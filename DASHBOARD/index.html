@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#281323">
+  <title>Arthur Nery | LovePlay</title>
+  <link rel="manifest" href="../manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="LovePlay">
+  <link rel="apple-touch-icon" href="../ASSETS/loveplay-icon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home">♥ LovePlay</a>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+    <nav id="mainNav" role="tablist" aria-label="Dashboard sections">
+      <a class="tab-button" id="tab-games" href="#games" role="tab" aria-controls="games" aria-selected="false" tabindex="-1">Games</a>
+      <a class="tab-button" id="tab-music" href="#music" role="tab" aria-controls="music" aria-selected="false" tabindex="-1">Music</a>
+      <a class="tab-button" id="tab-movies" href="#movies" role="tab" aria-controls="movies" aria-selected="false" tabindex="-1">PineDrama</a>
+      <a class="tab-button" id="tab-tiktok" href="#tiktok" role="tab" aria-controls="tiktok" aria-selected="false" tabindex="-1">TikTok</a>
+      <a class="tab-button" id="tab-pictures" href="#pictures" role="tab" aria-controls="pictures" aria-selected="false" tabindex="-1">Pictures</a>
+      <a class="tab-button" id="tab-messages" href="#messages" role="tab" aria-controls="messages" aria-selected="false" tabindex="-1">Messages</a>
+      <a class="tab-button" id="tab-calculator" href="#calculator" role="tab" aria-controls="calculator" aria-selected="false" tabindex="-1">EE Calculator</a>
+      <a class="tab-button" id="tab-more-apps" href="#more-apps" role="tab" aria-controls="more-apps" aria-selected="false" tabindex="-1">More Apps</a>
+    </nav>
+    <div class="heart-counter">♡ <span id="heartCount">0</span> hearts</div>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="Enable dark mode">☾</button>
+  </header>
+
+  <main>
+    <section class="home-tab-panel" id="home">
+      <div class="hero section-wrap">
+      <div>
+        <span class="eyebrow">A LITTLE WORLD, MADE FOR YOU</span>
+        <h1>Hey, my favorite <span>person.</span> ♥</h1>
+        <p>I made this little world just for you. Play games, listen to our songs, revisit our memories, and discover your surprises.</p>
+        <a class="button button-primary" href="#games">Let's play →</a>
+      </div>
+      <div class="hero-art">
+        <div class="big-heart">♥</div>
+        <div class="floating-note">you + me ♡</div>
+      </div>
+      </div>
+
+      <section class="section-wrap background-music-section" aria-label="Home background music">
+        <div class="background-music-card">
+          <div class="background-music-copy">
+            <span class="eyebrow">A SONG FOR YOU</span>
+            <h2 id="backgroundMusicTitle">Perfect</h2>
+            <p id="backgroundMusicArtist">Ed Sheeran</p>
+          </div>
+          <div class="background-music-actions">
+            <button class="button button-primary" id="playBackgroundMusic" type="button">♫ Play / resume</button>
+            <button class="button button-quiet" id="editBackgroundMusic" type="button">Edit song</button>
+          </div>
+          <div class="background-music-player" id="backgroundMusicPlayer">
+            <div id="backgroundMusicEmbed" title="Spotify player for Perfect by Ed Sheeran"></div>
+            <p class="helper-text background-music-status" id="backgroundMusicStatus" aria-live="polite">Trying to start automatically. If the browser blocks it, tap anywhere or use Play / resume.</p>
+            <a class="background-music-open-link" id="backgroundMusicOpenLink" href="https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v" target="_blank" rel="noopener noreferrer">Open this song in Spotify ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-wrap featured-section" aria-label="LovePlay featured moments">
+        <div class="featured-showcase" id="featuredShowcase">
+          <img class="featured-image" id="featuredImage" src="../ASSETS/memory-1.jpg" alt="A favorite LovePlay memory" fetchpriority="high">
+          <div class="featured-shade"></div>
+          <div class="featured-copy" aria-live="off">
+            <span class="eyebrow" id="featuredEyebrow">A MEMORY TO KEEP</span>
+            <h2 id="featuredTitle">Little moments, forever ours.</h2>
+            <p id="featuredDescription">A small collection of the memories that make us smile.</p>
+            <a class="button button-primary featured-link" id="featuredLink" href="#pictures">Open our pictures →</a>
+          </div>
+          <div class="featured-controls">
+            <span class="featured-count" id="featuredCount" aria-live="polite">01 / 03</span>
+            <button class="featured-control" id="featuredPrevious" type="button" aria-label="Previous featured moment">‹</button>
+            <button class="featured-control" id="featuredPause" type="button" aria-label="Pause featured slideshow">Ⅱ</button>
+            <button class="featured-control" id="featuredNext" type="button" aria-label="Next featured moment">›</button>
+          </div>
+        </div>
+        <p class="featured-hint">Featured memories rotate automatically. Use the controls to pause or browse.</p>
+      </section>
+
+      <section class="section-wrap welcome-strip">
+        <div><strong>A reminder for today</strong>
+          <p>You are loved more than this little website can say.</p>
+        </div>
+        <span id="todayLabel"></span>
+      </section>
+
+      <section class="section-wrap keepsake-section" aria-labelledby="keepsakeHeading">
+        <div class="keepsake-heading">
+          <span class="eyebrow">LITTLE THINGS, JUST FOR YOU</span>
+          <h2 id="keepsakeHeading">Open a little something.</h2>
+          <p>Choose a card to read a note, find a reminder, or open your gift.</p>
+        </div>
+        <div class="keepsake-grid">
+          <button class="keepsake-card flower-card" id="openFlowerLetter" type="button">
+            <span class="keepsake-art flower-art" aria-hidden="true">
+              <span class="flower-petal petal-one"></span><span class="flower-petal petal-two"></span>
+              <span class="flower-petal petal-three"></span><span class="flower-petal petal-four"></span>
+              <span class="flower-center"></span><span class="flower-stem"></span>
+            </span>
+            <span class="keepsake-card-copy">
+              <span class="pill">A LETTER FOR YOU</span>
+              <strong>A flower, with love</strong>
+              <span>Open and edit your little love letter.</span>
+            </span>
+            <span class="keepsake-arrow" aria-hidden="true">↗</span>
+          </button>
+
+          <button class="keepsake-card chill-card" id="openChillLetter" type="button">
+            <span class="keepsake-art chill-art" aria-hidden="true">
+              <svg class="chill-doodle" viewBox="0 0 180 120" aria-hidden="true" focusable="false">
+                <path class="doodle-glass" d="M28 21h47L60 74v18H43V74L28 21Z"/>
+                <path class="doodle-drink" d="M34 43h35L60 72H43l-9-29Z"/>
+                <path class="doodle-glass" d="M40 99h25M52 92v7"/>
+                <path class="doodle-lemon" d="M72 24a13 13 0 1 0-26 0c0 7 13 19 13 19s13-12 13-19Z"/>
+                <circle class="doodle-lemon-core" cx="59" cy="24" r="5"/>
+                <path class="doodle-cigarette" d="M105 81h47v10h-47z"/>
+                <path class="doodle-cigarette-tip" d="M142 81h10v10h-10z"/>
+                <path class="doodle-smoke" d="M117 73c-10-10 9-12 0-22s8-13 1-23"/>
+                <path class="doodle-smoke smoke-second" d="M135 72c-8-9 8-12 2-20s5-10 3-16"/>
+              </svg>
+            </span>
+            <span class="keepsake-card-copy">
+              <span class="pill">ALCOHOL &amp; SMOKE ART</span>
+              <strong>A little drink &amp; smoke</strong>
+              <span>Open and edit your personal note.</span>
+            </span>
+            <span class="keepsake-arrow" aria-hidden="true">↗</span>
+          </button>
+
+          <button class="keepsake-card reminder-card" id="openReminder" type="button">
+            <span class="keepsake-art reminder-art" aria-hidden="true"><span>☼</span><i></i></span>
+            <span class="keepsake-card-copy">
+              <span class="pill">A GENTLE REMINDER</span>
+              <strong>You are doing just fine.</strong>
+              <span>Take a breath. You deserve a little rest.</span>
+            </span>
+            <span class="keepsake-arrow" aria-hidden="true">↗</span>
+          </button>
+
+          <button class="keepsake-card gift-card" id="openGift" type="button">
+            <span class="keepsake-art gift-art" aria-hidden="true"><span class="gift-box">♡</span></span>
+            <span class="keepsake-card-copy">
+              <span class="pill">A GIFT FROM MY HEART</span>
+              <strong>There's something for you.</strong>
+              <span>Open your surprise when it is ready.</span>
+            </span>
+            <span class="keepsake-arrow" aria-hidden="true">↗</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="section-wrap surprise-section" id="surprise">
+        <div class="surprise-box">
+          <span class="eyebrow">YOUR FINAL SURPRISE</span>
+          <h2>A little something <span>from my heart.</span></h2>
+          <p id="surpriseDescription">Collect 2 hearts by playing the games.</p>
+          <div class="progress-track"><div id="progressFill"></div></div>
+          <p id="progressText">0 of 2 hearts collected</p>
+          <button class="button button-primary" id="openSurprise" disabled>Unlock my letter ♡</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="section-wrap content-section tab-panel" id="games" role="tabpanel" aria-labelledby="tab-games" tabindex="0" hidden>
+      <div class="section-heading">
+        <div><span class="eyebrow">PLAY WITH MY HEART</span>
+          <h2>Pick a game to play.</h2>
+        </div>
+        <p>Play a quick favorite or challenge yourself with chess.</p>
+      </div>
+
+      <div class="game-grid">
+        <article class="feature-card">
+          <div class="card-art chess-art">♔ ♞ ♙</div>
+          <div class="card-body">
+            <span class="pill">CHESS</span>
+            <h3>Play Chess vs Fritz</h3>
+            <p>Play a full game against the Fritz chess engine.</p>
+            <button class="button button-dark" id="startChess">Play chess ↗</button>
+            <a class="game-external-link" href="https://www.chess.com/play/online" target="_blank" rel="noopener noreferrer">Play live multiplayer ↗</a>
+          </div>
+        </article>
+        <article class="feature-card">
+          <div class="card-art match-art">♥　♡　♥　♡</div>
+          <div class="card-body">
+            <span class="pill">GAME 01</span>
+            <h3>Heart Match</h3>
+            <p>Find every matching pair of hearts.</p>
+            <button class="button button-dark" id="startMatch">Play Heart Match ↗</button>
+          </div>
+        </article>
+        <article class="feature-card">
+          <div class="card-art quiz-art">? ♥</div>
+          <div class="card-body">
+            <span class="pill">GAME 02</span>
+            <h3>How Well Do You Know Me?</h3>
+            <p>Answer up to 10 questions about us. You can edit all the questions and answers.</p>
+            <button class="button button-dark" id="startQuiz">Start the quiz ↗</button>
+            <button class="button button-quiet" id="editQuizQuestions" type="button">Edit Q&amp;A</button>
+          </div>
+        </article>
+        <article class="feature-card">
+          <div class="card-art connect-art">🔴 🟡 🔴</div>
+          <div class="card-body">
+            <span class="pill">2 PLAYERS</span>
+            <h3>Connect Four</h3>
+            <p>Take turns and connect four pieces before your opponent.</p>
+            <button class="button button-dark" id="startConnectFour">Play Connect Four ↗</button>
+          </div>
+        </article>
+        <article class="feature-card">
+          <div class="card-art snake-art">➜ ● ●</div>
+          <div class="card-body">
+            <span class="pill">ARCADE</span>
+            <h3>Snake</h3>
+            <p>Collect food, grow longer, and avoid the walls and yourself.</p>
+            <button class="button button-dark" id="startSnake">Play Snake ↗</button>
+          </div>
+        </article>
+        <article class="feature-card">
+          <div class="card-art tic-art">X O X</div>
+          <div class="card-body">
+            <span class="pill">2 PLAYERS</span>
+            <h3>Tic-Tac-Toe</h3>
+            <p>A classic local two-player game. Get three in a row.</p>
+            <button class="button button-dark" id="startTicTacToe">Play Tic-Tac-Toe ↗</button>
+          </div>
+        </article>
+        <article class="feature-card">
+          <div class="card-art roblox-art">
+            <img src="../ASSETS/roblox-logo.svg" alt="Roblox logo" loading="lazy">
+          </div>
+          <div class="card-body">
+            <span class="pill">PLAY ON ROBLOX</span>
+            <h3>Roblox</h3>
+            <p>Open Roblox and choose from millions of community-made experiences.</p>
+            <a class="button button-dark game-launch-link" href="https://www.roblox.com/" target="_blank" rel="noopener noreferrer">Explore Roblox ↗</a>
+          </div>
+        </article>
+        <article class="feature-card">
+          <div class="card-art mlbb-art">
+            <img src="../ASSETS/mlbb-logo.svg" alt="Mobile Legends: Bang Bang logo" loading="lazy">
+          </div>
+          <div class="card-body">
+            <span class="pill">MOBILE LEGENDS</span>
+            <h3>Mobile Legends: Bang Bang</h3>
+            <p>Visit the official MLBB site for game details and supported download options.</p>
+            <a class="button button-dark game-launch-link" href="https://www.mobilelegends.com/" target="_blank" rel="noopener noreferrer">Visit MLBB ↗</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="game-panel" id="gamePanel" hidden>
+        <div class="panel-top">
+          <div><span class="eyebrow" id="gameEyebrow">LET'S PLAY</span>
+            <h3 id="gameTitle">Heart Match</h3>
+          </div>
+          <button class="icon-button" id="closeGame">✕</button>
+        </div>
+        <div id="gameContent"></div>
+        <p class="game-feedback" id="gameFeedback" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="section-wrap content-section tab-panel" id="music" role="tabpanel" aria-labelledby="tab-music" tabindex="0" hidden>
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">MUSIC ON SPOTIFY</span>
+          <h2>Pick a mood and press play.</h2>
+        </div>
+      </div>
+      <div class="music-tabs" role="tablist" aria-label="Music genres">
+        <button class="music-tab" id="music-tab-arthur" type="button" role="tab" aria-controls="music-player-panel" aria-selected="true" tabindex="0" data-music="arthur">Arthur Nery</button>
+        <button class="music-tab" id="music-tab-hiphop" type="button" role="tab" aria-controls="music-player-panel" aria-selected="false" tabindex="-1" data-music="hiphop">Hip-Hop</button>
+        <button class="music-tab" id="music-tab-love" type="button" role="tab" aria-controls="music-player-panel" aria-selected="false" tabindex="-1" data-music="love">Love Songs</button>
+        <button class="music-tab" id="music-tab-pop" type="button" role="tab" aria-controls="music-player-panel" aria-selected="false" tabindex="-1" data-music="pop">Pop</button>
+        <button class="music-tab" id="music-tab-rnb" type="button" role="tab" aria-controls="music-player-panel" aria-selected="false" tabindex="-1" data-music="rnb">R&amp;B</button>
+      </div>
+      <div class="music-layout">
+        <div class="album-art">
+          <div class="album-heart" id="musicMoodIcon" aria-hidden="true">♥</div>
+          <span id="musicMoodLabel">ARTHUR NERY</span>
+        </div>
+        <div class="playlist" id="music-player-panel" role="tabpanel" aria-labelledby="music-tab-arthur" tabindex="0">
+          <h3 id="musicPlaylistTitle">Arthur Nery</h3>
+          <p id="musicPlaylistDescription">Choose a track in the player. If Spotify preview playback is unavailable, open Spotify to listen.</p>
+          <iframe
+            class="spotify-embed"
+            src="https://open.spotify.com/embed/artist/7uDdl5V5AETSFY7K3muu22?utm_source=generator&amp;theme=0"
+            title="Arthur Nery on Spotify"
+            loading="eager"
+            id="spotifyEmbed"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+          </iframe>
+          <a
+            class="button button-primary spotify-profile-link"
+            id="spotifyOpenLink"
+            href="https://open.spotify.com/artist/7uDdl5V5AETSFY7K3muu22"
+            target="_blank"
+            rel="noopener noreferrer">
+            Open on Spotify ↗
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-wrap content-section tab-panel" id="movies" role="tabpanel" aria-labelledby="tab-movies" tabindex="0" hidden>
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">SHORT DRAMAS ON PINEDRAMA</span>
+          <h2>Featured PineDrama dramas.</h2>
+        </div>
+        <p>Explore popular short dramas featured in PineDrama's official app preview.</p>
+      </div>
+      <div class="pinedrama-banner">
+        <div>
+          <span class="pill">OFFICIAL PINEDRAMA APP</span>
+          <h3>Discover more short dramas.</h3>
+          <p>PineDrama's drama catalog is available in its mobile app. Open the official Google Play page to explore and install it.</p>
+        </div>
+        <a
+          class="button button-primary"
+          href="https://play.google.com/store/apps/details?id=com.ss.android.ttmd.video"
+          target="_blank"
+          rel="noopener noreferrer">
+          See more online ↗
+        </a>
+      </div>
+      <h3 class="pinedrama-shelf-title">Featured on PineDrama</h3>
+      <p class="movie-note">Drama titles and artwork shown in PineDrama's official Google Play preview. The catalog may vary by region and app updates.</p>
+      <div class="movie-grid">
+        <article class="movie-card pinedrama-card">
+          <div class="pinedrama-poster poster-return" role="img" aria-label="PineDrama poster for The Return of Divorced Heiress"></div>
+          <div class="movie-card-body">
+            <span class="pill">ROMANCE · REVENGE</span>
+            <h3>The Return of Divorced Heiress</h3>
+            <a class="pinedrama-drama-link" href="https://play.google.com/store/apps/details?id=com.ss.android.ttmd.video" target="_blank" rel="noopener noreferrer">See more on PineDrama ↗</a>
+          </div>
+        </article>
+        <article class="movie-card pinedrama-card">
+          <div class="pinedrama-poster poster-blind-wife" role="img" aria-label="PineDrama poster for Dangerous Blind Wife"></div>
+          <div class="movie-card-body">
+            <span class="pill">ROMANCE · FLASH MARRIAGE</span>
+            <h3>Dangerous Blind Wife</h3>
+            <a class="pinedrama-drama-link" href="https://play.google.com/store/apps/details?id=com.ss.android.ttmd.video" target="_blank" rel="noopener noreferrer">See more on PineDrama ↗</a>
+          </div>
+        </article>
+        <article class="movie-card pinedrama-card">
+          <div class="pinedrama-poster poster-love-me" role="img" aria-label="PineDrama poster for Love Me Like You Do"></div>
+          <div class="movie-card-body">
+            <span class="pill">SWEET LOVE</span>
+            <h3>Love Me Like You Do</h3>
+            <a class="pinedrama-drama-link" href="https://play.google.com/store/apps/details?id=com.ss.android.ttmd.video" target="_blank" rel="noopener noreferrer">See more on PineDrama ↗</a>
+          </div>
+        </article>
+        <article class="movie-card pinedrama-card">
+          <div class="pinedrama-poster poster-wakeup" role="img" aria-label="PineDrama poster for Wake Up, Dad! Wedding Time"></div>
+          <div class="movie-card-body">
+            <span class="pill">SWEET LOVE · FAMILY</span>
+            <h3>Wake Up, Dad! Wedding Time</h3>
+            <a class="pinedrama-drama-link" href="https://play.google.com/store/apps/details?id=com.ss.android.ttmd.video" target="_blank" rel="noopener noreferrer">See more on PineDrama ↗</a>
+          </div>
+        </article>
+        <article class="movie-card pinedrama-card">
+          <img
+            class="pinedrama-poster pinedrama-feature-image"
+            src="https://play-lh.googleusercontent.com/6xEQjGt62rnKFYh923K1OL90f_-HqoUIfagDOIzxbZ_o4YUlv-cfrG8cbqlDxHOG82owvF39IHvCELrUZnFiXAM=w1080-h1920-rw"
+            alt="PineDrama featured drama preview: Obsessed with You: The Boss's Way"
+            loading="lazy">
+          <div class="movie-card-body">
+            <span class="pill">ROMANCE · CEO</span>
+            <h3>Obsessed with You: The Boss's Way</h3>
+            <a class="pinedrama-drama-link" href="https://play.google.com/store/apps/details?id=com.ss.android.ttmd.video" target="_blank" rel="noopener noreferrer">See more on PineDrama ↗</a>
+          </div>
+        </article>
+        <article class="movie-card pinedrama-card">
+          <img
+            class="pinedrama-poster pinedrama-feature-image"
+            src="https://play-lh.googleusercontent.com/jib_s9jBk2SOm0DuHm7vnj_pMRMakvD0pnDpDR0qqeymPdHkEXNilsNXsSQQEXg4EZzL0Dr1n9CKA-qlzjF1=w1080-h1920-rw"
+            alt="PineDrama featured drama preview for Take My Empire, Keep My Heart"
+            loading="lazy">
+          <div class="movie-card-body">
+            <span class="pill">ROMANCE · BILLIONAIRE</span>
+            <h3>Take My Empire, Keep My Heart</h3>
+            <a class="pinedrama-drama-link" href="https://play.google.com/store/apps/details?id=com.ss.android.ttmd.video" target="_blank" rel="noopener noreferrer">See more on PineDrama ↗</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-wrap content-section tab-panel tiktok-panel" id="tiktok" role="tabpanel" aria-labelledby="tab-tiktok" tabindex="0" hidden>
+      <div class="tiktok-card">
+        <span class="eyebrow">WATCH &amp; DISCOVER</span>
+        <h2>TikTok <span>videos</span></h2>
+        <p>Paste a public TikTok video link to watch it here. Add more links to make your own swipe-through playlist.</p>
+        <form class="tiktok-add-form" id="tiktokVideoForm">
+          <label for="tiktokVideoUrl">TikTok video link</label>
+          <div class="tiktok-add-row">
+            <input id="tiktokVideoUrl" name="videoUrl" type="url" placeholder="https://www.tiktok.com/@user/video/..." required>
+            <button class="button button-primary" type="submit">Add video</button>
+          </div>
+          <p class="tiktok-form-message" id="tiktokVideoMessage" role="status" aria-live="polite"></p>
+        </form>
+        <div class="tiktok-viewer" id="tiktokViewer" hidden>
+          <div class="tiktok-player-wrap" id="tiktokPlayerWrap"></div>
+          <div class="tiktok-controls">
+            <button class="button button-dark" id="tiktokPrevious" type="button" aria-label="Previous TikTok video">‹ Previous</button>
+            <span id="tiktokVideoCount" aria-live="polite"></span>
+            <button class="button button-dark" id="tiktokNext" type="button" aria-label="Next TikTok video">Next ›</button>
+          </div>
+          <button class="tiktok-remove-button" id="tiktokRemoveVideo" type="button">Remove this video</button>
+        </div>
+        <p class="tiktok-note">LovePlay can embed individual public videos, but TikTok does not allow its For You feed or login/sign-in screen to be embedded here. Signing in and liking may require TikTok's own app or website. Your video list is saved only in this browser.</p>
+      </div>
+    </section>
+
+    <section class="ee-app tab-panel" id="calculator" role="tabpanel" aria-labelledby="tab-calculator" tabindex="0" hidden>
+      <aside class="ee-sidebar" aria-label="Electrical calculator navigation">
+        <a class="ee-sidebar-brand" href="#calculator">
+          <span class="ee-brand-bolt" aria-hidden="true">ϟ</span>
+          <span><strong>Electrical Engineering Calculator</strong><small>Solve. Learn. Build a Brighter Tomorrow.</small></span>
+        </a>
+        <nav class="ee-sidebar-nav" id="eeSidebarNav" aria-label="Calculator categories"></nav>
+        <p class="ee-sidebar-motto">Better calculations.<br> Bigger possibilities.</p>
+        <span class="ee-sidebar-mark" aria-hidden="true">ϟ</span>
+      </aside>
+      <div class="ee-workspace">
+        <header class="ee-topbar">
+          <span class="ee-mobile-brand">ϟ Electrical Engineering Calculator</span>
+          <nav aria-label="Calculator quick links">
+            <a href="#ee-formula-reference" data-ee-nav-target="reference">Formulas</a>
+            <a href="#eeCategories" data-ee-nav-target="home">Calculations</a>
+            <a href="#ee-disclaimer" data-ee-nav-target="home">Solutions</a>
+          </nav>
+        </header>
+        <div class="ee-main">
+          <section class="ee-welcome" id="eeWelcome">
+            <div>
+              <span class="ee-eyebrow">WELCOME</span>
+              <h2>Welcome to the<br>Electrical Engineering Calculator</h2>
+              <p>Find the right formula, input your values, and get instant results. Explore essential tools for students, engineers, and professionals.</p>
+            </div>
+            <div class="ee-welcome-art" aria-hidden="true">⚡</div>
+          </section>
+          <div class="ee-category-grid" id="eeCategories"></div>
+          <section class="ee-reference" id="ee-formula-reference">
+            <h2>▤ &nbsp;Formula Reference</h2>
+            <div class="ee-reference-grid" id="eeFormulaReference"></div>
+          </section>
+          <p class="ee-disclaimer" id="ee-disclaimer">For learning and preliminary estimates only. Always verify designs, equipment ratings, and installation requirements against applicable standards and qualified professional guidance.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-wrap content-section tab-panel ee-more-apps" id="more-apps" role="tabpanel" aria-labelledby="tab-more-apps" tabindex="0" hidden>
+      <header class="ee-more-apps-heading">
+        <span class="ee-eyebrow">QUICK ACCESS</span>
+        <h2 id="eeMoreAppsTitle">More Apps</h2>
+        <p>Open a service or app from one convenient place.</p>
+      </header>
+      <div class="ee-app-grid">
+        <a class="ee-app-choice ee-app-autocad" href="https://web.autocad.com/" target="_blank" rel="noopener noreferrer">
+          <span class="ee-app-choice-icon" aria-hidden="true">A</span>
+          <span><strong>AutoCAD</strong><small>Open AutoCAD web</small></span>
+          <span class="ee-app-choice-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="ee-app-choice ee-app-wechat" href="https://www.wechat.com/" target="_blank" rel="noopener noreferrer">
+          <span class="ee-app-choice-icon" aria-hidden="true">W</span>
+          <span><strong>WeChat</strong><small>Visit WeChat</small></span>
+          <span class="ee-app-choice-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="ee-app-choice ee-app-facebook" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
+          <span class="ee-app-choice-icon" aria-hidden="true">f</span>
+          <span><strong>Facebook</strong><small>Open Facebook</small></span>
+          <span class="ee-app-choice-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="ee-app-choice ee-app-messenger" href="https://www.messenger.com/" target="_blank" rel="noopener noreferrer">
+          <span class="ee-app-choice-icon" aria-hidden="true">M</span>
+          <span><strong>Messenger</strong><small>Open Messenger</small></span>
+          <span class="ee-app-choice-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="ee-app-choice ee-app-chatgpt" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">
+          <span class="ee-app-choice-icon" aria-hidden="true">✳</span>
+          <span><strong>ChatGPT</strong><small>Open ChatGPT</small></span>
+          <span class="ee-app-choice-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="ee-app-choice ee-app-gmail" href="https://mail.google.com/" target="_blank" rel="noopener noreferrer">
+          <span class="ee-app-choice-icon" aria-hidden="true">✉</span>
+          <span><strong>Gmail</strong><small>Open Gmail</small></span>
+          <span class="ee-app-choice-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="ee-app-choice ee-app-viber" href="https://www.viber.com/en/" target="_blank" rel="noopener noreferrer">
+          <span class="ee-app-choice-icon" aria-hidden="true">V</span>
+          <span><strong>Viber</strong><small>Visit Viber</small></span>
+          <span class="ee-app-choice-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="ee-app-choice ee-app-telegram" href="https://web.telegram.org/" target="_blank" rel="noopener noreferrer">
+          <span class="ee-app-choice-icon" aria-hidden="true">➤</span>
+          <span><strong>Telegram</strong><small>Open Telegram Web</small></span>
+          <span class="ee-app-choice-arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section-wrap content-section tab-panel" id="pictures" role="tabpanel" aria-labelledby="tab-pictures" tabindex="0" hidden>
+      <div class="section-heading">
+        <div>        <span class="eyebrow">OUR FAVORITE MOMENTS</span>
+        <h2>Captured little memories.</h2>
+        </div>
+      </div>
+      <input id="photoUploadInput" type="file" accept="image/*" hidden>
+      <p class="helper-text" id="photoUploadHelp">Photos are saved in this browser and will still be here when you return on this device.</p>
+      <div class="photo-albums-view" id="photoAlbumsView">
+        <div class="photo-albums-grid" id="photoAlbumsGrid" aria-label="Photo albums">
+          <button class="photo-album-add-card" id="addPhotoAlbum" type="button">
+            <span class="photo-album-add-icon" aria-hidden="true">＋</span>
+            <span>Add album</span>
+          </button>
+        </div>
+      </div>
+      <div class="photo-gallery-view" id="photoGalleryView" hidden>
+        <div class="photo-gallery-toolbar">
+          <button class="button button-dark photo-gallery-back" id="closePhotoAlbum" type="button">‹ Albums</button>
+          <h3 class="photo-gallery-title" id="photoGalleryTitle">Our photos</h3>
+          <button class="button button-primary" id="addPhotoButton" type="button" disabled>＋ Add photo</button>
+        </div>
+        <div class="photo-grid" id="photoGrid" aria-label="Our photo gallery"></div>
+        <button class="button button-dark restore-photos-button" id="restoreRemovedPhotos" type="button" hidden>
+          Restore removed original photos
+        </button>
+      </div>
+    </section>
+
+    <section class="message-section tab-panel" id="messages" role="tabpanel" aria-labelledby="tab-messages" tabindex="0" hidden>
+      <div class="section-wrap message-layout">
+        <div>
+          <span class="eyebrow">A FEW WORDS FROM ME</span>
+          <h2>Little notes, just for you. ♡</h2>
+          <p>Choose an envelope to read a personal message.</p>
+        </div>
+        <div class="envelope-grid">
+          <button class="envelope" data-message="miss">✉<strong>When you miss me</strong></button>
+          <button class="envelope" data-message="tired">✉<strong>When you're tired</strong></button>
+          <button class="envelope" data-message="smile">✉<strong>When you need a smile</strong></button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <a class="brand" href="#home">♥ LovePlay</a>
+    <p>Made with love, just for you.</p>
+    <a href="#home">Back to top ↑</a>
+  </footer>
+
+  <div class="modal" id="messageModal" hidden>
+    <div class="modal-card letter-card">
+      <button class="modal-close" data-close="messageModal">✕</button>
+      <span class="letter-heart">♥</span>
+      <h2 id="modalTitle">Dear you,</h2>
+      <p id="modalMessage"></p>
+      <button class="button button-dark" data-close="messageModal">Keep this close ♡</button>
+    </div>
+  </div>
+
+  <div class="modal" id="keepsakeLetterModal" hidden>
+    <div class="modal-card letter-card keepsake-letter-card" role="dialog" aria-modal="true" aria-labelledby="keepsakeLetterTitle">
+      <button class="modal-close" data-close="keepsakeLetterModal" type="button" aria-label="Close letter">✕</button>
+      <span class="letter-heart" id="keepsakeLetterIcon" aria-hidden="true">♥</span>
+      <span class="eyebrow" id="keepsakeLetterEyebrow">A NOTE FROM MY HEART</span>
+      <h2 id="keepsakeLetterTitle">A little letter for you.</h2>
+      <div id="keepsakeLetterView">
+        <p class="keepsake-letter-output" id="keepsakeLetterOutput"></p>
+        <p class="signature" id="keepsakeLetterSignature">Always cheering for you ♥</p>
+        <div class="photo-viewer-actions">
+          <button class="button button-primary" id="editKeepsakeLetter" type="button">Edit message</button>
+          <button class="button button-dark keepsake-cancel" data-close="keepsakeLetterModal" type="button">Close</button>
+        </div>
+
+      </div>
+      <div id="keepsakeLetterEditor" hidden>
+        <p class="keepsake-edit-hint">Edit your message below. It will be saved on this device and shown as your finished letter.</p>
+        <label class="photo-name-label" for="keepsakeLetterText">Your message</label>
+        <textarea class="photo-name-input keepsake-letter-input" id="keepsakeLetterText" rows="7" maxlength="2000"></textarea>
+        <div class="photo-viewer-actions">
+          <button class="button button-primary" id="saveKeepsakeLetter" type="button">Save letter</button>
+          <button class="button button-dark keepsake-cancel" id="cancelKeepsakeEdit" type="button">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="createAlbumModal" hidden>
+    <form class="modal-card album-form" id="createAlbumForm" role="dialog" aria-modal="true" aria-labelledby="createAlbumTitle">
+      <button class="modal-close" data-close="createAlbumModal" type="button" aria-label="Close">✕</button>
+      <span class="eyebrow">A NEW PLACE FOR MEMORIES</span>
+      <h2 id="createAlbumTitle">Create a photo album</h2>
+      <label class="photo-name-label" for="newAlbumName">Album name</label>
+      <input class="photo-name-input" id="newAlbumName" type="text" maxlength="40" required placeholder="e.g. Summer memories">
+      <div class="photo-viewer-actions">
+        <button class="button button-primary" type="submit">Create album</button>
+        <button class="button button-dark keepsake-cancel" data-close="createAlbumModal" type="button">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal" id="editBackgroundMusicModal" hidden>
+    <form class="modal-card background-music-editor" id="editBackgroundMusicForm" role="dialog" aria-modal="true" aria-labelledby="editBackgroundMusicTitle">
+      <button class="modal-close" data-close="editBackgroundMusicModal" type="button" aria-label="Close">✕</button>
+      <span class="eyebrow">PERSONALIZE THE SOUNDTRACK</span>
+      <h2 id="editBackgroundMusicTitle">Edit background music</h2>
+      <label class="photo-name-label" for="backgroundMusicNameInput">Song title</label>
+      <input class="photo-name-input" id="backgroundMusicNameInput" type="text" maxlength="80" required>
+      <label class="photo-name-label" for="backgroundMusicArtistInput">Artist</label>
+      <input class="photo-name-input" id="backgroundMusicArtistInput" type="text" maxlength="80" required>
+      <label class="photo-name-label" for="backgroundMusicUrlInput">Spotify track link</label>
+      <input class="photo-name-input" id="backgroundMusicUrlInput" type="url" required placeholder="https://open.spotify.com/track/...">
+      <p class="helper-text">Paste a Spotify track link. The player will appear on the Home page when someone presses Play.</p>
+      <div class="photo-viewer-actions">
+        <button class="button button-primary" type="submit">Save song</button>
+        <button class="button button-dark keepsake-cancel" data-close="editBackgroundMusicModal" type="button">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal" id="quizEditorModal" hidden>
+    <form class="modal-card quiz-editor-card" id="quizEditorForm" role="dialog" aria-modal="true" aria-labelledby="quizEditorTitle">
+      <button class="modal-close" data-close="quizEditorModal" type="button" aria-label="Close">✕</button>
+      <span class="eyebrow">MAKE IT YOURS</span>
+      <h2 id="quizEditorTitle">Edit your Q&amp;A game</h2>
+      <p class="helper-text">Fill in up to 10 questions, four answer choices for each, and select the correct answer. Leave a question blank to skip it.</p>
+      <div class="quiz-editor-questions" id="quizEditorQuestions"></div>
+      <div class="photo-viewer-actions">
+        <button class="button button-primary" type="submit">Save questions</button>
+        <button class="button button-dark keepsake-cancel" data-close="quizEditorModal" type="button">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal" id="photoModal" hidden>
+    <div class="modal-card photo-modal-card" role="dialog" aria-modal="true" aria-label="Photo viewer">
+      <button class="modal-close" data-close="photoModal">✕</button>
+      <div class="photo-viewer-stage" id="photoViewerStage">
+        <button class="photo-nav-button" id="previousPhoto" type="button" aria-label="Previous photo">‹</button>
+        <div class="photo-image-frame" id="photoImageFrame">
+          <img id="expandedPhoto" alt="Selected memory">
+          <div class="photo-sticker-layer" id="expandedStickers" aria-hidden="true"></div>
+        </div>
+        <button class="photo-nav-button" id="nextPhoto" type="button" aria-label="Next photo">›</button>
+      </div>
+      <p id="expandedCaption"></p>
+      <p class="photo-count" id="photoCount" aria-live="polite"></p>
+      <div class="photo-viewer-actions">
+        <button class="photo-action-button" id="renameCurrentPhoto" type="button" aria-label="Edit photo name">
+          <span class="photo-action-icon" aria-hidden="true">✎</span><span>Edit name</span>
+        </button>
+        <button class="photo-action-button" id="editCurrentPhoto" type="button" aria-label="Edit photo design">
+          <span class="photo-action-icon" aria-hidden="true">✦</span><span>Edit design</span>
+        </button>
+        <button class="photo-action-button" id="replaceCurrentPhoto" type="button" aria-label="Replace photo">
+          <span class="photo-action-icon" aria-hidden="true">↻</span><span>Replace</span>
+        </button>
+        <button class="photo-action-button photo-action-remove" id="removeCurrentPhoto" type="button" aria-label="Remove photo">
+          <span class="photo-action-icon" aria-hidden="true">×</span><span>Remove</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="renamePhotoModal" hidden>
+    <div class="modal-card photo-design-card" role="dialog" aria-modal="true" aria-labelledby="renamePhotoTitle">
+      <button class="modal-close" data-close="renamePhotoModal" type="button" aria-label="Close rename dialog">✕</button>
+      <h2 id="renamePhotoTitle">Edit photo name</h2>
+      <label class="photo-name-label" for="photoNameInput">Photo name</label>
+      <input id="photoNameInput" class="photo-name-input" type="text" maxlength="100" autocomplete="off">
+      <div class="photo-viewer-actions">
+        <button class="button button-primary" id="savePhotoName" type="button">Save name</button>
+        <button class="button button-dark" data-close="renamePhotoModal" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="designModal" hidden>
+    <div class="modal-card photo-design-card" role="dialog" aria-modal="true" aria-labelledby="designTitle">
+      <button class="modal-close" data-close="designModal" type="button" aria-label="Close design editor">✕</button>
+      <h2 id="designTitle">Edit photo design</h2>
+      <p>Choose a filter and add as many stickers or glasses as you like. Drag each to move it.</p>
+      <div class="photo-design-stage" id="photoDesignStage">
+        <img id="designPhoto" alt="Photo design preview">
+        <div class="photo-sticker-layer" id="designStickers"></div>
+      </div>
+      <div class="photo-design-controls">
+        <label for="photoFilter">Filter</label>
+        <select id="photoFilter">
+          <option value="none">Original</option>
+          <option value="glow">TikTok Glow</option>
+          <option value="soft-glam">Soft Glam</option>
+          <option value="golden-hour">Golden Hour</option>
+          <option value="paris">Paris</option>
+          <option value="clean">Clean Girl</option>
+          <option value="dreamy">Dreamy</option>
+          <option value="film">Film</option>
+          <option value="moody">Moody</option>
+          <option value="black-white">Classic B&amp;W</option>
+          <option value="cool">Cool Tone</option>
+        </select>
+        <label for="photoStickerChoice">Sticker</label>
+        <select id="photoStickerChoice">
+          <option value="❤️">Heart</option>
+          <option value="💖">Sparkling heart 💖</option>
+          <option value="🩷">Pink heart 🩷</option>
+          <option value="💕">Two hearts 💕</option>
+          <option value="⭐">Star</option>
+          <option value="🌟">Glowing star</option>
+          <option value="🌸">Flower</option>
+          <option value="🌼">Daisy</option>
+          <option value="🦋">Butterfly</option>
+          <option value="🪽">Angel wings</option>
+          <option value="☁️">Cloud</option>
+          <option value="🎀">Bow</option>
+          <option value="💋">Kiss</option>
+          <option value="✨">Sparkles</option>
+          <option value="😎">Sunglasses emoji</option>
+          <option value="🐱">Cat</option>
+          <option value="glasses">Glasses (eyewear)</option>
+        </select>
+        <span></span>
+        <button class="button button-dark" id="addPhotoSticker" type="button">＋ Add sticker</button>
+      </div>
+      <div class="photo-sticker-list" id="photoStickerList" aria-live="polite"></div>
+      <button class="button button-primary" id="savePhotoDesign" type="button">Save design</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="script.js"></script>
+  <script>
+    if ("serviceWorker" in navigator && window.isSecureContext) {
+      navigator.serviceWorker.register("../sw.js", { scope: "../" }).catch(error => {
+        console.error("Could not register the LovePlay offline app shell.", error);
+      });
+    }
+  </script>
+</body>
+</html>

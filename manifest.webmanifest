@@ -1,0 +1,19 @@
+{
+  "id": "./DASHBOARD/index.html",
+  "name": "LovePlay",
+  "short_name": "LovePlay",
+  "description": "A little world, made for you.",
+  "start_url": "./DASHBOARD/index.html#home",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fffaf7",
+  "theme_color": "#281323",
+  "icons": [
+    {
+      "src": "./ASSETS/loveplay-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
