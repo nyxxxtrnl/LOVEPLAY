@@ -1827,16 +1827,6 @@ a.ee-app-choice:focus-visible {
   text-align: center;
 }
 
-.chess-embed {
-  display: block;
-  width: 100%;
-  height: min(78vh, 680px);
-  min-height: 480px;
-  border: 0;
-  border-radius: 12px;
-  background: #f4f0ed;
-}
-
 .board-status {
   margin: 12px 0;
   color: var(--muted);
@@ -3189,7 +3179,6 @@ footer p {
   .movie-grid { grid-template-columns: 1fr; }
   .pinedrama-poster { aspect-ratio: 4 / 5; }
   .album-art { min-height: 210px; }
-  .chess-embed { height: 65vh; min-height: 400px; }
   .tic-board { grid-template-columns: repeat(3, minmax(70px, 90px)); }
   .tic-cell { width: 100%; height: auto; aspect-ratio: 1; }
   .connect-board { grid-template-columns: repeat(7, minmax(28px, 1fr)); gap: 4px; padding: 8px; }

@@ -351,40 +351,6 @@ function addGameActions(container, label, onClick) {
   container.appendChild(actions);
 }
 
-// CHESS: PLAY AGAINST FRITZ
-function startChess() {
-  openGame("Play Chess vs Fritz", "CHESS · PLAY AGAINST THE COMPUTER");
-
-  const note = document.createElement("p");
-  note.className = "helper-text";
-  note.style.textAlign = "center";
-  note.textContent =
-    "Fritz may ask you to sign in or create a free ChessBase account. If the board does not load, open the game directly.";
-
-  const frame = document.createElement("iframe");
-  frame.className = "chess-embed";
-  frame.title = "Play chess against Fritz";
-  frame.src = "https://fritz.chessbase.com/en/";
-  frame.loading = "lazy";
-  frame.allow = "fullscreen";
-
-  const link = document.createElement("a");
-  link.className = "game-external-link";
-  link.href = "https://fritz.chessbase.com/en/";
-  link.target = "_blank";
-  link.rel = "noopener noreferrer";
-  link.textContent = "Open Fritz chess in a new tab ↗";
-
-  const multiplayer = document.createElement("a");
-  multiplayer.className = "game-external-link";
-  multiplayer.href = "https://www.chess.com/play/online";
-  multiplayer.target = "_blank";
-  multiplayer.rel = "noopener noreferrer";
-  multiplayer.textContent = "Play live multiplayer on Chess.com ↗";
-
-  gameContent.append(note, frame, link, multiplayer);
-}
-
 // TIC-TAC-TOE: LOCAL TWO PLAYER
 let ticState;
 
@@ -1802,9 +1768,6 @@ document.getElementById("editQuizQuestions")
 
 document.getElementById("quizEditorForm")
   .addEventListener("submit", saveQuizEditor);
-
-document.getElementById("startChess")
-  .addEventListener("click", startChess);
 
 document.getElementById("startConnectFour")
   .addEventListener("click", startConnectFour);
