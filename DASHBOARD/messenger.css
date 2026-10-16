@@ -836,11 +836,19 @@ body[data-theme="dark"] #chat .messenger-app[data-chat-theme="mint"] .messenger-
   font-size: 0.7rem;
 }
 
-.messenger-seen-avatar {
-  width: 18px;
-  height: 18px;
-  flex: 0 0 18px;
-  font-size: 0.6rem;
+.messenger-read-receipt-label {
+  display: none;
+}
+
+.messenger-message[data-actions-open="true"] .messenger-read-receipt-label {
+  display: inline;
+}
+
+.messenger-avatar.messenger-seen-avatar {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  font-size: 0.48rem;
 }
 
 .messenger-custom-theme-color {

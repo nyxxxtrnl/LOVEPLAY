@@ -777,6 +777,7 @@ if (!isConfigured) {
           avatar.append(image, document.createElement("span"));
           setAvatar(avatar, currentRecipient);
           const label = document.createElement("span");
+          label.className = "messenger-read-receipt-label";
           label.textContent = "Seen";
           receipt.append(avatar, label);
           content.append(receipt);
