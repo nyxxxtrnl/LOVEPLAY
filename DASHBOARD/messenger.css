@@ -725,7 +725,8 @@ body[data-theme="dark"] #chat .messenger-app[data-chat-theme="mint"] .messenger-
   }
 
   body:has(#chat:not([hidden]) .messenger-app[data-chat-open="true"]) #chat .messenger-card {
-    height: calc(100svh - 112px);
+    height: calc(100svh - env(safe-area-inset-bottom));
+    height: calc(100dvh - env(safe-area-inset-bottom));
   }
 
   #chat .messenger-thread-header {
@@ -2604,7 +2605,8 @@ body[data-theme="dark"] #chat .messenger-message[data-own="true"] .messenger-mes
     }
 
     body:has(#chat:not([hidden]) .messenger-app[data-chat-open="true"]) #chat .messenger-card {
-      height: calc(100svh - 112px);
+      height: calc(100svh - env(safe-area-inset-bottom));
+      height: calc(100dvh - env(safe-area-inset-bottom));
     }
   }
 
