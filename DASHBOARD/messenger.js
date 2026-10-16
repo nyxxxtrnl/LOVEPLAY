@@ -74,8 +74,10 @@ function describeError(error, action) {
   if (code === "auth/app-not-authorized") return "This website domain is not authorized. Add it in Firebase Authentication → Settings → Authorized domains.";
   if (code === "auth/network-request-failed") return "Could not reach Firebase. Check your internet connection, HTTPS, and browser extensions.";
   if (code === "permission-denied" || code === "firestore/permission-denied") {
-    return `${action} was blocked by Firestore rules. Confirm that the setup instructions and security rules are applied.`;
+    return `${action} was blocked by Firestore rules (permission-denied). Publish the latest firestore.rules to the LovePlay Firebase project, then try again.`;
   }
+  if (code === "failed-precondition") return `${action} needs a Firestore index or setup change. Check the browser console for Firebase's details.`;
+  if (code === "unavailable") return `${action} could not reach Firestore. Check your internet connection and try again.`;
   return `${action} failed (${code}). Check your connection and Firebase setup, then try again.`;
 }
 
@@ -379,7 +381,6 @@ if (!isConfigured) {
     document.getElementById("chatEmptyState").hidden = true;
     messagesList.replaceChildren();
     syncPresenceSubscriptions();
-    subscribeToMessages(conversationId);
 
     try {
       const existing = await getDoc(conversationRef);
@@ -391,6 +392,7 @@ if (!isConfigured) {
           lastMessage: ""
         });
       }
+      subscribeToMessages(conversationId);
       setStatus(`Private chat with ${recipient.displayName}.`);
       messageInput.focus();
     } catch (error) {

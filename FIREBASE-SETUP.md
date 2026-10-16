@@ -26,6 +26,9 @@ keys, or private server credentials in `firebase-config.js`.
 The Firestore rules allow signed-in users to find display names and read/write
 only conversations they participate in. Email addresses are not stored in the
 public profile documents. Do not replace these rules with open read/write rules.
+When [`firestore.rules`](./firestore.rules) changes, publish its latest contents
+in Firebase Console → Firestore Database → Rules. Pushing to GitHub does not
+automatically deploy Firebase security rules.
 
 ## Sign-in troubleshooting
 
