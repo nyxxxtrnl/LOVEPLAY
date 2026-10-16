@@ -156,6 +156,8 @@ function saveProgress() {
 function updateProgress() {
   document.getElementById("heartCount").textContent =
     progress.hearts;
+  document.getElementById("chatHeartCount").textContent =
+    progress.hearts;
 
   document.getElementById("progressText").textContent =
     `${progress.hearts} of ${HEART_GOAL} hearts collected`;

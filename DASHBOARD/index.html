@@ -585,6 +585,16 @@
     </section>
 
     <section class="section-wrap content-section tab-panel" id="chat" role="tabpanel" aria-labelledby="tab-chat" tabindex="0" hidden>
+      <header class="mobile-chat-header">
+        <a class="mobile-chat-back" href="#home" aria-label="Back to LovePlay home">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6M9 12h12"/></svg>
+        </a>
+        <h2>Chat</h2>
+        <span class="mobile-chat-heart" aria-label="Hearts collected">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.8 4.8a5.4 5.4 0 0 0-7.6 0L12 6l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6l1.2 1.2L12 21l7.6-7.4 1.2-1.2a5.4 5.4 0 0 0 0-7.6Z"/></svg>
+          <span id="chatHeartCount">0</span>
+        </span>
+      </header>
       <div class="section-heading">
         <div>
           <span class="eyebrow">LOVEPLAY MESSENGER</span>
@@ -627,7 +637,7 @@
                 <span>Your profile</span>
                 <strong id="chatAccountName"></strong>
               </div>
-              <button class="messenger-secondary-button" id="chatEditProfileDetails" type="button">Edit profile</button>
+              <button class="messenger-secondary-button" id="chatEditProfileDetails" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0m1-15v6m-3-3h6"/></svg><span>Edit profile</span></button>
             </div>
             <div class="messenger-account-actions">
               <label class="messenger-active-toggle" for="chatActiveToggle">
@@ -693,7 +703,7 @@
               <div class="messenger-empty" id="chatEmptyState">Search for a person to start a private chat.</div>
               <div class="messenger-thread" id="chatThread" hidden>
                 <header class="messenger-thread-header">
-                  <button class="messenger-back-button" id="chatBackToList" type="button"><span aria-hidden="true">‹</span> Chats</button>
+                  <button class="messenger-back-button" id="chatBackToList" type="button" aria-label="Back to chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span>Chats</span></button>
                   <div class="messenger-avatar" id="chatRecipientAvatar" aria-hidden="true"><img alt=""><span>?</span></div>
                   <div class="messenger-thread-copy">
                     <h3 id="chatRecipientName"></h3>
@@ -704,7 +714,7 @@
                 <form class="messenger-compose" id="chatMessageForm">
                   <label class="visually-hidden" for="chatMessageInput">Write a message</label>
                   <textarea id="chatMessageInput" maxlength="2000" rows="2" placeholder="Write a message..." required></textarea>
-                  <button class="button button-primary" type="submit">Send</button>
+                  <button class="button button-primary" type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4 20-7Zm0 0L11 13"/></svg><span>Send</span></button>
                 </form>
               </div>
             </div>
