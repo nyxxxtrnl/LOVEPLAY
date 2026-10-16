@@ -3500,8 +3500,53 @@ footer p {
   .featured-controls { right: 16px; bottom: 16px; }
   .welcome-strip { align-items: flex-start; }
   .keepsake-section { padding-top: 52px; }
-  .keepsake-grid { grid-template-columns: 1fr; }
-  .keepsake-card { min-height: 116px; }
+  .keepsake-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .keepsake-card {
+    position: relative;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 64px auto;
+    align-content: start;
+    gap: 10px;
+    min-height: 0;
+    padding: 10px;
+    border-radius: 16px;
+  }
+  .keepsake-art {
+    width: 100%;
+    height: 64px;
+    border-radius: 12px;
+  }
+  .keepsake-card-copy {
+    align-content: start;
+    gap: 4px;
+    padding-right: 4px;
+  }
+  .keepsake-card-copy .pill {
+    font-size: 0.49rem;
+    letter-spacing: 0.35px;
+    white-space: normal;
+    line-height: 1.3;
+  }
+  .keepsake-card-copy strong {
+    font-size: 0.9rem;
+  }
+  .keepsake-card-copy > span:last-child {
+    font-size: 0.68rem;
+  }
+  .keepsake-arrow {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.82);
+  }
   #todayLabel { display: none; }
   .game-grid, .music-layout { grid-template-columns: 1fr; }
   .movie-grid { grid-template-columns: 1fr; }
