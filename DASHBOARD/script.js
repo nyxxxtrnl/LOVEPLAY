@@ -7,7 +7,7 @@ const HEART_GOAL = 2;
 const STORAGE_KEY = "loveplay-progress-v1";
 const KEEPSAKE_LETTER_STORAGE_KEY = "loveplay-keepsake-letters-v1";
 const QUIZ_STORAGE_KEY = "loveplay-quiz-questions-v1";
-const CHAT_THEME_STORAGE_KEY = "loveplay-chat-theme-v1";
+const THEME_STORAGE_KEY = "loveplay-theme-v1";
 const BACKGROUND_MUSIC_STORAGE_KEY = "loveplay-background-music-v1";
 const TIKTOK_VIDEO_STORAGE_KEY = "loveplay-tiktok-videos-v1";
 const DEFAULT_BACKGROUND_MUSIC = {
@@ -1921,35 +1921,55 @@ function resumeBackgroundMusicOnInteraction() {
 document.addEventListener("pointerdown", resumeBackgroundMusicOnInteraction);
 document.addEventListener("keydown", resumeBackgroundMusicOnInteraction);
 
-function applyChatTheme(theme) {
+function applyTheme(theme) {
   const dark = theme === "dark";
-  const chatPanel = document.getElementById("chat");
-  chatPanel.dataset.chatDark = String(dark);
-  document.querySelectorAll("[data-chat-theme-toggle]").forEach(toggle => {
-    toggle.setAttribute("aria-pressed", String(dark));
-    toggle.setAttribute("aria-label", dark ? "Enable chat light mode" : "Enable chat dark mode");
-    toggle.title = dark ? "Enable light mode for chat" : "Enable dark mode for chat";
-  });
+  document.body.dataset.theme = dark ? "dark" : "light";
+  const toggle = document.getElementById("themeToggle");
+  toggle.setAttribute("aria-checked", String(dark));
+  toggle.setAttribute("aria-label", dark ? "Turn off dark mode" : "Turn on dark mode");
+  document.querySelector('meta[name="theme-color"]').content = dark ? "#1b141d" : "#281323";
 }
 
 try {
-  applyChatTheme(localStorage.getItem(CHAT_THEME_STORAGE_KEY) === "dark" ? "dark" : "light");
+  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem("loveplay-chat-theme-v1");
+  applyTheme(savedTheme === "dark" ? "dark" : "light");
 } catch (error) {
-  applyChatTheme("light");
+  applyTheme("light");
 }
 
-function toggleChatTheme() {
-  const theme = document.getElementById("chat").dataset.chatDark === "true" ? "light" : "dark";
-  applyChatTheme(theme);
+function toggleTheme() {
+  const theme = document.body.dataset.theme === "dark" ? "light" : "dark";
+  applyTheme(theme);
   try {
-    localStorage.setItem(CHAT_THEME_STORAGE_KEY, theme);
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch (error) {
     showToast(error.message || "Could not save your theme preference.");
   }
 }
 
-document.querySelectorAll("[data-chat-theme-toggle]").forEach(toggle => {
-  toggle.addEventListener("click", toggleChatTheme);
+document.getElementById("themeToggle").addEventListener("click", toggleTheme);
+
+const dashboardSettings = document.getElementById("dashboardSettings");
+const dashboardSettingsPanel = document.getElementById("dashboardSettingsPanel");
+const dashboardSettingsToggle = document.getElementById("dashboardSettingsToggle");
+
+function setDashboardSettingsOpen(open) {
+  dashboardSettings.dataset.open = String(open);
+  dashboardSettingsPanel.setAttribute("aria-hidden", String(!open));
+  dashboardSettingsPanel.inert = !open;
+  dashboardSettingsToggle.setAttribute("aria-expanded", String(open));
+  dashboardSettingsToggle.setAttribute("aria-label", open ? "Close quick settings" : "Open quick settings");
+  if (!open) dashboardSettingsToggle.focus();
+}
+
+dashboardSettingsToggle.addEventListener("click", () => {
+  setDashboardSettingsOpen(dashboardSettings.dataset.open !== "true");
+});
+document.getElementById("dashboardSettingsClose").addEventListener("click", () => setDashboardSettingsOpen(false));
+document.getElementById("dashboardSettingsBackdrop").addEventListener("click", () => setDashboardSettingsOpen(false));
+document.getElementById("editBackgroundMusic").addEventListener("click", () => setDashboardSettingsOpen(false));
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && dashboardSettings.dataset.open === "true") setDashboardSettingsOpen(false);
 });
 
 const designStickersLayer = document.getElementById("designStickers");
@@ -3275,10 +3295,6 @@ function activateTab(tabId) {
   const activePanel =
     tabPanels.find(panel => panel.id === tabId) ||
     homePanel;
-
-  document.querySelectorAll("[data-chat-theme-toggle]").forEach(toggle => {
-    toggle.hidden = activePanel.id !== "chat";
-  });
 
   if (activePanel.id !== "games") closeGame();
 

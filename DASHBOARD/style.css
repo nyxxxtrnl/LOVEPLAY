@@ -101,32 +101,123 @@ a {
   white-space: nowrap;
 }
 
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 9px;
+.dashboard-settings {
+  --dashboard-settings-width: min(350px, calc(100vw - 48px));
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  pointer-events: none;
 }
 
-.chat-theme-toggle {
+.dashboard-settings-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  background: rgba(24, 14, 23, 0.34);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.dashboard-settings-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
   display: grid;
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
+  width: var(--dashboard-settings-width);
+  align-content: start;
+  gap: 12px;
+  height: 100%;
+  padding: 26px 22px;
+  border-left: 1px solid var(--line);
+  background: var(--cream);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  transform: translateX(102%);
+  transition: transform 260ms ease;
+  pointer-events: auto;
+}
+
+.dashboard-settings[data-open="true"] {
+  pointer-events: auto;
+}
+
+.dashboard-settings[data-open="true"] .dashboard-settings-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dashboard-settings[data-open="true"] .dashboard-settings-panel {
+  transform: translateX(0);
+}
+
+.dashboard-settings-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.dashboard-settings-heading .eyebrow {
+  color: var(--rose);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.dashboard-settings-heading h2 {
+  margin: 2px 0 0;
+  color: var(--plum);
+  font-size: 1.4rem;
+}
+
+.dashboard-settings-close {
+  display: grid;
+  width: 38px;
+  height: 38px;
   place-items: center;
-  padding: 0;
   border: 1px solid var(--line);
   border-radius: 50%;
   background: var(--blush);
   color: var(--plum);
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
-.chat-theme-toggle[hidden] {
-  display: none;
+.dashboard-settings-option {
+  display: flex;
+  width: 100%;
+  min-height: 70px;
+  align-items: center;
+  gap: 13px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--cream) 88%, var(--blush));
+  color: var(--ink);
+  text-align: left;
 }
 
-.chat-theme-toggle svg {
-  width: 19px;
-  height: 19px;
+.dashboard-settings-option:hover {
+  border-color: var(--rose);
+}
+
+.dashboard-settings-option-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--blush);
+  color: var(--rose);
+}
+
+.dashboard-settings-option-icon svg {
+  width: 21px;
+  height: 21px;
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
@@ -134,13 +225,113 @@ a {
   stroke-width: 1.8;
 }
 
-.chat-theme-toggle .chat-theme-sun,
-.chat-theme-toggle[aria-pressed="true"] .chat-theme-moon {
+.dashboard-theme-sun,
+.dashboard-settings-option[aria-checked="true"] .dashboard-theme-moon {
   display: none;
 }
 
-.chat-theme-toggle[aria-pressed="true"] .chat-theme-sun {
+.dashboard-settings-option[aria-checked="true"] .dashboard-theme-sun {
   display: initial;
+}
+
+.dashboard-settings-option-copy {
+  display: grid;
+  flex: 1;
+  gap: 3px;
+}
+
+.dashboard-settings-option-copy strong {
+  color: var(--plum);
+  font-size: 0.9rem;
+}
+
+.dashboard-settings-option-copy small {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.dashboard-settings-music-icon {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.dashboard-switch {
+  width: 42px;
+  height: 24px;
+  flex: 0 0 42px;
+  padding: 3px;
+  border-radius: 999px;
+  background: #b5aab2;
+  transition: background 180ms ease;
+}
+
+.dashboard-switch span {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 180ms ease;
+}
+
+.dashboard-settings-option[aria-checked="true"] .dashboard-switch {
+  background: var(--rose);
+}
+
+.dashboard-settings-option[aria-checked="true"] .dashboard-switch span {
+  transform: translateX(18px);
+}
+
+.dashboard-settings-arrow {
+  color: var(--rose);
+  font-size: 1.6rem;
+}
+
+.dashboard-settings-tab {
+  position: absolute;
+  top: 43%;
+  right: 0;
+  display: grid;
+  width: 42px;
+  min-height: 112px;
+  justify-items: center;
+  gap: 9px;
+  padding: 12px 7px;
+  border: 1px solid var(--line);
+  border-right: 0;
+  border-radius: 14px 0 0 14px;
+  background: var(--blush);
+  box-shadow: var(--shadow);
+  color: var(--plum);
+  transition: right 260ms ease, background 180ms ease;
+  pointer-events: auto;
+}
+
+.dashboard-settings[data-open="true"] .dashboard-settings-tab {
+  right: var(--dashboard-settings-width);
+}
+
+.dashboard-settings-tab svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.dashboard-settings-tab span {
+  writing-mode: vertical-rl;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.dashboard-settings-tab:hover,
+.dashboard-settings-close:hover {
+  background: var(--pink);
 }
 
 .theme-toggle {
