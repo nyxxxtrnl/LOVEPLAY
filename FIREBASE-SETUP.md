@@ -39,8 +39,8 @@ before being stored directly in their Firestore message, so photo messaging
 does not require a Storage bucket or billing-plan upgrade. Voice messages use
 Firebase Storage; Storage rules limit audio uploads to 10 MB. Message reactions
 and sender-only deletion are validated by Firestore rules. Chat color themes
-are saved on the current device. Typing status and read receipts use the
-existing Realtime Database presence rules.
+are saved on the current device. Read receipts use the existing Realtime
+Database presence rules.
 
 Publish the current contents of [`firestore.rules`](./firestore.rules) in
 Firebase Console → Firestore Database → Rules, and publish

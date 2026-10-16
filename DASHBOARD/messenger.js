@@ -164,12 +164,7 @@ if (!isConfigured) {
   let latestConversations = [];
   let selectedAvatarDataUrl = null;
   let returnToSettingsAfterProfileEdit = false;
-  let currentRecipientPresence = null;
   let recipientSeenMessageId = null;
-  let typingTimer = null;
-  let typingIdleTimer = null;
-  let recipientTypingTimer = null;
-  let typingGeneration = 0;
   let lastSeenMessageId = null;
   let mediaRecorder = null;
   let recordingChunks = [];
@@ -246,8 +241,6 @@ if (!isConfigured) {
           const seenMessageId = status?.seen?.[currentConversationId]?.messageId || null;
           const seenChanged = seenMessageId !== recipientSeenMessageId;
           recipientSeenMessageId = seenMessageId;
-          currentRecipientPresence = status || {};
-          renderRecipientActivity();
           if (seenChanged) renderMessagesFromCurrentSnapshot();
         }
       }, error => {
@@ -292,10 +285,8 @@ if (!isConfigured) {
   }
 
   function clearConversation() {
-    stopTyping();
     currentConversationId = null;
     currentRecipient = null;
-    currentRecipientPresence = null;
     recipientSeenMessageId = null;
     lastSeenMessageId = null;
     chatApp.dataset.chatOpen = "false";
@@ -304,75 +295,11 @@ if (!isConfigured) {
     document.getElementById("chatThread").hidden = true;
     document.getElementById("chatEmptyState").hidden = false;
     document.getElementById("chatEmptyState").textContent = "Search for a person to start a private chat.";
-    document.getElementById("chatTypingStatus").hidden = true;
-    clearTimeout(recipientTypingTimer);
-    recipientTypingTimer = null;
     messagesList.replaceChildren();
-  }
-
-  function renderRecipientActivity() {
-    clearTimeout(recipientTypingTimer);
-    recipientTypingTimer = null;
-    const typingStatus = currentRecipientPresence?.typing?.[currentConversationId];
-    const updatedAt = typingStatus && typeof typingStatus === "object"
-      ? typingStatus.updatedAt
-      : null;
-    const age = typeof updatedAt === "number" ? Date.now() - updatedAt : Infinity;
-    const typing = age >= 0 && age < 3000;
-    document.getElementById("chatTypingStatus").hidden = !typing;
-    if (typing) {
-      recipientTypingTimer = setTimeout(renderRecipientActivity, 3000 - age);
-    }
   }
 
   function renderMessagesFromCurrentSnapshot() {
     if (latestMessageSnapshot) renderMessages(latestMessageSnapshot);
-  }
-
-  function stopTyping() {
-    typingGeneration += 1;
-    clearTimeout(typingTimer);
-    clearTimeout(typingIdleTimer);
-    typingTimer = null;
-    typingIdleTimer = null;
-    if (!realtimeDatabase || !currentUser || !currentConversationId) return;
-    removeRealtimeValue(
-      realtimeRef(realtimeDatabase, `presence/${currentUser.uid}/typing/${currentConversationId}`)
-    ).catch(error => setStatus(describeError(error, "Updating typing status"), true));
-  }
-
-  function updateTypingStatus() {
-    clearTimeout(typingTimer);
-    clearTimeout(typingIdleTimer);
-    const generation = ++typingGeneration;
-    if (!realtimeDatabase || !currentUser || !currentConversationId) return;
-    const conversationId = currentConversationId;
-    const typingRef = realtimeRef(
-      realtimeDatabase,
-      `presence/${currentUser.uid}/typing/${conversationId}`
-    );
-    if (!messageInput.value.trim()) {
-      removeRealtimeValue(typingRef).catch(error => setStatus(describeError(error, "Updating typing status"), true));
-      return;
-    }
-    typingTimer = setTimeout(async () => {
-      try {
-        await onDisconnect(typingRef).remove();
-        if (generation !== typingGeneration || conversationId !== currentConversationId) return;
-        await setRealtimeValue(typingRef, { updatedAt: realtimeServerTimestamp() });
-        if (generation !== typingGeneration || conversationId !== currentConversationId) {
-          await removeRealtimeValue(typingRef);
-          return;
-        }
-        typingIdleTimer = setTimeout(() => {
-          if (generation === typingGeneration && conversationId === currentConversationId) {
-            removeRealtimeValue(typingRef).catch(error => setStatus(describeError(error, "Updating typing status"), true));
-          }
-        }, 1800);
-      } catch (error) {
-        setStatus(describeError(error, "Updating typing status"), true);
-      }
-    }, 250);
   }
 
   function markLatestIncomingAsSeen(messages) {
@@ -877,25 +804,18 @@ if (!isConfigured) {
 
   async function openConversation(recipient) {
     if (!currentUser || recipient.uid === currentUser.uid) return;
-    stopTyping();
     const participants = [currentUser.uid, recipient.uid].sort();
     const conversationId = `dm_${participants.join("_")}`;
     const conversationRef = doc(db, "conversations", conversationId);
     currentConversationId = conversationId;
     currentRecipient = recipient;
-    currentRecipientPresence = null;
     recipientSeenMessageId = null;
     lastSeenMessageId = null;
-    clearTimeout(recipientTypingTimer);
-    recipientTypingTimer = null;
-    clearTimeout(typingTimer);
-    typingTimer = null;
     document.getElementById("chatRecipientName").textContent = recipient.displayName;
     setAvatar(document.getElementById("chatRecipientAvatar"), recipient);
     const recipientStatus = document.getElementById("chatRecipientStatus");
     recipientStatus.dataset.presenceUid = recipient.uid;
     recipientStatus.querySelector("span:last-child").textContent = "Private conversation · Offline";
-    document.getElementById("chatTypingStatus").hidden = true;
     document.getElementById("chatThread").hidden = false;
     document.getElementById("chatEmptyState").hidden = true;
     chatApp.dataset.chatOpen = "true";
@@ -1170,20 +1090,8 @@ if (!isConfigured) {
     event.preventDefault();
     const text = messageInput.value.trim();
     if (!text) return;
-    stopTyping();
     sendChatMessage({ text });
   });
-  messageInput.addEventListener("input", event => {
-    if ([
-      "insertText",
-      "insertCompositionText",
-      "deleteContentBackward",
-      "deleteContentForward"
-    ].includes(event.inputType)) {
-      updateTypingStatus();
-    }
-  });
-  messageInput.addEventListener("blur", stopTyping);
 
   function saveChatTheme(conversationId, theme, color = chatCustomThemeColor.value) {
     if (!CHAT_THEMES.includes(theme)) return;

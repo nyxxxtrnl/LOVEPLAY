@@ -842,13 +842,6 @@ body[data-theme="dark"] .messenger-app[data-chat-theme="mint"] .messenger-compos
   font-size: 0.6rem;
 }
 
-.messenger-typing-indicator {
-  margin: 3px 0 0;
-  color: #39866f;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
 .messenger-custom-theme-color {
   width: 34px;
   height: 34px;
@@ -907,55 +900,19 @@ body[data-theme="dark"] #messengerApp[data-chat-theme="custom"] .messenger-compo
     grid-row: 1;
   }
 
-  .photo-gallery-title-group {
-    display: grid;
+  .photo-gallery-toolbar .photo-gallery-title {
     grid-column: 2;
     grid-row: 1;
     min-width: 0;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .photo-gallery-title-group .photo-gallery-title {
-    min-width: 0;
-    order: 0;
     text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  .photo-gallery-add-album {
-    display: inline-flex;
-    min-height: 36px;
-    flex: 0 0 auto;
-    order: 1;
-    align-items: center;
-    justify-content: center;
-    padding: 6px 10px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: var(--blush);
-    color: var(--plum);
-    font: inherit;
-    font-size: 0.75rem;
-    font-weight: 700;
-  }
-
   .photo-gallery-toolbar > #addPhotoButton {
     grid-column: 1 / -1;
     grid-row: 2;
-  }
-}
-
-.photo-gallery-add-album {
-  display: none;
-}
-
-@media (max-width: 600px) {
-  .photo-gallery-add-album {
-    display: inline-flex;
   }
 }
 
@@ -2579,10 +2536,17 @@ body[data-theme="dark"] .messenger-message[data-own="true"] .messenger-message-b
     #chat .mobile-chat-header {
       position: static;
       min-height: 54px;
-      grid-template-columns: auto;
-      justify-content: end;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
       padding: 6px 16px;
       background: rgba(255, 250, 247, 0.98);
+    }
+
+    #chat .mobile-chat-header h2 {
+      font-family: inherit;
+      font-size: 0.96rem;
+      letter-spacing: 0.045em;
+      text-align: left;
     }
 
     #chat .mobile-chat-settings {
@@ -2638,6 +2602,10 @@ body[data-theme="dark"] .messenger-message[data-own="true"] .messenger-message-b
     body[data-theme="dark"] #chat .mobile-chat-header {
       border-color: #4b3b49;
       background: rgba(33, 26, 35, 0.98);
+    }
+
+    body[data-theme="dark"] #chat .mobile-chat-header h2 {
+      color: #f8dce8;
     }
 
     body[data-theme="dark"] #chat .mobile-chat-settings {
@@ -2708,4 +2676,9 @@ body[data-theme="dark"] .messenger-message[data-own="true"] .messenger-message-b
     padding: 8px 12px;
     font-size: 0.78rem;
   }
+}
+
+body:has(#chat:not([hidden])) .topbar > .brand,
+body:has(#chat:not([hidden])) .topbar > .heart-counter {
+  display: none;
 }
