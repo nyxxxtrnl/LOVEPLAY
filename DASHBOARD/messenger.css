@@ -644,26 +644,26 @@
   margin-bottom: 4px;
 }
 
-body[data-theme="dark"] #music .music-search input,
-body[data-theme="dark"] #music .music-search select,
-body[data-theme="dark"] .messenger-chat-theme,
-body[data-theme="dark"] .messenger-sticker-picker,
-body[data-theme="dark"] .messenger-reaction-summary span,
-body[data-theme="dark"] .messenger-reaction-picker summary,
-body[data-theme="dark"] .messenger-reaction-options,
-body[data-theme="dark"] .messenger-gif-dialog {
+#chat[data-chat-dark="true"] #music .music-search input,
+#chat[data-chat-dark="true"] #music .music-search select,
+#chat[data-chat-dark="true"] .messenger-chat-theme,
+#chat[data-chat-dark="true"] .messenger-sticker-picker,
+#chat[data-chat-dark="true"] .messenger-reaction-summary span,
+#chat[data-chat-dark="true"] .messenger-reaction-picker summary,
+#chat[data-chat-dark="true"] .messenger-reaction-options,
+#chat[data-chat-dark="true"] .messenger-gif-dialog {
   border-color: #594454;
   background: #302431;
   color: #f8edf2;
 }
 
-body[data-theme="dark"] .messenger-compose-tool {
+#chat[data-chat-dark="true"] .messenger-compose-tool {
   border-color: #594454;
   background: #302431;
   color: #f4a8c3;
 }
 
-body[data-theme="dark"] .messenger-gif-form input {
+#chat[data-chat-dark="true"] .messenger-gif-form input {
   border-color: #594454;
   background: #241a24;
   color: #f8edf2;
@@ -699,15 +699,15 @@ body[data-theme="dark"] .messenger-gif-form input {
   background: #effbf5;
 }
 
-body[data-theme="dark"] .messenger-app[data-chat-theme="ocean"] .messenger-messages,
-body[data-theme="dark"] .messenger-app[data-chat-theme="ocean"] .messenger-thread-header,
-body[data-theme="dark"] .messenger-app[data-chat-theme="ocean"] .messenger-compose,
-body[data-theme="dark"] .messenger-app[data-chat-theme="lavender"] .messenger-messages,
-body[data-theme="dark"] .messenger-app[data-chat-theme="lavender"] .messenger-thread-header,
-body[data-theme="dark"] .messenger-app[data-chat-theme="lavender"] .messenger-compose,
-body[data-theme="dark"] .messenger-app[data-chat-theme="mint"] .messenger-messages,
-body[data-theme="dark"] .messenger-app[data-chat-theme="mint"] .messenger-thread-header,
-body[data-theme="dark"] .messenger-app[data-chat-theme="mint"] .messenger-compose {
+#chat[data-chat-dark="true"] .messenger-app[data-chat-theme="ocean"] .messenger-messages,
+#chat[data-chat-dark="true"] .messenger-app[data-chat-theme="ocean"] .messenger-thread-header,
+#chat[data-chat-dark="true"] .messenger-app[data-chat-theme="ocean"] .messenger-compose,
+#chat[data-chat-dark="true"] .messenger-app[data-chat-theme="lavender"] .messenger-messages,
+#chat[data-chat-dark="true"] .messenger-app[data-chat-theme="lavender"] .messenger-thread-header,
+#chat[data-chat-dark="true"] .messenger-app[data-chat-theme="lavender"] .messenger-compose,
+#chat[data-chat-dark="true"] .messenger-app[data-chat-theme="mint"] .messenger-messages,
+#chat[data-chat-dark="true"] .messenger-app[data-chat-theme="mint"] .messenger-thread-header,
+#chat[data-chat-dark="true"] .messenger-app[data-chat-theme="mint"] .messenger-compose {
   background: #241a24;
 }
 
@@ -868,9 +868,9 @@ body[data-theme="dark"] .messenger-app[data-chat-theme="mint"] .messenger-compos
   background: color-mix(in srgb, var(--chat-custom-accent, #87516f) 8%, #fff);
 }
 
-body[data-theme="dark"] #messengerApp[data-chat-theme="custom"] .messenger-messages,
-body[data-theme="dark"] #messengerApp[data-chat-theme="custom"] .messenger-thread-header,
-body[data-theme="dark"] #messengerApp[data-chat-theme="custom"] .messenger-compose {
+#chat[data-chat-dark="true"] #messengerApp[data-chat-theme="custom"] .messenger-messages,
+#chat[data-chat-dark="true"] #messengerApp[data-chat-theme="custom"] .messenger-thread-header,
+#chat[data-chat-dark="true"] #messengerApp[data-chat-theme="custom"] .messenger-compose {
   background: color-mix(in srgb, var(--chat-custom-accent, #87516f) 18%, #241a24);
 }
 
@@ -926,40 +926,40 @@ body[data-theme="dark"] #messengerApp[data-chat-theme="custom"] .messenger-compo
   clip-path: inset(50%);
 }
 
-body[data-theme="dark"] .messenger-card,
-body[data-theme="dark"] .messenger-sidebar {
+#chat[data-chat-dark="true"] .messenger-card,
+#chat[data-chat-dark="true"] .messenger-sidebar {
   background: #241a24;
 }
 
-body[data-theme="dark"] .messenger-auth-form h3,
-body[data-theme="dark"] .messenger-list-block h3,
-body[data-theme="dark"] .messenger-thread-header h3,
-body[data-theme="dark"] .messenger-auth-form label,
-body[data-theme="dark"] .messenger-sidebar label,
-body[data-theme="dark"] .messenger-active-toggle,
-body[data-theme="dark"] .messenger-account-bar strong,
-body[data-theme="dark"] .messenger-person-button strong {
+#chat[data-chat-dark="true"] .messenger-auth-form h3,
+#chat[data-chat-dark="true"] .messenger-list-block h3,
+#chat[data-chat-dark="true"] .messenger-thread-header h3,
+#chat[data-chat-dark="true"] .messenger-auth-form label,
+#chat[data-chat-dark="true"] .messenger-sidebar label,
+#chat[data-chat-dark="true"] .messenger-active-toggle,
+#chat[data-chat-dark="true"] .messenger-account-bar strong,
+#chat[data-chat-dark="true"] .messenger-person-button strong {
   color: #f8dce8;
 }
 
-body[data-theme="dark"] .messenger-auth-form input,
-body[data-theme="dark"] .messenger-sidebar input,
-body[data-theme="dark"] .messenger-compose textarea {
+#chat[data-chat-dark="true"] .messenger-auth-form input,
+#chat[data-chat-dark="true"] .messenger-sidebar input,
+#chat[data-chat-dark="true"] .messenger-compose textarea {
   border-color: #594454;
   background: #302431;
   color: #f8edf2;
 }
 
-body[data-theme="dark"] .messenger-person-button:hover,
-body[data-theme="dark"] .messenger-person-button[aria-current="true"] {
+#chat[data-chat-dark="true"] .messenger-person-button:hover,
+#chat[data-chat-dark="true"] .messenger-person-button[aria-current="true"] {
   background: #422b3e;
 }
 
-body[data-theme="dark"] .messenger-message[data-own="true"] {
+#chat[data-chat-dark="true"] .messenger-message[data-own="true"] {
   background: #70405c;
 }
 
-body[data-theme="dark"] .music-playback-note {
+#chat[data-chat-dark="true"] .music-playback-note {
   background: #302431;
 }
 
@@ -1121,27 +1121,46 @@ body[data-theme="dark"] .music-playback-note {
   justify-content: flex-end;
 }
 
-body[data-theme="dark"] .messenger-profile-dialog {
+#chat[data-chat-dark="true"] .messenger-profile-dialog {
   border-color: #594454;
   background: #302431;
   color: #f8edf2;
 }
 
-body[data-theme="dark"] .messenger-profile-heading h3,
-body[data-theme="dark"] .messenger-photo-picker {
+#chat[data-chat-dark="true"] .messenger-profile-heading h3,
+#chat[data-chat-dark="true"] .messenger-photo-picker {
   color: #f8dce8;
 }
 
-body[data-theme="dark"] .messenger-profile-form {
+#chat[data-chat-dark="true"] .messenger-profile-form {
   background: transparent;
 }
 
-body[data-theme="dark"] .messenger-avatar-camera {
+#chat[data-chat-dark="true"] .messenger-avatar-camera {
   border-color: #241a24;
 }
 
 .mobile-chat-header {
   display: none;
+}
+
+.mobile-chat-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+#chat .chat-theme-toggle {
+  border-color: #f0dfe5;
+  background: #fff;
+  color: #51364c;
+}
+
+#chat[data-chat-dark="true"] .chat-theme-toggle {
+  border-color: #594454;
+  background: #241a24;
+  color: #f8edf2;
 }
 
 @media (max-width: 600px) {
@@ -1166,7 +1185,7 @@ body[data-theme="dark"] .messenger-avatar-camera {
     top: 0;
     display: grid;
     min-height: 58px;
-    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     padding: 5px 14px;
     border-bottom: 1px solid #f0dfe5;
@@ -1182,6 +1201,16 @@ body[data-theme="dark"] .messenger-avatar-camera {
     font-size: 1.06rem;
     font-weight: 700;
     text-align: center;
+  }
+
+  #chat .mobile-chat-actions .chat-theme-toggle {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+
+  #chat .mobile-chat-actions .mobile-chat-settings {
+    display: inline-flex;
   }
 
   #chat > .section-heading {
@@ -1618,72 +1647,72 @@ body[data-theme="dark"] .messenger-avatar-camera {
     stroke-width: 1.8;
   }
 
-  body[data-theme="dark"] #chat .mobile-chat-header,
-  body[data-theme="dark"] #chat .messenger-card,
-  body[data-theme="dark"] #chat .messenger-status,
-  body[data-theme="dark"] #chat .messenger-auth,
-  body[data-theme="dark"] #chat .messenger-app,
-  body[data-theme="dark"] #chat .messenger-sidebar,
-  body[data-theme="dark"] #chat .messenger-messages {
+  #chat[data-chat-dark="true"] .mobile-chat-header,
+  #chat[data-chat-dark="true"] .messenger-card,
+  #chat[data-chat-dark="true"] .messenger-status,
+  #chat[data-chat-dark="true"] .messenger-auth,
+  #chat[data-chat-dark="true"] .messenger-app,
+  #chat[data-chat-dark="true"] .messenger-sidebar,
+  #chat[data-chat-dark="true"] .messenger-messages {
     background: #211a23;
   }
 
-  body[data-theme="dark"] #chat .mobile-chat-header {
+  #chat[data-chat-dark="true"] .mobile-chat-header {
     border-color: #4b3b49;
   }
 
-  body[data-theme="dark"] #chat .mobile-chat-header h2,
-  body[data-theme="dark"] #chat .messenger-sidebar-heading h3,
-  body[data-theme="dark"] #chat .messenger-person-copy strong,
-  body[data-theme="dark"] #chat .messenger-thread-header h3 {
+  #chat[data-chat-dark="true"] .mobile-chat-header h2,
+  #chat[data-chat-dark="true"] .messenger-sidebar-heading h3,
+  #chat[data-chat-dark="true"] .messenger-person-copy strong,
+  #chat[data-chat-dark="true"] .messenger-thread-header h3 {
     color: #f4d9e7;
   }
 
-  body[data-theme="dark"] #chat .mobile-chat-back,
-  body[data-theme="dark"] #chat .messenger-back-button {
+  #chat[data-chat-dark="true"] .mobile-chat-back,
+  #chat[data-chat-dark="true"] .messenger-back-button {
     color: #f4d9e7;
   }
 
-  body[data-theme="dark"] #chat .mobile-chat-heart {
+  #chat[data-chat-dark="true"] .mobile-chat-heart {
     border-color: #594454;
     background: #382733;
     color: #f08caf;
   }
 
-  body[data-theme="dark"] #chat .messenger-auth-form {
+  #chat[data-chat-dark="true"] .messenger-auth-form {
     border-color: #4b3b49;
     background: #2a222d;
   }
 
-  body[data-theme="dark"] #chat .messenger-auth-form h3,
-  body[data-theme="dark"] #chat .messenger-auth-form label {
+  #chat[data-chat-dark="true"] .messenger-auth-form h3,
+  #chat[data-chat-dark="true"] .messenger-auth-form label {
     color: #f4d9e7;
   }
 
-  body[data-theme="dark"] #chat .messenger-auth-form input,
-  body[data-theme="dark"] #chat #chatSearchForm input {
+  #chat[data-chat-dark="true"] .messenger-auth-form input,
+  #chat[data-chat-dark="true"] #chatSearchForm input {
     border-color: #594454;
     background: #302431;
     color: #f8edf2;
   }
 
-  body[data-theme="dark"] #chat .messenger-account-bar,
-  body[data-theme="dark"] #chat .messenger-app[data-chat-open="true"] .messenger-thread-header,
-  body[data-theme="dark"] #chat .messenger-compose {
+  #chat[data-chat-dark="true"] .messenger-account-bar,
+  #chat[data-chat-dark="true"] .messenger-app[data-chat-open="true"] .messenger-thread-header,
+  #chat[data-chat-dark="true"] .messenger-compose {
     border-color: #4b3b49;
     background: #241a24;
   }
 
-  body[data-theme="dark"] #chat .messenger-person-button {
+  #chat[data-chat-dark="true"] .messenger-person-button {
     border-color: #4b3b49;
   }
 
-  body[data-theme="dark"] #chat .messenger-person-button:hover,
-  body[data-theme="dark"] #chat .messenger-person-button[aria-current="true"] {
+  #chat[data-chat-dark="true"] .messenger-person-button:hover,
+  #chat[data-chat-dark="true"] .messenger-person-button[aria-current="true"] {
     background: #422b3e;
   }
 
-  body[data-theme="dark"] #chat .messenger-compose textarea {
+  #chat[data-chat-dark="true"] .messenger-compose textarea {
     border-color: #594454;
     background: #302431;
     color: #f8edf2;
@@ -2117,44 +2146,44 @@ body[data-theme="dark"] .messenger-avatar-camera {
   border-radius: 999px;
 }
 
-body[data-theme="dark"] .messenger-account-bar,
-body[data-theme="dark"] .messenger-thread-header,
-body[data-theme="dark"] .messenger-conversation,
-body[data-theme="dark"] .messenger-messages,
-body[data-theme="dark"] .messenger-compose {
+#chat[data-chat-dark="true"] .messenger-account-bar,
+#chat[data-chat-dark="true"] .messenger-thread-header,
+#chat[data-chat-dark="true"] .messenger-conversation,
+#chat[data-chat-dark="true"] .messenger-messages,
+#chat[data-chat-dark="true"] .messenger-compose {
   background: #241a24;
 }
 
-body[data-theme="dark"] .messenger-profile-form {
+#chat[data-chat-dark="true"] .messenger-profile-form {
   border-color: #594454;
   background: #302431;
 }
 
-body[data-theme="dark"] .messenger-profile-heading h3,
-body[data-theme="dark"] .messenger-profile-name,
-body[data-theme="dark"] .messenger-thread-header h3,
-body[data-theme="dark"] .messenger-person-copy strong {
+#chat[data-chat-dark="true"] .messenger-profile-heading h3,
+#chat[data-chat-dark="true"] .messenger-profile-name,
+#chat[data-chat-dark="true"] .messenger-thread-header h3,
+#chat[data-chat-dark="true"] .messenger-person-copy strong {
   color: #f8dce8;
 }
 
-body[data-theme="dark"] .messenger-profile-name input,
-body[data-theme="dark"] .messenger-sidebar form input {
+#chat[data-chat-dark="true"] .messenger-profile-name input,
+#chat[data-chat-dark="true"] .messenger-sidebar form input {
   border-color: #594454;
   background: #302431;
   color: #f8edf2;
 }
 
-body[data-theme="dark"] .messenger-person-button:hover,
-body[data-theme="dark"] .messenger-person-button[aria-current="true"] {
+#chat[data-chat-dark="true"] .messenger-person-button:hover,
+#chat[data-chat-dark="true"] .messenger-person-button[aria-current="true"] {
   background: #422b3e;
 }
 
-body[data-theme="dark"] .messenger-message-bubble {
+#chat[data-chat-dark="true"] .messenger-message-bubble {
   background: #403440;
   color: #f8edf2;
 }
 
-body[data-theme="dark"] .messenger-message[data-own="true"] .messenger-message-bubble {
+#chat[data-chat-dark="true"] .messenger-message[data-own="true"] .messenger-message-bubble {
   background: #70405c;
 }
 
@@ -2452,31 +2481,6 @@ body[data-theme="dark"] .messenger-message[data-own="true"] .messenger-message-b
     cursor: pointer;
   }
 
-  .messenger-settings-theme {
-    display: flex;
-    min-height: 48px;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border: 1px solid #eadfe5;
-    border-radius: 14px;
-    background: #fffaf8;
-    color: #51364c;
-    font: inherit;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  .messenger-settings-theme svg {
-    width: 20px;
-    height: 20px;
-    fill: none;
-    stroke: currentColor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.7;
-  }
-
   .messenger-settings-signout svg {
     width: 19px;
     height: 19px;
@@ -2487,37 +2491,31 @@ body[data-theme="dark"] .messenger-message[data-own="true"] .messenger-message-b
     stroke-width: 1.8;
   }
 
-  body[data-theme="dark"] .messenger-settings-dialog {
+  #chat[data-chat-dark="true"] .messenger-settings-dialog {
     border-color: #594454;
     background: #302431;
     color: #f8edf2;
   }
 
-  body[data-theme="dark"] .messenger-settings-profile {
+  #chat[data-chat-dark="true"] .messenger-settings-profile {
     border-color: #594454;
     background: #241a24;
   }
 
-  body[data-theme="dark"] .messenger-settings-profile-copy > strong,
-  body[data-theme="dark"] .messenger-settings-active-copy strong {
+  #chat[data-chat-dark="true"] .messenger-settings-profile-copy > strong,
+  #chat[data-chat-dark="true"] .messenger-settings-active-copy strong {
     color: #f8dce8;
   }
 
-  body[data-theme="dark"] .messenger-settings-active-icon {
+  #chat[data-chat-dark="true"] .messenger-settings-active-icon {
     background: #422b3e;
     color: #f4a8c3;
   }
 
-  body[data-theme="dark"] .messenger-settings-signout {
+  #chat[data-chat-dark="true"] .messenger-settings-signout {
     border-color: #694050;
     background: #39232e;
     color: #ffc4d0;
-  }
-
-  body[data-theme="dark"] .messenger-settings-theme {
-    border-color: #594454;
-    background: #241a24;
-    color: #f8edf2;
   }
 
   @media (max-width: 600px) {
@@ -2580,6 +2578,12 @@ body[data-theme="dark"] .messenger-message[data-own="true"] .messenger-message-b
       stroke-width: 1.7;
     }
 
+    #chat .mobile-chat-actions .chat-theme-toggle {
+      width: 38px;
+      height: 38px;
+      flex-basis: 38px;
+    }
+
     #chat .messenger-account-bar {
       display: none;
     }
@@ -2599,30 +2603,18 @@ body[data-theme="dark"] .messenger-message[data-own="true"] .messenger-message-b
       padding: 20px;
     }
 
-    body[data-theme="dark"] #chat .mobile-chat-header {
+    #chat[data-chat-dark="true"] .mobile-chat-header {
       border-color: #4b3b49;
       background: rgba(33, 26, 35, 0.98);
     }
 
-    body[data-theme="dark"] #chat .mobile-chat-header h2 {
+    #chat[data-chat-dark="true"] .mobile-chat-header h2 {
       color: #f8dce8;
     }
 
-    body[data-theme="dark"] #chat .mobile-chat-settings {
+    #chat[data-chat-dark="true"] .mobile-chat-settings {
       border-color: #594454;
       background: #302431;
-      color: #f8edf2;
-    }
-
-    #chat .messenger-settings-theme {
-      border-color: #f0e3e9;
-      background: #fffaf8;
-      color: #51364c;
-    }
-
-    body[data-theme="dark"] #chat .messenger-settings-theme {
-      border-color: #594454;
-      background: #241a24;
       color: #f8edf2;
     }
 
@@ -2679,6 +2671,6 @@ body[data-theme="dark"] .messenger-message[data-own="true"] .messenger-message-b
 }
 
 body:has(#chat:not([hidden])) .topbar > .brand,
-body:has(#chat:not([hidden])) .topbar > .heart-counter {
+body:has(#chat:not([hidden])) .topbar .topbar-actions > .heart-counter {
   display: none;
 }

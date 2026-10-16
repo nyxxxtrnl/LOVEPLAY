@@ -7,7 +7,7 @@ const HEART_GOAL = 2;
 const STORAGE_KEY = "loveplay-progress-v1";
 const KEEPSAKE_LETTER_STORAGE_KEY = "loveplay-keepsake-letters-v1";
 const QUIZ_STORAGE_KEY = "loveplay-quiz-questions-v1";
-const THEME_STORAGE_KEY = "loveplay-theme-v1";
+const CHAT_THEME_STORAGE_KEY = "loveplay-chat-theme-v1";
 const BACKGROUND_MUSIC_STORAGE_KEY = "loveplay-background-music-v1";
 const TIKTOK_VIDEO_STORAGE_KEY = "loveplay-tiktok-videos-v1";
 const DEFAULT_BACKGROUND_MUSIC = {
@@ -1921,34 +1921,36 @@ function resumeBackgroundMusicOnInteraction() {
 document.addEventListener("pointerdown", resumeBackgroundMusicOnInteraction);
 document.addEventListener("keydown", resumeBackgroundMusicOnInteraction);
 
-function applyTheme(theme) {
+function applyChatTheme(theme) {
   const dark = theme === "dark";
-  document.body.dataset.theme = dark ? "dark" : "light";
-  const label = dark ? "Enable light mode" : "Enable dark mode";
-  const toggle = document.getElementById("themeToggle");
-  toggle.setAttribute("aria-pressed", String(dark));
-  toggle.setAttribute("aria-label", label);
-  document.getElementById("chatSettingsThemeLabel").textContent = dark ? "Light mode" : "Dark mode";
-  document.querySelector('meta[name="theme-color"]').content = dark ? "#1b141d" : "#281323";
+  const chatPanel = document.getElementById("chat");
+  chatPanel.dataset.chatDark = String(dark);
+  document.querySelectorAll("[data-chat-theme-toggle]").forEach(toggle => {
+    toggle.setAttribute("aria-pressed", String(dark));
+    toggle.setAttribute("aria-label", dark ? "Enable chat light mode" : "Enable chat dark mode");
+    toggle.title = dark ? "Enable light mode for chat" : "Enable dark mode for chat";
+  });
 }
 
 try {
-  applyTheme(localStorage.getItem(THEME_STORAGE_KEY) === "dark" ? "dark" : "light");
+  applyChatTheme(localStorage.getItem(CHAT_THEME_STORAGE_KEY) === "dark" ? "dark" : "light");
 } catch (error) {
-  applyTheme("light");
+  applyChatTheme("light");
 }
 
-function toggleTheme() {
-  const theme = document.body.dataset.theme === "dark" ? "light" : "dark";
-  applyTheme(theme);
+function toggleChatTheme() {
+  const theme = document.getElementById("chat").dataset.chatDark === "true" ? "light" : "dark";
+  applyChatTheme(theme);
   try {
-    localStorage.setItem(THEME_STORAGE_KEY, theme);
+    localStorage.setItem(CHAT_THEME_STORAGE_KEY, theme);
   } catch (error) {
     showToast(error.message || "Could not save your theme preference.");
   }
 }
 
-document.getElementById("themeToggle").addEventListener("click", toggleTheme);
+document.querySelectorAll("[data-chat-theme-toggle]").forEach(toggle => {
+  toggle.addEventListener("click", toggleChatTheme);
+});
 
 const designStickersLayer = document.getElementById("designStickers");
 const photoDesignStage = document.getElementById("photoDesignStage");
@@ -3273,6 +3275,10 @@ function activateTab(tabId) {
   const activePanel =
     tabPanels.find(panel => panel.id === tabId) ||
     homePanel;
+
+  document.querySelectorAll("[data-chat-theme-toggle]").forEach(toggle => {
+    toggle.hidden = activePanel.id !== "chat";
+  });
 
   if (activePanel.id !== "games") closeGame();
 

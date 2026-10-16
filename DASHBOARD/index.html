@@ -29,7 +29,12 @@
       <a class="tab-button" id="tab-calculator" href="#calculator" role="tab" aria-controls="calculator" aria-selected="false" tabindex="-1">EE Calculator</a>
       <a class="tab-button" id="tab-more-apps" href="#more-apps" role="tab" aria-controls="more-apps" aria-selected="false" tabindex="-1">More Apps</a>
     </nav>
-    <div class="heart-counter">♡ <span id="heartCount">0</span> hearts</div>
+    <div class="topbar-actions">
+      <div class="heart-counter">♡ <span id="heartCount">0</span> hearts</div>
+      <button class="chat-theme-toggle" type="button" data-chat-theme-toggle aria-label="Enable chat dark mode" aria-pressed="false" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="chat-theme-moon" d="M20.7 13A8.5 8.5 0 0 1 11 3.3a8.5 8.5 0 1 0 9.7 9.7Z"/><circle class="chat-theme-sun" cx="12" cy="12" r="4"/><path class="chat-theme-sun" d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+      </button>
+    </div>
   </header>
 
   <main>
@@ -601,13 +606,18 @@
       </div>
     </section>
 
-    <section class="section-wrap content-section tab-panel" id="chat" role="tabpanel" aria-labelledby="tab-chat" tabindex="0" hidden>
+    <section class="section-wrap content-section tab-panel" id="chat" role="tabpanel" aria-labelledby="tab-chat" tabindex="0" data-chat-dark="false" hidden>
       <header class="mobile-chat-header">
         <h2><span aria-hidden="true">♥</span> LOVEPLAY CHAT</h2>
-        <button class="mobile-chat-settings" id="chatSettingsButton" type="button" aria-haspopup="dialog" aria-controls="chatSettingsDialog">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V4a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2.9Z"/></svg>
-          <span>Settings</span>
-        </button>
+        <div class="mobile-chat-actions">
+          <button class="chat-theme-toggle" type="button" data-chat-theme-toggle aria-label="Enable chat dark mode" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="chat-theme-moon" d="M20.7 13A8.5 8.5 0 0 1 11 3.3a8.5 8.5 0 1 0 9.7 9.7Z"/><circle class="chat-theme-sun" cx="12" cy="12" r="4"/><path class="chat-theme-sun" d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+          </button>
+          <button class="mobile-chat-settings" id="chatSettingsButton" type="button" aria-haspopup="dialog" aria-controls="chatSettingsDialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V4a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2.9Z"/></svg>
+            <span>Settings</span>
+          </button>
+        </div>
       </header>
       <div class="section-heading">
         <div>
@@ -687,10 +697,6 @@
                 <span class="messenger-settings-active-copy"><strong>Show me as active</strong><small>Let people see when you are online.</small></span>
                 <input id="chatSettingsActiveToggle" type="checkbox" checked>
               </label>
-              <button class="messenger-settings-theme" id="themeToggle" type="button" aria-pressed="false">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 13A8.5 8.5 0 0 1 11 3.3a8.5 8.5 0 1 0 9.7 9.7Z"/></svg>
-                <span id="chatSettingsThemeLabel">Dark mode</span>
-              </button>
               <button class="messenger-settings-signout" id="chatSettingsSignOut" type="button">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5m5 5H3m9-9h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></svg>
                 <span>Sign out</span>

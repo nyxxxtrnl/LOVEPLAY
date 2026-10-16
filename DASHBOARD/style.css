@@ -101,6 +101,48 @@ a {
   white-space: nowrap;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.chat-theme-toggle {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--blush);
+  color: var(--plum);
+}
+
+.chat-theme-toggle[hidden] {
+  display: none;
+}
+
+.chat-theme-toggle svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.chat-theme-toggle .chat-theme-sun,
+.chat-theme-toggle[aria-pressed="true"] .chat-theme-moon {
+  display: none;
+}
+
+.chat-theme-toggle[aria-pressed="true"] .chat-theme-sun {
+  display: initial;
+}
+
 .theme-toggle {
   display: grid;
   place-items: center;
