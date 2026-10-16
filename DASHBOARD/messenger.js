@@ -30,6 +30,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
   where,
   writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
@@ -47,6 +48,11 @@ const messagesList = document.getElementById("chatMessages");
 const messageForm = document.getElementById("chatMessageForm");
 const messageInput = document.getElementById("chatMessageInput");
 const activeToggle = document.getElementById("chatActiveToggle");
+const profileForm = document.getElementById("chatProfileForm");
+const profileNameInput = document.getElementById("chatProfileName");
+const profilePhotoInput = document.getElementById("chatProfilePhoto");
+const chatApp = document.getElementById("messengerApp");
+const AVATAR_MAX_LENGTH = 180000;
 
 function setStatus(message, isError = false) {
   messengerStatus.textContent = message;
@@ -126,6 +132,8 @@ if (!isConfigured) {
   let currentShowActive = true;
   let presenceConnection = null;
   let presenceConnectionUnsubscribe = null;
+  let latestConversations = [];
+  let selectedAvatarDataUrl = null;
   const presenceSubscriptions = new Map();
 
   function clearSubscriptions() {
@@ -231,6 +239,7 @@ if (!isConfigured) {
   function clearConversation() {
     currentConversationId = null;
     currentRecipient = null;
+    chatApp.dataset.chatOpen = "false";
     if (unsubscribeMessages) unsubscribeMessages();
     unsubscribeMessages = null;
     document.getElementById("chatThread").hidden = true;
@@ -244,6 +253,83 @@ if (!isConfigured) {
     const profile = { uid: snapshot.id, ...snapshot.data() };
     profileCache.set(profile.uid, profile);
     return profile;
+  }
+
+  function setAvatar(container, profile) {
+    const image = container.querySelector("img");
+    const fallback = container.querySelector("span");
+    const photoUrl = typeof profile.photoUrl === "string" ? profile.photoUrl : "";
+    image.hidden = !photoUrl;
+    image.alt = photoUrl ? `${profile.displayName} profile photo` : "";
+    if (photoUrl) image.src = photoUrl;
+    else image.removeAttribute("src");
+    fallback.hidden = Boolean(photoUrl);
+    fallback.textContent = profile.displayName.trim().charAt(0).toLocaleUpperCase() || "?";
+  }
+
+  function renderCurrentProfile() {
+    document.getElementById("chatAccountName").textContent = currentProfile.displayName;
+    setAvatar(document.getElementById("chatAccountAvatar"), currentProfile);
+  }
+
+  function openProfileEditor() {
+    profileNameInput.value = currentProfile.displayName;
+    selectedAvatarDataUrl = null;
+    profilePhotoInput.value = "";
+    setAvatar(document.getElementById("chatProfileAvatar"), currentProfile);
+    profileForm.hidden = false;
+    profileNameInput.focus();
+  }
+
+  function closeProfileEditor() {
+    profileForm.hidden = true;
+    selectedAvatarDataUrl = null;
+    profilePhotoInput.value = "";
+  }
+
+  async function resizeAvatar(file) {
+    if (!file.type.startsWith("image/")) throw new Error("Choose an image file for your profile photo.");
+    if (file.size > 8 * 1024 * 1024) throw new Error("Choose an image smaller than 8 MB.");
+
+    let bitmap;
+    if (typeof createImageBitmap === "function") {
+      bitmap = await createImageBitmap(file);
+    } else {
+      bitmap = await new Promise((resolve, reject) => {
+        const image = new Image();
+        const objectUrl = URL.createObjectURL(file);
+        image.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          resolve(image);
+        };
+        image.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error("Your browser could not open this image."));
+        };
+        image.src = objectUrl;
+      });
+    }
+    try {
+      let size = 256;
+      let quality = 0.78;
+      let dataUrl = "";
+      while (size >= 96) {
+        const scale = Math.min(1, size / Math.max(bitmap.width, bitmap.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+        canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+        const context = canvas.getContext("2d");
+        if (!context) throw new Error("Your browser could not process this image.");
+        context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        dataUrl = canvas.toDataURL("image/jpeg", quality);
+        if (dataUrl.length <= AVATAR_MAX_LENGTH) return dataUrl;
+        size = Math.floor(size * 0.75);
+        quality = Math.max(0.5, quality - 0.08);
+      }
+      throw new Error("This image could not be compressed enough. Try a different photo.");
+    } finally {
+      bitmap.close?.();
+    }
   }
 
   async function getProfile(uid) {
@@ -265,11 +351,22 @@ if (!isConfigured) {
     button.type = "button";
     button.className = "messenger-person-button";
     button.setAttribute("aria-current", String(isActive));
+    const avatar = document.createElement("div");
+    avatar.className = "messenger-avatar";
+    avatar.setAttribute("aria-hidden", "true");
+    const avatarImage = document.createElement("img");
+    avatarImage.alt = "";
+    avatarImage.hidden = true;
+    const avatarFallback = document.createElement("span");
+    avatar.append(avatarImage, avatarFallback);
+    setAvatar(avatar, profile);
+    const copy = document.createElement("div");
+    copy.className = "messenger-person-copy";
     const name = document.createElement("strong");
     name.textContent = profile.displayName;
     const detail = document.createElement("span");
     detail.textContent = subtitle;
-    button.append(name, detail);
+    copy.append(name, detail);
     const presence = document.createElement("span");
     presence.className = "messenger-presence-label";
     const dot = document.createElement("span");
@@ -280,7 +377,8 @@ if (!isConfigured) {
     presenceText.textContent = "Offline";
     presence.append(dot, presenceText);
     presence.dataset.presenceUid = profile.uid;
-    button.append(presence);
+    copy.append(presence);
+    button.append(avatar, copy);
     item.append(button);
     return { item, button };
   }
@@ -342,13 +440,28 @@ if (!isConfigured) {
       const item = document.createElement("li");
       item.className = "messenger-message";
       item.dataset.own = String(message.senderId === currentUser.uid);
-      item.append(document.createTextNode(message.text));
+      if (message.senderId !== currentUser.uid && currentRecipient) {
+        const avatar = document.createElement("div");
+        avatar.className = "messenger-avatar messenger-message-avatar";
+        avatar.setAttribute("aria-hidden", "true");
+        const avatarImage = document.createElement("img");
+        avatarImage.alt = "";
+        avatarImage.hidden = true;
+        const avatarFallback = document.createElement("span");
+        avatar.append(avatarImage, avatarFallback);
+        setAvatar(avatar, currentRecipient);
+        item.append(avatar);
+      }
+      const bubble = document.createElement("div");
+      bubble.className = "messenger-message-bubble";
+      bubble.append(document.createTextNode(message.text));
       const time = document.createElement("small");
       const date = message.createdAt?.toDate?.();
       time.textContent = `${message.senderId === currentUser.uid ? "You" : message.senderName} · ${
         date ? new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(date) : "Sending..."
       }`;
-      item.append(time);
+      bubble.append(time);
+      item.append(bubble);
       messagesList.append(item);
     });
     messagesList.scrollTop = messagesList.scrollHeight;
@@ -374,11 +487,13 @@ if (!isConfigured) {
     currentConversationId = conversationId;
     currentRecipient = recipient;
     document.getElementById("chatRecipientName").textContent = recipient.displayName;
+    setAvatar(document.getElementById("chatRecipientAvatar"), recipient);
     const recipientStatus = document.getElementById("chatRecipientStatus");
     recipientStatus.dataset.presenceUid = recipient.uid;
     recipientStatus.querySelector("span:last-child").textContent = "Private conversation · Offline";
     document.getElementById("chatThread").hidden = false;
     document.getElementById("chatEmptyState").hidden = true;
+    chatApp.dataset.chatOpen = "true";
     messagesList.replaceChildren();
     syncPresenceSubscriptions();
 
@@ -401,6 +516,7 @@ if (!isConfigured) {
   }
 
   async function renderConversations(snapshot) {
+    latestConversations = snapshot.docs.slice();
     const conversations = snapshot.docs.slice().sort((a, b) => {
       const aTime = a.data().updatedAt?.toMillis?.() || 0;
       const bTime = b.data().updatedAt?.toMillis?.() || 0;
@@ -469,13 +585,95 @@ if (!isConfigured) {
     messengerApp.hidden = false;
     conversationList.replaceChildren();
     searchInput.value = "";
-    document.getElementById("chatAccountName").textContent = profile.displayName;
+    renderCurrentProfile();
     clearConversation();
     watchConversations();
     renderSearchMessage("Type at least 2 letters to find people.");
     await startPresence(user);
     if (realtimeDatabase) setStatus(`Signed in as ${profile.displayName}.`);
   }
+
+  document.getElementById("chatEditProfile").addEventListener("click", openProfileEditor);
+  document.getElementById("chatCancelProfile").addEventListener("click", closeProfileEditor);
+  document.getElementById("chatCancelProfileFooter").addEventListener("click", closeProfileEditor);
+  document.getElementById("chatBackToList").addEventListener("click", () => {
+    chatApp.dataset.chatOpen = "false";
+    document.getElementById("chatUserSearch").focus();
+  });
+
+  profilePhotoInput.addEventListener("change", async () => {
+    const file = profilePhotoInput.files?.[0];
+    if (!file) return;
+    try {
+      selectedAvatarDataUrl = await resizeAvatar(file);
+      setAvatar(document.getElementById("chatProfileAvatar"), {
+        displayName: profileNameInput.value || currentProfile.displayName,
+        photoUrl: selectedAvatarDataUrl
+      });
+      setStatus("Photo ready. Save changes to update your profile.");
+    } catch (error) {
+      profilePhotoInput.value = "";
+      setStatus(error.message || "Could not prepare that profile photo.", true);
+    }
+  });
+
+  document.getElementById("chatRemovePhoto").addEventListener("click", () => {
+    selectedAvatarDataUrl = "";
+    setAvatar(document.getElementById("chatProfileAvatar"), {
+      displayName: profileNameInput.value || currentProfile.displayName,
+      photoUrl: ""
+    });
+    profilePhotoInput.value = "";
+  });
+
+  profileNameInput.addEventListener("input", () => {
+    if (selectedAvatarDataUrl) {
+      setAvatar(document.getElementById("chatProfileAvatar"), {
+        displayName: profileNameInput.value || currentProfile.displayName,
+        photoUrl: selectedAvatarDataUrl
+      });
+    } else if (!profileForm.hidden) {
+      setAvatar(document.getElementById("chatProfileAvatar"), {
+        ...currentProfile,
+        displayName: profileNameInput.value || currentProfile.displayName
+      });
+    }
+  });
+
+  profileForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    const displayName = profileNameInput.value.trim();
+    if (displayName.length < 2 || displayName.length > 40) {
+      setStatus("Your display name must be between 2 and 40 characters.", true);
+      return;
+    }
+
+    const displayNameSearch = displayName.normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase()
+      .trim();
+    const updates = { displayName, displayNameSearch };
+    if (selectedAvatarDataUrl !== null) updates.photoUrl = selectedAvatarDataUrl;
+    setFormBusy(profileForm, true);
+    setStatus("Saving profile...");
+    try {
+      await updateDoc(doc(db, "profiles", currentUser.uid), updates);
+      currentProfile = { ...currentProfile, ...updates };
+      profileCache.set(currentUser.uid, currentProfile);
+      renderCurrentProfile();
+      if (currentConversationId && currentRecipient) {
+        document.getElementById("chatRecipientName").textContent = currentRecipient.displayName;
+      }
+      await renderConversations({ docs: latestConversations });
+      if (searchInput.value.trim().length >= 2) await searchPeople();
+      closeProfileEditor();
+      setStatus("Your profile was updated.");
+    } catch (error) {
+      setStatus(describeError(error, "Saving profile"), true);
+    } finally {
+      setFormBusy(profileForm, false);
+    }
+  });
 
   loginForm.addEventListener("submit", async event => {
     event.preventDefault();
@@ -612,6 +810,7 @@ if (!isConfigured) {
       currentUser = null;
       currentProfile = null;
       profileCache.clear();
+      latestConversations = [];
       clearConversation();
       conversationList.replaceChildren();
       searchResults.replaceChildren();
