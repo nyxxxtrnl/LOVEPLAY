@@ -74,43 +74,45 @@
       </div>
       </div>
 
-      <section class="section-wrap background-music-section" aria-label="Home background music">
-        <div class="background-music-card">
-          <div class="background-music-copy">
-            <span class="eyebrow">A SONG FOR YOU</span>
-            <h2 id="backgroundMusicTitle">Perfect</h2>
-            <p id="backgroundMusicArtist">Ed Sheeran</p>
+      <div class="section-wrap home-feature-row" aria-label="Home music and featured memories">
+        <section class="background-music-section" aria-label="Home background music">
+          <div class="background-music-card">
+            <div class="background-music-copy">
+              <span class="eyebrow">A SONG FOR YOU</span>
+              <h2 id="backgroundMusicTitle">Perfect</h2>
+              <p id="backgroundMusicArtist">Ed Sheeran</p>
+            </div>
+            <div class="background-music-actions">
+              <button class="button button-primary" id="playBackgroundMusic" type="button">♫ Play / resume</button>
+            </div>
+            <div class="background-music-player" id="backgroundMusicPlayer">
+              <div id="backgroundMusicEmbed" title="Spotify player for Perfect by Ed Sheeran"></div>
+              <p class="helper-text background-music-status" id="backgroundMusicStatus" aria-live="polite">Trying to start automatically. If the browser blocks it, tap anywhere or use Play / resume.</p>
+              <a class="background-music-open-link" id="backgroundMusicOpenLink" href="https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v" target="_blank" rel="noopener noreferrer">Open this song in Spotify ↗</a>
+            </div>
           </div>
-          <div class="background-music-actions">
-            <button class="button button-primary" id="playBackgroundMusic" type="button">♫ Play / resume</button>
-          </div>
-          <div class="background-music-player" id="backgroundMusicPlayer">
-            <div id="backgroundMusicEmbed" title="Spotify player for Perfect by Ed Sheeran"></div>
-            <p class="helper-text background-music-status" id="backgroundMusicStatus" aria-live="polite">Trying to start automatically. If the browser blocks it, tap anywhere or use Play / resume.</p>
-            <a class="background-music-open-link" id="backgroundMusicOpenLink" href="https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v" target="_blank" rel="noopener noreferrer">Open this song in Spotify ↗</a>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="section-wrap featured-section" aria-label="LovePlay featured moments">
-        <div class="featured-showcase" id="featuredShowcase">
-          <img class="featured-image" id="featuredImage" src="../ASSETS/memory-1.jpg" alt="A favorite LovePlay memory" fetchpriority="high">
-          <div class="featured-shade"></div>
-          <div class="featured-copy" aria-live="off">
-            <span class="eyebrow" id="featuredEyebrow">A MEMORY TO KEEP</span>
-            <h2 id="featuredTitle">Little moments, forever ours.</h2>
-            <p id="featuredDescription">A small collection of the memories that make us smile.</p>
-            <a class="button button-primary featured-link" id="featuredLink" href="#pictures">Open our pictures →</a>
+        <section class="featured-section" aria-label="LovePlay featured moments">
+          <div class="featured-showcase" id="featuredShowcase">
+            <img class="featured-image" id="featuredImage" src="../ASSETS/memory-1.jpg" alt="A favorite LovePlay memory" fetchpriority="high">
+            <div class="featured-shade"></div>
+            <div class="featured-copy" aria-live="off">
+              <span class="eyebrow" id="featuredEyebrow">A MEMORY TO KEEP</span>
+              <h2 id="featuredTitle">Little moments, forever ours.</h2>
+              <p id="featuredDescription">A small collection of the memories that make us smile.</p>
+              <a class="button button-primary featured-link" id="featuredLink" href="#pictures">Open our pictures →</a>
+            </div>
+            <div class="featured-controls">
+              <span class="featured-count" id="featuredCount" aria-live="polite">01 / 03</span>
+              <button class="featured-control" id="featuredPrevious" type="button" aria-label="Previous featured moment">‹</button>
+              <button class="featured-control" id="featuredPause" type="button" aria-label="Pause featured slideshow">Ⅱ</button>
+              <button class="featured-control" id="featuredNext" type="button" aria-label="Next featured moment">›</button>
+            </div>
           </div>
-          <div class="featured-controls">
-            <span class="featured-count" id="featuredCount" aria-live="polite">01 / 03</span>
-            <button class="featured-control" id="featuredPrevious" type="button" aria-label="Previous featured moment">‹</button>
-            <button class="featured-control" id="featuredPause" type="button" aria-label="Pause featured slideshow">Ⅱ</button>
-            <button class="featured-control" id="featuredNext" type="button" aria-label="Next featured moment">›</button>
-          </div>
-        </div>
-        <p class="featured-hint">Featured memories rotate automatically. Use the controls to pause or browse.</p>
-      </section>
+          <p class="featured-hint">Featured memories rotate automatically. Use the controls to pause or browse.</p>
+        </section>
+      </div>
 
       <section class="section-wrap welcome-strip">
         <div><strong>A reminder for today</strong>
