@@ -3330,7 +3330,7 @@ function activateTab(tabId) {
   });
   mobileTabLinks.forEach(link => {
     const selected = link.hash === `#${activePanel.id}` ||
-      (link.hash === "#more-apps" && !["home", "games", "chat", "music", "pictures"].includes(activePanel.id));
+      (link.hash === "#more-apps" && !["home", "games", "chat", "music"].includes(activePanel.id));
     if (selected) {
       link.setAttribute("aria-current", "page");
     } else {
