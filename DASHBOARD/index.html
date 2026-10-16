@@ -1095,9 +1095,11 @@
   <script type="module" src="messenger.js"></script>
   <script>
     if ("serviceWorker" in navigator && window.isSecureContext) {
-      navigator.serviceWorker.register("../sw.js", { scope: "../" }).catch(error => {
-        console.error("Could not register the LovePlay offline app shell.", error);
-      });
+      navigator.serviceWorker.register("../sw.js", { scope: "../" })
+        .then(registration => registration.update())
+        .catch(error => {
+          console.error("Could not register or check for LovePlay app updates.", error);
+        });
     }
   </script>
 </body>
