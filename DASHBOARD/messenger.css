@@ -832,6 +832,7 @@ body[data-theme="dark"] #chat .messenger-app[data-chat-theme="mint"] .messenger-
   align-items: center;
   justify-content: flex-end;
   gap: 5px;
+  margin-top: 3px;
   color: var(--muted);
   font-size: 0.7rem;
 }
@@ -962,10 +963,6 @@ body[data-theme="dark"] #chat .messenger-compose textarea {
 body[data-theme="dark"] #chat .messenger-person-button:hover,
 body[data-theme="dark"] #chat .messenger-person-button[aria-current="true"] {
   background: #422b3e;
-}
-
-body[data-theme="dark"] #chat .messenger-message[data-own="true"] {
-  background: #70405c;
 }
 
 body[data-theme="dark"] .music-playback-note {
