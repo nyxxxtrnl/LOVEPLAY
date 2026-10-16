@@ -293,8 +293,8 @@ a {
   top: 43%;
   left: 0;
   display: grid;
-  width: 24px;
-  min-height: 72px;
+  width: 20px;
+  min-height: 60px;
   padding: 0;
   border: 1px solid var(--line);
   border-left: 0;
@@ -309,7 +309,7 @@ a {
 
 .dashboard-settings-tab::before {
   width: 3px;
-  height: 30px;
+  height: 24px;
   border-radius: 999px;
   background: var(--rose);
   content: "";
