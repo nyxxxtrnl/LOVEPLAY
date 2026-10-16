@@ -13,6 +13,10 @@ service cloud.firestore {
           .data.participants.hasAny([request.auth.uid]);
     }
 
+    function isAllowedMessageReaction(reaction) {
+      return reaction in ['❤️', '😂', '👍', '😮', '😢', '👏'];
+    }
+
     match /profiles/{userId} {
       allow read: if signedIn();
       allow create: if signedIn()
@@ -79,15 +83,69 @@ service cloud.firestore {
       match /messages/{messageId} {
         allow read: if isConversationParticipant(conversationId);
         allow create: if isConversationParticipant(conversationId)
-          && request.resource.data.keys().hasAll(['senderId', 'senderName', 'text', 'createdAt'])
-          && request.resource.data.keys().hasOnly(['senderId', 'senderName', 'text', 'createdAt'])
+          && request.resource.data.keys().hasAll(['senderId', 'senderName', 'text', 'type', 'reactions', 'createdAt'])
+          && request.resource.data.keys().hasOnly([
+            'senderId', 'senderName', 'text', 'type', 'reactions', 'createdAt', 'mediaUrl', 'mediaPath'
+          ])
           && request.resource.data.senderId == request.auth.uid
           && request.resource.data.senderName == get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.displayName
           && request.resource.data.text is string
-          && request.resource.data.text.size() > 0
           && request.resource.data.text.size() <= 2000
-          && request.resource.data.createdAt == request.time;
-        allow update, delete: if false;
+          && request.resource.data.type in ['text', 'image', 'audio', 'gif', 'sticker']
+          && request.resource.data.reactions is map
+          && request.resource.data.reactions.size() == 0
+          && request.resource.data.createdAt == request.time
+          && (
+            (
+              request.resource.data.type == 'text'
+              && request.resource.data.text.size() > 0
+              && !request.resource.data.keys().hasAny(['mediaUrl', 'mediaPath'])
+            )
+            || (
+              request.resource.data.type == 'sticker'
+              && request.resource.data.text in ['❤️', '🥰', '😘', '😂', '🥹', '🐻', '🌷', '✨']
+              && !request.resource.data.keys().hasAny(['mediaUrl', 'mediaPath'])
+            )
+            || (
+              request.resource.data.type == 'gif'
+              && request.resource.data.text == 'GIF'
+              && request.resource.data.keys().hasAll(['mediaUrl'])
+              && request.resource.data.mediaUrl is string
+              && request.resource.data.mediaUrl.size() <= 2000
+              && (
+                request.resource.data.mediaUrl.matches('^https://media\\.giphy\\.com/.+\\.gif$')
+                || request.resource.data.mediaUrl.matches('^https://i\\.giphy\\.com/.+\\.gif$')
+                || request.resource.data.mediaUrl.matches('^https://media\\.tenor\\.com/.+\\.gif$')
+              )
+              && !request.resource.data.keys().hasAny(['mediaPath'])
+            )
+            || (
+              request.resource.data.type in ['image', 'audio']
+              && request.resource.data.text in ['Photo', 'Voice message']
+              && request.resource.data.keys().hasAll(['mediaUrl', 'mediaPath'])
+              && request.resource.data.mediaUrl is string
+              && request.resource.data.mediaUrl.matches('^https://firebasestorage\\.googleapis\\.com/.+$')
+              && request.resource.data.mediaPath is string
+              && request.resource.data.mediaPath.matches(
+                '^conversations/' + conversationId + '/messages/' + request.auth.uid + '/[^/]+$'
+              )
+              && (
+                (request.resource.data.type == 'image' && request.resource.data.text == 'Photo')
+                || (request.resource.data.type == 'audio' && request.resource.data.text == 'Voice message')
+              )
+            )
+          );
+        allow update: if isConversationParticipant(conversationId)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions'])
+          && request.resource.data.reactions is map
+          && request.resource.data.reactions.diff(resource.data.get('reactions', {}))
+            .affectedKeys().hasOnly([request.auth.uid])
+          && (
+            !request.resource.data.reactions.keys().hasAny([request.auth.uid])
+            || isAllowedMessageReaction(request.resource.data.reactions[request.auth.uid])
+          );
+        allow delete: if isConversationParticipant(conversationId)
+          && resource.data.senderId == request.auth.uid;
       }
     }
   }

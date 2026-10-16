@@ -1956,10 +1956,11 @@ document.addEventListener("keydown", resumeBackgroundMusicOnInteraction);
 function applyTheme(theme) {
   const dark = theme === "dark";
   document.body.dataset.theme = dark ? "dark" : "light";
+  const label = dark ? "Enable light mode" : "Enable dark mode";
   const toggle = document.getElementById("themeToggle");
-  toggle.textContent = dark ? "☀" : "☾";
   toggle.setAttribute("aria-pressed", String(dark));
-  toggle.setAttribute("aria-label", dark ? "Enable light mode" : "Enable dark mode");
+  toggle.setAttribute("aria-label", label);
+  document.getElementById("chatSettingsThemeLabel").textContent = dark ? "Light mode" : "Dark mode";
   document.querySelector('meta[name="theme-color"]').content = dark ? "#1b141d" : "#281323";
 }
 
@@ -1969,16 +1970,17 @@ try {
   applyTheme("light");
 }
 
-document.getElementById("themeToggle")
-  .addEventListener("click", () => {
-    const theme = document.body.dataset.theme === "dark" ? "light" : "dark";
-    applyTheme(theme);
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch (error) {
-      showToast(error.message || "Could not save your theme preference.");
-    }
-  });
+function toggleTheme() {
+  const theme = document.body.dataset.theme === "dark" ? "light" : "dark";
+  applyTheme(theme);
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch (error) {
+    showToast(error.message || "Could not save your theme preference.");
+  }
+}
+
+document.getElementById("themeToggle").addEventListener("click", toggleTheme);
 
 const designStickersLayer = document.getElementById("designStickers");
 const photoDesignStage = document.getElementById("photoDesignStage");
@@ -2137,6 +2139,20 @@ const musicCollections = {
     link: "https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd",
     description: "A Spotify-curated hip-hop playlist. Pick a track or open it in Spotify."
   },
+  opm: {
+    title: "OPM · Original Pilipino Music",
+    label: "OPM",
+    icon: "♫",
+    searchQuery: "OPM Philippines popular songs",
+    description: "Search Spotify for Filipino artists, OPM songs, and playlists."
+  },
+  "pinoy-hiphop": {
+    title: "Pinoy Hip-Hop",
+    label: "PINOY HIP-HOP",
+    icon: "♫",
+    searchQuery: "Pinoy hip hop Philippines",
+    description: "Search Spotify for Pinoy hip-hop artists, tracks, and playlists."
+  },
   love: {
     title: "Love Pop · Love Songs",
     label: "LOVE SONGS",
@@ -2182,9 +2198,24 @@ function selectMusicCollection(collectionId, focusTab = false) {
   document.getElementById("musicPlaylistDescription").textContent = collection.description;
   document.getElementById("musicMoodLabel").textContent = collection.label;
   document.getElementById("musicMoodIcon").textContent = collection.icon;
-  document.getElementById("spotifyOpenLink").href = collection.link;
-  document.getElementById("spotifyEmbed").title = `${collection.title} on Spotify`;
-  document.getElementById("spotifyEmbed").src = collection.embed;
+  const searchCollection = Boolean(collection.searchQuery);
+  const spotifyEmbed = document.getElementById("spotifyEmbed");
+  const spotifyOpenLink = document.getElementById("spotifyOpenLink");
+  const musicSearchCollection = document.getElementById("musicSearchCollection");
+  spotifyEmbed.hidden = searchCollection;
+  spotifyOpenLink.hidden = searchCollection;
+  musicSearchCollection.hidden = !searchCollection;
+  if (searchCollection) {
+    document.getElementById("musicSearchCollectionDescription").textContent = collection.description;
+    document.getElementById("musicSearchCollectionLink").href =
+      `https://open.spotify.com/search/${encodeURIComponent(collection.searchQuery)}`;
+    document.getElementById("musicSearchDownloadLink").href =
+      `https://bandcamp.com/search?q=${encodeURIComponent(collection.searchQuery)}`;
+  } else {
+    spotifyOpenLink.href = collection.link;
+    spotifyEmbed.title = `${collection.title} on Spotify`;
+    spotifyEmbed.src = collection.embed;
+  }
 
   const albumArt = document.querySelector("#music .album-art");
   albumArt.classList.remove(...Object.keys(musicCollections).map(id => `music-mood-${id}`));
@@ -2204,6 +2235,19 @@ musicTabs.forEach((tab, index) => {
     event.preventDefault();
     selectMusicCollection(musicTabs[nextIndex].dataset.music, true);
   });
+});
+
+document.getElementById("musicSearchForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const term = document.getElementById("musicSearchInput").value.trim();
+  if (!term) return;
+  const provider = document.getElementById("musicSearchProvider").value;
+  const searchUrls = {
+    spotify: `https://open.spotify.com/search/${encodeURIComponent(term)}`,
+    youtube: `https://music.youtube.com/search?q=${encodeURIComponent(term)}`,
+    bandcamp: `https://bandcamp.com/search?q=${encodeURIComponent(term)}`
+  };
+  window.open(searchUrls[provider] || searchUrls.spotify, "_blank", "noopener,noreferrer");
 });
 
 const featuredSlides = [

@@ -30,7 +30,6 @@
       <a class="tab-button" id="tab-more-apps" href="#more-apps" role="tab" aria-controls="more-apps" aria-selected="false" tabindex="-1">More Apps</a>
     </nav>
     <div class="heart-counter">♡ <span id="heartCount">0</span> hearts</div>
-    <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="Enable dark mode">☾</button>
   </header>
 
   <main>
@@ -275,18 +274,32 @@
     <section class="section-wrap content-section tab-panel" id="music" role="tabpanel" aria-labelledby="tab-music" tabindex="0" hidden>
       <div class="section-heading">
         <div>
-          <span class="eyebrow">MUSIC ON SPOTIFY</span>
-          <h2>Pick a mood and press play.</h2>
+          <span class="eyebrow">FIND MUSIC ONLINE</span>
+          <h2>Search a song or pick a mood.</h2>
         </div>
       </div>
       <p class="music-playback-note">Spotify may only play a preview until you sign in. For the full song, sign in to Spotify in the player or open the track there; playback depends on Spotify availability and your account.</p>
       <div class="music-tabs" role="tablist" aria-label="Music genres">
         <button class="music-tab" id="music-tab-arthur" type="button" role="tab" aria-controls="music-player-panel" aria-selected="true" tabindex="0" data-music="arthur">Arthur Nery</button>
         <button class="music-tab" id="music-tab-hiphop" type="button" role="tab" aria-controls="music-player-panel" aria-selected="false" tabindex="-1" data-music="hiphop">Hip-Hop</button>
+        <button class="music-tab" id="music-tab-opm" type="button" role="tab" aria-controls="music-player-panel" aria-selected="false" tabindex="-1" data-music="opm">OPM</button>
+        <button class="music-tab" id="music-tab-pinoy-hiphop" type="button" role="tab" aria-controls="music-player-panel" aria-selected="false" tabindex="-1" data-music="pinoy-hiphop">Pinoy Hip-Hop</button>
         <button class="music-tab" id="music-tab-love" type="button" role="tab" aria-controls="music-player-panel" aria-selected="false" tabindex="-1" data-music="love">Love Songs</button>
         <button class="music-tab" id="music-tab-pop" type="button" role="tab" aria-controls="music-player-panel" aria-selected="false" tabindex="-1" data-music="pop">Pop</button>
         <button class="music-tab" id="music-tab-rnb" type="button" role="tab" aria-controls="music-player-panel" aria-selected="false" tabindex="-1" data-music="rnb">R&amp;B</button>
       </div>
+      <form class="music-search" id="musicSearchForm" role="search">
+        <label class="visually-hidden" for="musicSearchInput">Search music online</label>
+        <input id="musicSearchInput" type="search" maxlength="120" placeholder="Search songs, artists, OPM, or hip-hop" required>
+        <label class="visually-hidden" for="musicSearchProvider">Music search service</label>
+        <select id="musicSearchProvider" aria-label="Music search service">
+          <option value="spotify">Spotify</option>
+          <option value="youtube">YouTube Music</option>
+          <option value="bandcamp">Bandcamp downloads</option>
+        </select>
+        <button class="button button-primary" type="submit">Search</button>
+      </form>
+      <p class="music-search-note">Listen through official services. Download only music the artist or label has authorized for download.</p>
       <div class="music-layout">
         <div class="album-art">
           <div class="album-heart" id="musicMoodIcon" aria-hidden="true">♥</div>
@@ -311,6 +324,11 @@
             rel="noopener noreferrer">
             Open on Spotify ↗
           </a>
+          <div class="music-search-collection" id="musicSearchCollection" hidden>
+            <p id="musicSearchCollectionDescription"></p>
+            <a class="button button-primary" id="musicSearchCollectionLink" href="https://open.spotify.com/search/OPM" target="_blank" rel="noopener noreferrer">Explore on Spotify ↗</a>
+            <a class="music-download-link" id="musicSearchDownloadLink" href="https://bandcamp.com/search?q=OPM" target="_blank" rel="noopener noreferrer">Find artist-authorized downloads on Bandcamp ↗</a>
+          </div>
         </div>
       </div>
     </section>
@@ -641,6 +659,10 @@
                 <input id="chatActiveToggle" type="checkbox" checked>
                 <span>Show me as active</span>
               </label>
+              <button class="messenger-secondary-button" id="chatSettingsDesktopButton" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V4a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2.9Z"/></svg>
+                <span>Settings</span>
+              </button>
               <button class="button button-quiet" id="chatSignOut" type="button">Sign out</button>
             </div>
           </div>
@@ -666,6 +688,10 @@
                 <span class="messenger-settings-active-copy"><strong>Show me as active</strong><small>Let people see when you are online.</small></span>
                 <input id="chatSettingsActiveToggle" type="checkbox" checked>
               </label>
+              <button class="messenger-settings-theme" id="themeToggle" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 13A8.5 8.5 0 0 1 11 3.3a8.5 8.5 0 1 0 9.7 9.7Z"/></svg>
+                <span id="chatSettingsThemeLabel">Dark mode</span>
+              </button>
               <button class="messenger-settings-signout" id="chatSettingsSignOut" type="button">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5m5 5H3m9-9h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></svg>
                 <span>Sign out</span>
@@ -734,13 +760,58 @@
                     <h3 id="chatRecipientName"></h3>
                     <p class="messenger-recipient-status" id="chatRecipientStatus"><span class="messenger-presence-dot" aria-hidden="true"></span><span>Private conversation · Offline</span></p>
                   </div>
+                  <label class="visually-hidden" for="chatThemeSelect">Chat color theme</label>
+                  <select class="messenger-chat-theme" id="chatThemeSelect" aria-label="Chat theme">
+                    <option value="berry">Berry</option>
+                    <option value="ocean">Ocean</option>
+                    <option value="lavender">Lavender</option>
+                    <option value="mint">Mint</option>
+                  </select>
                 </header>
                 <ol class="messenger-messages" id="chatMessages" aria-live="polite" aria-label="Chat messages"></ol>
                 <form class="messenger-compose" id="chatMessageForm">
-                  <label class="visually-hidden" for="chatMessageInput">Write a message</label>
-                  <textarea id="chatMessageInput" maxlength="2000" rows="2" placeholder="Write a message..." required></textarea>
-                  <button class="button button-primary" type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4 20-7Zm0 0L11 13"/></svg><span>Send</span></button>
+                  <div class="messenger-compose-tools">
+                    <button class="messenger-compose-tool" id="chatImageButton" type="button" aria-label="Send a photo" title="Photo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg></button>
+                    <input id="chatImageInput" type="file" accept="image/*" hidden>
+                    <button class="messenger-compose-tool" id="chatVoiceButton" type="button" aria-label="Record a voice message" title="Voice message"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0m-7 7v5m-4 0h8"/></svg></button>
+                    <button class="messenger-compose-tool" id="chatStickerButton" type="button" aria-label="Choose a sticker" aria-expanded="false" aria-controls="chatStickerPicker" title="Stickers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13V6a3 3 0 0 0-3-3H7a4 4 0 0 0-4 4v10a4 4 0 0 0 4 4h6"/><path d="M16 21v-6h6m-6 6 6-6M8 9h8m-8 4h5"/></svg></button>
+                    <button class="messenger-compose-tool messenger-gif-button" id="chatGifButton" type="button" aria-label="Send a GIF" title="GIF">GIF</button>
+                  </div>
+                  <div class="messenger-sticker-picker" id="chatStickerPicker" hidden aria-label="Choose a sticker">
+                    <button type="button" data-chat-sticker="❤️" aria-label="Heart sticker">❤️</button>
+                    <button type="button" data-chat-sticker="🥰" aria-label="Smiling hearts sticker">🥰</button>
+                    <button type="button" data-chat-sticker="😘" aria-label="Kiss sticker">😘</button>
+                    <button type="button" data-chat-sticker="😂" aria-label="Laughing sticker">😂</button>
+                    <button type="button" data-chat-sticker="🥹" aria-label="Touched sticker">🥹</button>
+                    <button type="button" data-chat-sticker="🐻" aria-label="Bear sticker">🐻</button>
+                    <button type="button" data-chat-sticker="🌷" aria-label="Tulip sticker">🌷</button>
+                    <button type="button" data-chat-sticker="✨" aria-label="Sparkles sticker">✨</button>
+                  </div>
+                  <div class="messenger-compose-input">
+                    <label class="visually-hidden" for="chatMessageInput">Write a message</label>
+                    <textarea id="chatMessageInput" maxlength="2000" rows="2" placeholder="Write a message..."></textarea>
+                    <button class="button button-primary" type="submit" aria-label="Send message"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4 20-7Zm0 0L11 13"/></svg><span>Send</span></button>
+                  </div>
                 </form>
+                <dialog class="messenger-gif-dialog" id="chatGifDialog" aria-labelledby="chatGifTitle">
+                  <form class="messenger-gif-form" id="chatGifForm">
+                    <div class="messenger-profile-heading">
+                      <div>
+                        <h3 id="chatGifTitle">Send a GIF</h3>
+                        <p>Search GIPHY, then paste a direct GIF link below.</p>
+                      </div>
+                      <button class="messenger-icon-button" id="chatCloseGif" type="button" aria-label="Close GIF picker">×</button>
+                    </div>
+                    <label for="chatGifSearch">Search GIFs online</label>
+                    <div class="messenger-gif-search-row">
+                      <input id="chatGifSearch" type="search" maxlength="100" placeholder="happy, love, celebration...">
+                      <a class="messenger-secondary-button" id="chatGifSearchLink" href="https://giphy.com/" target="_blank" rel="noopener noreferrer">Search GIPHY ↗</a>
+                    </div>
+                    <label for="chatGifUrl">Direct GIF link</label>
+                    <input id="chatGifUrl" type="url" inputmode="url" placeholder="https://media.giphy.com/...gif" required>
+                    <button class="button button-primary" type="submit">Send GIF</button>
+                  </form>
+                </dialog>
               </div>
             </div>
           </div>

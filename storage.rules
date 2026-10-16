@@ -1,0 +1,28 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isConversationParticipant(conversationId) {
+      return request.auth != null
+        && firestore.exists(/databases/(default)/documents/conversations/$(conversationId))
+        && firestore.get(/databases/(default)/documents/conversations/$(conversationId))
+          .data.participants.hasAny([request.auth.uid]);
+    }
+
+    match /conversations/{conversationId}/messages/{senderId}/{fileName} {
+      allow read: if isConversationParticipant(conversationId);
+      allow create: if isConversationParticipant(conversationId)
+        && request.auth.uid == senderId
+        && (
+          (request.resource.contentType == 'image/jpeg' && request.resource.size <= 8 * 1024 * 1024)
+          || (
+            request.resource.contentType.matches('^audio/(webm|ogg|mp4|mpeg|wav)$')
+            && request.resource.size <= 10 * 1024 * 1024
+          )
+        );
+      allow update: if false;
+      allow delete: if isConversationParticipant(conversationId)
+        && request.auth.uid == senderId;
+    }
+  }
+}

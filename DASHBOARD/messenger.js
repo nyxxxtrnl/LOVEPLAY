@@ -19,7 +19,16 @@ import {
   set as setRealtimeValue
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 import {
+  deleteObject,
+  getDownloadURL,
+  getStorage,
+  ref as storageRef,
+  uploadBytes
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+import {
   collection,
+  deleteDoc,
+  deleteField,
   doc,
   getDoc,
   getDocs,
@@ -47,6 +56,13 @@ const conversationList = document.getElementById("chatConversationList");
 const messagesList = document.getElementById("chatMessages");
 const messageForm = document.getElementById("chatMessageForm");
 const messageInput = document.getElementById("chatMessageInput");
+const imageInput = document.getElementById("chatImageInput");
+const voiceButton = document.getElementById("chatVoiceButton");
+const stickerButton = document.getElementById("chatStickerButton");
+const stickerPicker = document.getElementById("chatStickerPicker");
+const gifDialog = document.getElementById("chatGifDialog");
+const gifForm = document.getElementById("chatGifForm");
+const chatThemeSelect = document.getElementById("chatThemeSelect");
 const activeToggle = document.getElementById("chatActiveToggle");
 const settingsActiveToggle = document.getElementById("chatSettingsActiveToggle");
 const profileForm = document.getElementById("chatProfileForm");
@@ -58,6 +74,7 @@ const chatApp = document.getElementById("messengerApp");
 const AVATAR_MAX_LENGTH = 180000;
 
 function setStatus(message, isError = false) {
+  if (!isError && message.startsWith("Signed in as ")) message = "";
   messengerStatus.textContent = message;
   messengerStatus.dataset.error = String(isError);
 }
@@ -84,6 +101,12 @@ function describeError(error, action) {
   if (code === "auth/network-request-failed") return "Could not reach Firebase. Check your internet connection, HTTPS, and browser extensions.";
   if (code === "permission-denied" || code === "firestore/permission-denied") {
     return `${action} was blocked by Firestore rules (permission-denied). Publish the latest firestore.rules to the LovePlay Firebase project, then try again.`;
+  }
+  if (code === "storage/unauthorized") {
+    return `${action} was blocked by Firebase Storage rules. Enable Firebase Storage and publish the latest storage.rules.`;
+  }
+  if (code === "storage/bucket-not-found") {
+    return "Firebase Storage is not enabled for this project yet. Create its default storage bucket, then try again.";
   }
   if (code === "failed-precondition") return `${action} needs a Firestore index or setup change. Check the browser console for Firebase's details.`;
   if (code === "unavailable") return `${action} could not reach Firestore. Check your internet connection and try again.`;
@@ -119,6 +142,7 @@ if (!isConfigured) {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  const storage = getStorage(app);
   const realtimeDatabase = typeof firebaseConfig.databaseURL === "string" && firebaseConfig.databaseURL.startsWith("https://")
     ? getDatabase(app, firebaseConfig.databaseURL)
     : null;
@@ -138,7 +162,12 @@ if (!isConfigured) {
   let latestConversations = [];
   let selectedAvatarDataUrl = null;
   let returnToSettingsAfterProfileEdit = false;
+  let mediaRecorder = null;
+  let recordingChunks = [];
+  let recordingTimeout = null;
   const presenceSubscriptions = new Map();
+  const REACTION_EMOJIS = ["❤️", "😂", "👍", "😮", "😢", "👏"];
+  const CHAT_THEMES = ["berry", "ocean", "lavender", "mint"];
 
   function syncActiveToggleControls(checked, disabled) {
     [activeToggle, settingsActiveToggle].forEach(toggle => {
@@ -215,7 +244,6 @@ if (!isConfigured) {
   async function startPresence(user) {
     if (!realtimeDatabase) {
       syncActiveToggleControls(false, true);
-      setStatus(`Signed in as ${currentProfile.displayName}. Add the Firebase Realtime Database URL and rules to enable active status.`);
       return;
     }
 
@@ -442,6 +470,178 @@ if (!isConfigured) {
     }
   }
 
+  function messagePreview(message) {
+    if (message.type === "image") return "Photo";
+    if (message.type === "audio") return "Voice message";
+    if (message.type === "gif") return "GIF";
+    if (message.type === "sticker") return "Sticker";
+    return message.text;
+  }
+
+  async function sendChatMessage({ type = "text", text = "", blob = null, mediaUrl = "" } = {}) {
+    if (!currentConversationId || !currentRecipient || !currentUser) return;
+    const conversationId = currentConversationId;
+    const conversationRef = doc(db, "conversations", conversationId);
+    const messageRef = doc(collection(db, "conversations", conversationId, "messages"));
+    let uploadedRef = null;
+    let finalMediaUrl = mediaUrl;
+
+    try {
+      if (blob) {
+        const extension = blob.type.includes("png") ? "png"
+          : blob.type.includes("webp") ? "webp"
+            : blob.type.includes("ogg") ? "ogg"
+              : blob.type.includes("mp4") ? "m4a"
+                : blob.type.includes("mpeg") ? "mp3"
+                  : blob.type.includes("wav") ? "wav"
+                    : blob.type.includes("gif") ? "gif"
+                      : blob.type.includes("webm") ? "webm"
+                        : "jpg";
+        uploadedRef = storageRef(
+          storage,
+          `conversations/${conversationId}/messages/${currentUser.uid}/${messageRef.id}.${extension}`
+        );
+        setStatus(type === "image" ? "Uploading photo..." : "Uploading voice message...");
+        const upload = await uploadBytes(uploadedRef, blob, { contentType: blob.type.split(";")[0] });
+        finalMediaUrl = await getDownloadURL(upload.ref);
+      }
+
+      const messageData = {
+        senderId: currentUser.uid,
+        senderName: currentProfile.displayName,
+        text,
+        type,
+        reactions: {},
+        createdAt: serverTimestamp()
+      };
+      if (uploadedRef) {
+        messageData.mediaPath = uploadedRef.fullPath;
+        messageData.mediaUrl = finalMediaUrl;
+      } else if (type === "gif") {
+        messageData.mediaUrl = finalMediaUrl;
+      }
+
+      const batch = writeBatch(db);
+      batch.set(messageRef, messageData);
+      batch.update(conversationRef, {
+        lastMessage: messagePreview(messageData),
+        updatedAt: serverTimestamp()
+      });
+      await batch.commit();
+      if (type === "text") {
+        messageInput.value = "";
+        messageInput.focus();
+      }
+      stickerPicker.hidden = true;
+      stickerButton.setAttribute("aria-expanded", "false");
+      setStatus("");
+    } catch (error) {
+      if (uploadedRef) {
+        try {
+          await deleteObject(uploadedRef);
+        } catch (cleanupError) {
+          console.warn("Could not remove an unlinked chat upload.", cleanupError);
+        }
+      }
+      setStatus(describeError(error, "Sending message"), true);
+    }
+  }
+
+  async function updateMessageReaction(messageId, existingReaction, nextReaction) {
+    if (!currentConversationId || !currentUser) return;
+    try {
+      await updateDoc(
+        doc(db, "conversations", currentConversationId, "messages", messageId),
+        { [`reactions.${currentUser.uid}`]: existingReaction === nextReaction ? deleteField() : nextReaction }
+      );
+    } catch (error) {
+      setStatus(describeError(error, "Updating reaction"), true);
+    }
+  }
+
+  async function deleteMessageForEveryone(messageSnapshot, message) {
+    if (!currentUser || message.senderId !== currentUser.uid || !currentConversationId) return;
+    if (!window.confirm("Delete this message for everyone in this chat?")) return;
+    const conversationId = currentConversationId;
+    const conversationRef = doc(db, "conversations", conversationId);
+    const messageRef = doc(db, "conversations", conversationId, "messages", messageSnapshot.id);
+
+    try {
+      const latest = await getDocs(query(
+        collection(db, "conversations", conversationId, "messages"),
+        orderBy("createdAt", "desc"),
+        limit(2)
+      ));
+      const isLatest = latest.docs[0]?.id === messageSnapshot.id;
+      const nextMessage = latest.docs.find(snapshot => snapshot.id !== messageSnapshot.id);
+      const batch = writeBatch(db);
+      batch.delete(messageRef);
+      if (isLatest) {
+        batch.update(conversationRef, {
+          lastMessage: nextMessage ? messagePreview(nextMessage.data()) : "",
+          updatedAt: serverTimestamp()
+        });
+      }
+      await batch.commit();
+      if (message.mediaPath) {
+        try {
+          await deleteObject(storageRef(storage, message.mediaPath));
+        } catch (error) {
+          setStatus("Message deleted for everyone, but its uploaded file could not be removed.", true);
+          console.warn("Could not remove a deleted chat attachment.", error);
+          return;
+        }
+      }
+      setStatus("Message deleted for everyone.");
+    } catch (error) {
+      setStatus(describeError(error, "Deleting message"), true);
+    }
+  }
+
+  function renderReactions(messageId, reactions = {}) {
+    const ownReaction = reactions[currentUser.uid] || "";
+    const counts = new Map();
+    Object.values(reactions).forEach(reaction => {
+      if (REACTION_EMOJIS.includes(reaction)) counts.set(reaction, (counts.get(reaction) || 0) + 1);
+    });
+    const controls = document.createElement("div");
+    controls.className = "messenger-message-actions";
+    if (counts.size) {
+      const summary = document.createElement("div");
+      summary.className = "messenger-reaction-summary";
+      counts.forEach((count, emoji) => {
+        const reaction = document.createElement("span");
+        reaction.textContent = `${emoji} ${count}`;
+        summary.append(reaction);
+      });
+      controls.append(summary);
+    }
+
+    const picker = document.createElement("details");
+    picker.className = "messenger-reaction-picker";
+    const summary = document.createElement("summary");
+    summary.textContent = "☺";
+    summary.setAttribute("aria-label", "React to message");
+    picker.append(summary);
+    const options = document.createElement("div");
+    options.className = "messenger-reaction-options";
+    REACTION_EMOJIS.forEach(emoji => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = emoji;
+      button.setAttribute("aria-label", `React with ${emoji}`);
+      button.setAttribute("aria-pressed", String(ownReaction === emoji));
+      button.addEventListener("click", () => {
+        picker.open = false;
+        updateMessageReaction(messageId, ownReaction, emoji);
+      });
+      options.append(button);
+    });
+    picker.append(options);
+    controls.append(picker);
+    return controls;
+  }
+
   function renderMessages(snapshot) {
     const messages = snapshot.docs.slice().reverse();
     messagesList.replaceChildren();
@@ -455,10 +655,11 @@ if (!isConfigured) {
 
     messages.forEach(messageSnapshot => {
       const message = messageSnapshot.data();
+      const own = message.senderId === currentUser.uid;
       const item = document.createElement("li");
       item.className = "messenger-message";
-      item.dataset.own = String(message.senderId === currentUser.uid);
-      if (message.senderId !== currentUser.uid && currentRecipient) {
+      item.dataset.own = String(own);
+      if (!own && currentRecipient) {
         const avatar = document.createElement("div");
         avatar.className = "messenger-avatar messenger-message-avatar";
         avatar.setAttribute("aria-hidden", "true");
@@ -470,16 +671,55 @@ if (!isConfigured) {
         setAvatar(avatar, currentRecipient);
         item.append(avatar);
       }
+
       const bubble = document.createElement("div");
       bubble.className = "messenger-message-bubble";
-      bubble.append(document.createTextNode(message.text));
+      if (message.type === "image" || message.type === "gif") {
+        const image = document.createElement("img");
+        image.className = `messenger-message-media${message.type === "gif" ? " messenger-message-gif" : ""}`;
+        image.src = message.mediaUrl;
+        image.alt = message.type === "gif" ? "GIF" : `Photo from ${message.senderName}`;
+        image.loading = "lazy";
+        image.addEventListener("error", () => {
+          image.replaceWith(document.createTextNode("This image is no longer available."));
+        }, { once: true });
+        bubble.append(image);
+      } else if (message.type === "audio") {
+        const audio = document.createElement("audio");
+        audio.className = "messenger-message-audio";
+        audio.controls = true;
+        audio.preload = "metadata";
+        audio.src = message.mediaUrl;
+        bubble.append(audio);
+      } else if (message.type === "sticker") {
+        const sticker = document.createElement("span");
+        sticker.className = "messenger-message-sticker";
+        sticker.textContent = message.text;
+        bubble.append(sticker);
+      } else if (message.type === "deleted") {
+        const deleted = document.createElement("em");
+        deleted.textContent = "This message was deleted.";
+        bubble.append(deleted);
+      } else {
+        bubble.append(document.createTextNode(message.text || ""));
+      }
+
       const time = document.createElement("small");
       const date = message.createdAt?.toDate?.();
-      time.textContent = `${message.senderId === currentUser.uid ? "You" : message.senderName} · ${
+      time.textContent = `${own ? "You" : message.senderName} · ${
         date ? new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(date) : "Sending..."
       }`;
       bubble.append(time);
       item.append(bubble);
+      item.append(renderReactions(messageSnapshot.id, message.reactions));
+      if (own) {
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "messenger-delete-message";
+        deleteButton.type = "button";
+        deleteButton.textContent = "Delete for everyone";
+        deleteButton.addEventListener("click", () => deleteMessageForEveryone(messageSnapshot, message));
+        item.append(deleteButton);
+      }
       messagesList.append(item);
     });
     messagesList.scrollTop = messagesList.scrollHeight;
@@ -512,6 +752,7 @@ if (!isConfigured) {
     document.getElementById("chatThread").hidden = false;
     document.getElementById("chatEmptyState").hidden = true;
     chatApp.dataset.chatOpen = "true";
+    applyChatTheme(conversationId);
     messagesList.replaceChildren();
     syncPresenceSubscriptions();
 
@@ -608,7 +849,7 @@ if (!isConfigured) {
     watchConversations();
     renderSearchMessage("Type at least 2 letters to find people.");
     await startPresence(user);
-    if (realtimeDatabase) setStatus(`Signed in as ${profile.displayName}.`);
+    setStatus("");
   }
 
   document.getElementById("chatEditProfile").addEventListener("click", openProfileEditor);
@@ -623,9 +864,10 @@ if (!isConfigured) {
       settingsDialog.showModal();
     }
   });
-  document.getElementById("chatSettingsButton").addEventListener("click", () => {
+  [document.getElementById("chatSettingsButton"), document.getElementById("chatSettingsDesktopButton")]
+    .forEach(button => button.addEventListener("click", () => {
     if (currentUser) settingsDialog.showModal();
-  });
+    }));
   document.getElementById("chatCloseSettings").addEventListener("click", () => {
     settingsDialog.close();
   });
@@ -777,37 +1019,167 @@ if (!isConfigured) {
     searchPeople();
   });
 
-  messageForm.addEventListener("submit", async event => {
+  messageForm.addEventListener("submit", event => {
     event.preventDefault();
     const text = messageInput.value.trim();
-    if (!text || !currentConversationId || !currentRecipient) return;
+    if (!text) return;
+    sendChatMessage({ text });
+  });
 
-    const conversationId = currentConversationId;
-    const conversationRef = doc(db, "conversations", conversationId);
-    const messageRef = doc(collection(db, "conversations", conversationId, "messages"));
-    const batch = writeBatch(db);
-    batch.set(messageRef, {
-      senderId: currentUser.uid,
-      senderName: currentProfile.displayName,
-      text,
-      createdAt: serverTimestamp()
-    });
-    batch.update(conversationRef, {
-      lastMessage: text,
-      updatedAt: serverTimestamp()
-    });
-    const sendButton = messageForm.querySelector("button[type='submit']");
-    sendButton.disabled = true;
+  function saveChatTheme(conversationId, theme) {
+    if (!CHAT_THEMES.includes(theme)) return;
     try {
-      await batch.commit();
-      messageInput.value = "";
-      setStatus(`Message sent to ${currentRecipient.displayName}.`);
-      messageInput.focus();
+      localStorage.setItem(`loveplay-chat-theme-${conversationId}`, theme);
+      chatApp.dataset.chatTheme = theme;
+      chatThemeSelect.value = theme;
     } catch (error) {
-      setStatus(describeError(error, "Sending message"), true);
-    } finally {
-      sendButton.disabled = false;
+      setStatus("Could not save this chat's color theme.", true);
     }
+  }
+
+  function applyChatTheme(conversationId) {
+    let theme = "berry";
+    try {
+      const savedTheme = localStorage.getItem(`loveplay-chat-theme-${conversationId}`);
+      if (CHAT_THEMES.includes(savedTheme)) theme = savedTheme;
+    } catch (error) {
+      setStatus("Could not load this chat's color theme.", true);
+    }
+    chatApp.dataset.chatTheme = theme;
+    chatThemeSelect.value = theme;
+  }
+
+  chatThemeSelect.addEventListener("change", () => {
+    if (currentConversationId) saveChatTheme(currentConversationId, chatThemeSelect.value);
+  });
+
+  async function resizeChatImage(file) {
+    if (!file.type.startsWith("image/")) throw new Error("Choose an image file to send.");
+    if (file.size > 8 * 1024 * 1024) throw new Error("Choose a photo smaller than 8 MB.");
+    const bitmap = await createImageBitmap(file);
+    try {
+      const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+      canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("Your browser could not process that photo.");
+      context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      const blob = await new Promise((resolve, reject) => {
+        canvas.toBlob(result => {
+          if (result) resolve(result);
+          else reject(new Error("Your browser could not prepare that photo."));
+        }, "image/jpeg", 0.82);
+      });
+      if (blob.size > 8 * 1024 * 1024) throw new Error("That photo is too large to send.");
+      return blob;
+    } finally {
+      bitmap.close();
+    }
+  }
+
+  document.getElementById("chatImageButton").addEventListener("click", () => imageInput.click());
+  imageInput.addEventListener("change", async () => {
+    const file = imageInput.files?.[0];
+    if (!file) return;
+    try {
+      const blob = await resizeChatImage(file);
+      await sendChatMessage({ type: "image", text: "Photo", blob });
+    } catch (error) {
+      setStatus(error.message || describeError(error, "Preparing photo"), true);
+    } finally {
+      imageInput.value = "";
+    }
+  });
+
+  voiceButton.addEventListener("click", async () => {
+    if (mediaRecorder?.state === "recording") {
+      mediaRecorder.stop();
+      voiceButton.setAttribute("aria-label", "Record a voice message");
+      voiceButton.classList.remove("is-recording");
+      return;
+    }
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder !== "function") {
+      setStatus("Voice recording is not supported by this browser.", true);
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recordingChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.addEventListener("dataavailable", event => {
+        if (event.data.size) recordingChunks.push(event.data);
+      });
+      mediaRecorder.addEventListener("stop", async () => {
+        clearTimeout(recordingTimeout);
+        stream.getTracks().forEach(track => track.stop());
+        voiceButton.classList.remove("is-recording");
+        voiceButton.setAttribute("aria-label", "Record a voice message");
+        const recording = new Blob(recordingChunks, { type: mediaRecorder.mimeType || "audio/webm" });
+        recordingChunks = [];
+        mediaRecorder = null;
+        if (!recording.size) {
+          setStatus("No voice audio was recorded.", true);
+          return;
+        }
+        if (recording.size > 10 * 1024 * 1024) {
+          setStatus("That voice message is too large to send. Record a shorter message.", true);
+          return;
+        }
+        await sendChatMessage({ type: "audio", text: "Voice message", blob: recording });
+      }, { once: true });
+      mediaRecorder.start();
+      voiceButton.classList.add("is-recording");
+      voiceButton.setAttribute("aria-label", "Stop recording and send voice message");
+      setStatus("Recording voice message. Tap stop when you are done.");
+      recordingTimeout = setTimeout(() => {
+        if (mediaRecorder?.state === "recording") mediaRecorder.stop();
+      }, 120000);
+    } catch (error) {
+      setStatus(error.message || "Could not access the microphone.", true);
+    }
+  });
+
+  stickerButton.addEventListener("click", () => {
+    stickerPicker.hidden = !stickerPicker.hidden;
+    stickerButton.setAttribute("aria-expanded", String(!stickerPicker.hidden));
+  });
+  stickerPicker.addEventListener("click", event => {
+    const button = event.target.closest("[data-chat-sticker]");
+    if (!button) return;
+    sendChatMessage({ type: "sticker", text: button.dataset.chatSticker });
+  });
+
+  document.getElementById("chatGifButton").addEventListener("click", () => gifDialog.showModal());
+  document.getElementById("chatCloseGif").addEventListener("click", () => gifDialog.close());
+  document.getElementById("chatGifSearch").addEventListener("input", event => {
+    const term = event.target.value.trim();
+    document.getElementById("chatGifSearchLink").href =
+      `https://giphy.com/search/${encodeURIComponent(term)}`;
+  });
+
+  function isAllowedGifUrl(value) {
+    try {
+      const url = new URL(value);
+      return url.protocol === "https:" &&
+        ["media.giphy.com", "i.giphy.com", "media.tenor.com"].includes(url.hostname.toLowerCase()) &&
+        /\.gif$/i.test(url.pathname);
+    } catch {
+      return false;
+    }
+  }
+
+  gifForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    const url = document.getElementById("chatGifUrl").value.trim();
+    if (!isAllowedGifUrl(url)) {
+      setStatus("Paste a direct HTTPS GIF link from GIPHY or Tenor.", true);
+      return;
+    }
+    await sendChatMessage({ type: "gif", text: "GIF", mediaUrl: url });
+    gifDialog.close();
+    gifForm.reset();
+    document.getElementById("chatGifSearchLink").href = "https://giphy.com/";
   });
 
   async function signOutCurrentUser() {
