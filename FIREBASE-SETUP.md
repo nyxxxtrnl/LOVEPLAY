@@ -1,9 +1,10 @@
 # LovePlay chat setup
 
-The chat uses Firebase Authentication, Cloud Firestore, and Firebase Storage
-for shared photos and voice messages. Optional online presence uses Firebase
-Realtime Database. GitHub Pages can host the page, but Firebase must be
-configured separately before people can sign in or exchange messages.
+The chat uses Firebase Authentication, Cloud Firestore, and Realtime Database.
+Compressed chat photos are stored with their message in Firestore. Firebase
+Storage is used for voice messages and requires a Storage bucket. GitHub Pages
+can host the page, but Firebase must be configured separately before people can
+sign in or exchange messages.
 
 ## 1. Create and configure Firebase
 
@@ -17,8 +18,10 @@ Firebase resources and access:
 - Cloud Firestore should be created in Singapore (`asia-southeast1`). Publish
   the current [`firestore.rules`](./firestore.rules) after these chat changes;
   pushing the source code does not update Firebase rules.
-- Create or confirm the Firebase Storage bucket, then publish the current
-  [`storage.rules`](./storage.rules). Media uploads need an active bucket.
+- Voice messages require an active Firebase Storage bucket. The Firebase
+  Console may require the project to be upgraded to the Blaze plan to create
+  or use that bucket. Publish [`storage.rules`](./storage.rules) if voice
+  recording is enabled.
 - Realtime Database should be created in Singapore with
   [`database.rules.json`](./database.rules.json) published.
 - Add `nyxxxtrnl.github.io` under Authentication → Settings → Authorized
@@ -31,18 +34,21 @@ The Firestore rules allow signed-in users to find display names and read/write
 only conversations they participate in. Email addresses are not stored in the
 public profile documents. Users may update their own display name and a
 compressed profile photo (up to 180,000 characters) in their profile document.
-This profile photo is stored in Firestore. Conversation photos and voice notes
-use Firebase Storage; Storage rules restrict each upload to a signed-in
-conversation participant and limit images to 8 MB and audio to 10 MB. Message
-reactions and sender-only deletion are validated by Firestore rules. Chat color
-themes are saved on the current device.
+Profile photos are stored in Firestore. Conversation photos are compressed
+before being stored directly in their Firestore message, so photo messaging
+does not require a Storage bucket or billing-plan upgrade. Voice messages use
+Firebase Storage; Storage rules limit audio uploads to 10 MB. Message reactions
+and sender-only deletion are validated by Firestore rules. Chat color themes
+are saved on the current device. Typing status and read receipts use the
+existing Realtime Database presence rules.
 
 Publish the current contents of [`firestore.rules`](./firestore.rules) in
 Firebase Console → Firestore Database → Rules, and publish
 [`storage.rules`](./storage.rules) in Firebase Console → Storage → Rules.
 Pushing to GitHub does not automatically deploy Firebase security rules. New
-message sends, media uploads, reactions, and deleting messages will fail until
-the matching rules are published.
+message sends, photo messages, reactions, and deleting messages will fail until
+the current Firestore rules are published. Voice uploads also require an
+active Storage bucket and its current rules.
 
 ## Sign-in troubleshooting
 
@@ -68,10 +74,11 @@ The chat needs an internet connection and the Firebase setup above. If it shows
 a Firebase permission error, confirm that the rules were published to the same
 project ID as the web config.
 
-Photo and voice messages upload to the Firebase Storage bucket. Voice recording
-requires an HTTPS page and microphone permission. GIF search opens GIPHY; paste
-a direct GIF image URL from GIPHY or Tenor to send it. Stickers are built-in
-emoji stickers.
+Photo messages are compressed and stored with their Firestore message. Voice
+recording uploads to Firebase Storage, requires an HTTPS page and microphone
+permission, and may require the Blaze plan to create a Storage bucket. GIF
+search opens GIPHY; paste a direct GIF image URL from GIPHY or Tenor to send it.
+Stickers are built-in emoji stickers.
 
 ## Spotify playback
 

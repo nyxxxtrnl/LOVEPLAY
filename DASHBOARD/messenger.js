@@ -63,6 +63,7 @@ const stickerPicker = document.getElementById("chatStickerPicker");
 const gifDialog = document.getElementById("chatGifDialog");
 const gifForm = document.getElementById("chatGifForm");
 const chatThemeSelect = document.getElementById("chatThemeSelect");
+const chatCustomThemeColor = document.getElementById("chatCustomThemeColor");
 const activeToggle = document.getElementById("chatActiveToggle");
 const settingsActiveToggle = document.getElementById("chatSettingsActiveToggle");
 const profileForm = document.getElementById("chatProfileForm");
@@ -151,6 +152,7 @@ if (!isConfigured) {
   let currentProfile = null;
   let currentConversationId = null;
   let currentRecipient = null;
+  let latestMessageSnapshot = null;
   let unsubscribeConversations = null;
   let unsubscribeMessages = null;
   let searchTimer = null;
@@ -162,12 +164,18 @@ if (!isConfigured) {
   let latestConversations = [];
   let selectedAvatarDataUrl = null;
   let returnToSettingsAfterProfileEdit = false;
+  let currentRecipientPresence = null;
+  let recipientSeenMessageId = null;
+  let typingTimer = null;
+  let typingGeneration = 0;
+  let typingDisconnectConversationId = null;
+  let lastSeenMessageId = null;
   let mediaRecorder = null;
   let recordingChunks = [];
   let recordingTimeout = null;
   const presenceSubscriptions = new Map();
   const REACTION_EMOJIS = ["❤️", "😂", "👍", "😮", "😢", "👏"];
-  const CHAT_THEMES = ["berry", "ocean", "lavender", "mint"];
+  const CHAT_THEMES = ["berry", "ocean", "lavender", "mint", "custom"];
 
   function syncActiveToggleControls(checked, disabled) {
     [activeToggle, settingsActiveToggle].forEach(toggle => {
@@ -233,6 +241,14 @@ if (!isConfigured) {
         const connections = status?.connections || {};
         const online = status?.showActive !== false && Object.keys(connections).length > 0;
         renderPresence(uid, online);
+        if (currentRecipient?.uid === uid) {
+          const seenMessageId = status?.seen?.[currentConversationId]?.messageId || null;
+          const seenChanged = seenMessageId !== recipientSeenMessageId;
+          recipientSeenMessageId = seenMessageId;
+          currentRecipientPresence = status || {};
+          renderRecipientActivity();
+          if (seenChanged) renderMessagesFromCurrentSnapshot();
+        }
       }, error => {
         setStatus(describeError(error, "Loading active status"), true);
         renderPresence(uid, false);
@@ -275,15 +291,86 @@ if (!isConfigured) {
   }
 
   function clearConversation() {
+    stopTyping();
     currentConversationId = null;
     currentRecipient = null;
+    currentRecipientPresence = null;
+    recipientSeenMessageId = null;
+    typingDisconnectConversationId = null;
+    lastSeenMessageId = null;
     chatApp.dataset.chatOpen = "false";
     if (unsubscribeMessages) unsubscribeMessages();
     unsubscribeMessages = null;
     document.getElementById("chatThread").hidden = true;
     document.getElementById("chatEmptyState").hidden = false;
     document.getElementById("chatEmptyState").textContent = "Search for a person to start a private chat.";
+    document.getElementById("chatTypingStatus").hidden = true;
     messagesList.replaceChildren();
+  }
+
+  function renderRecipientActivity() {
+    const typing = currentRecipientPresence?.typing?.[currentConversationId] === true;
+    document.getElementById("chatTypingStatus").hidden = !typing;
+  }
+
+  function renderMessagesFromCurrentSnapshot() {
+    if (latestMessageSnapshot) renderMessages(latestMessageSnapshot);
+  }
+
+  function stopTyping() {
+    typingGeneration += 1;
+    clearTimeout(typingTimer);
+    typingTimer = null;
+    if (!realtimeDatabase || !currentUser || !currentConversationId) return;
+    removeRealtimeValue(
+      realtimeRef(realtimeDatabase, `presence/${currentUser.uid}/typing/${currentConversationId}`)
+    ).catch(error => setStatus(describeError(error, "Updating typing status"), true));
+  }
+
+  function updateTypingStatus() {
+    clearTimeout(typingTimer);
+    const generation = ++typingGeneration;
+    if (!realtimeDatabase || !currentUser || !currentConversationId) return;
+    const typingRef = realtimeRef(
+      realtimeDatabase,
+      `presence/${currentUser.uid}/typing/${currentConversationId}`
+    );
+    if (!messageInput.value.trim()) {
+      removeRealtimeValue(typingRef).catch(error => setStatus(describeError(error, "Updating typing status"), true));
+      return;
+    }
+    typingTimer = setTimeout(async () => {
+      try {
+        await setRealtimeValue(typingRef, true);
+        if (generation !== typingGeneration) {
+          await removeRealtimeValue(typingRef);
+          return;
+        }
+        if (typingDisconnectConversationId !== currentConversationId) {
+          typingDisconnectConversationId = currentConversationId;
+          await onDisconnect(typingRef).remove();
+        }
+        typingTimer = setTimeout(() => {
+          if (generation === typingGeneration) {
+            removeRealtimeValue(typingRef).catch(error => setStatus(describeError(error, "Updating typing status"), true));
+          }
+        }, 2000);
+      } catch (error) {
+        setStatus(describeError(error, "Updating typing status"), true);
+      }
+    }, 250);
+  }
+
+  function markLatestIncomingAsSeen(messages) {
+    if (!realtimeDatabase || !currentUser || !currentConversationId) return;
+    const latestIncoming = messages.slice().reverse()
+      .find(message => message.data().senderId !== currentUser.uid);
+    if (!latestIncoming || latestIncoming.id === lastSeenMessageId) return;
+    lastSeenMessageId = latestIncoming.id;
+    setRealtimeValue(
+      realtimeRef(realtimeDatabase, `presence/${currentUser.uid}/seen/${currentConversationId}`),
+      { messageId: latestIncoming.id, at: realtimeServerTimestamp() }
+    ).catch(error => setStatus(describeError(error, "Updating read status"), true));
   }
 
   function profileFromSnapshot(snapshot) {
@@ -501,7 +588,7 @@ if (!isConfigured) {
           storage,
           `conversations/${conversationId}/messages/${currentUser.uid}/${messageRef.id}.${extension}`
         );
-        setStatus(type === "image" ? "Uploading photo..." : "Uploading voice message...");
+        if (type === "audio") setStatus("Uploading voice message...");
         const upload = await uploadBytes(uploadedRef, blob, { contentType: blob.type.split(";")[0] });
         finalMediaUrl = await getDownloadURL(upload.ref);
       }
@@ -517,7 +604,7 @@ if (!isConfigured) {
       if (uploadedRef) {
         messageData.mediaPath = uploadedRef.fullPath;
         messageData.mediaUrl = finalMediaUrl;
-      } else if (type === "gif") {
+      } else if (type === "gif" || type === "image") {
         messageData.mediaUrl = finalMediaUrl;
       }
 
@@ -643,6 +730,7 @@ if (!isConfigured) {
   }
 
   function renderMessages(snapshot) {
+    latestMessageSnapshot = snapshot;
     const messages = snapshot.docs.slice().reverse();
     messagesList.replaceChildren();
     if (messages.length === 0) {
@@ -653,7 +741,17 @@ if (!isConfigured) {
       return;
     }
 
-    messages.forEach(messageSnapshot => {
+    markLatestIncomingAsSeen(messages);
+    const seenMessageId = currentRecipientPresence?.seen?.[currentConversationId]?.messageId;
+    const seenMessageIndex = messages.findIndex(messageSnapshot => messageSnapshot.id === seenMessageId);
+    let latestSeenOwnIndex = -1;
+    if (seenMessageIndex >= 0) {
+      for (let index = 0; index <= seenMessageIndex; index += 1) {
+        if (messages[index].data().senderId === currentUser.uid) latestSeenOwnIndex = index;
+      }
+    }
+
+    messages.forEach((messageSnapshot, messageIndex) => {
       const message = messageSnapshot.data();
       const own = message.senderId === currentUser.uid;
       const item = document.createElement("li");
@@ -710,16 +808,41 @@ if (!isConfigured) {
         date ? new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(date) : "Sending..."
       }`;
       bubble.append(time);
-      item.append(bubble);
-      item.append(renderReactions(messageSnapshot.id, message.reactions));
+      const content = document.createElement("div");
+      content.className = "messenger-message-content";
+      content.append(bubble, renderReactions(messageSnapshot.id, message.reactions));
       if (own) {
         const deleteButton = document.createElement("button");
         deleteButton.className = "messenger-delete-message";
         deleteButton.type = "button";
         deleteButton.textContent = "Delete for everyone";
-        deleteButton.addEventListener("click", () => deleteMessageForEveryone(messageSnapshot, message));
-        item.append(deleteButton);
+        deleteButton.addEventListener("click", event => {
+          event.stopPropagation();
+          deleteMessageForEveryone(messageSnapshot, message);
+        });
+        content.append(deleteButton);
+        if (messageIndex === latestSeenOwnIndex) {
+          const receipt = document.createElement("div");
+          receipt.className = "messenger-read-receipt";
+          const avatar = document.createElement("span");
+          avatar.className = "messenger-avatar messenger-seen-avatar";
+          avatar.setAttribute("aria-hidden", "true");
+          const image = document.createElement("img");
+          image.alt = "";
+          image.hidden = true;
+          avatar.append(image, document.createElement("span"));
+          setAvatar(avatar, currentRecipient);
+          const label = document.createElement("span");
+          label.textContent = "Seen";
+          receipt.append(avatar, label);
+          content.append(receipt);
+        }
       }
+      item.append(content);
+      item.addEventListener("click", event => {
+        if (event.target.closest("button, details, summary, audio, a")) return;
+        item.dataset.actionsOpen = String(item.dataset.actionsOpen !== "true");
+      });
       messagesList.append(item);
     });
     messagesList.scrollTop = messagesList.scrollHeight;
@@ -727,6 +850,7 @@ if (!isConfigured) {
 
   function subscribeToMessages(conversationId) {
     if (unsubscribeMessages) unsubscribeMessages();
+    latestMessageSnapshot = null;
     const messagesQuery = query(
       collection(db, "conversations", conversationId, "messages"),
       orderBy("createdAt", "desc"),
@@ -739,16 +863,24 @@ if (!isConfigured) {
 
   async function openConversation(recipient) {
     if (!currentUser || recipient.uid === currentUser.uid) return;
+    stopTyping();
+    typingDisconnectConversationId = null;
     const participants = [currentUser.uid, recipient.uid].sort();
     const conversationId = `dm_${participants.join("_")}`;
     const conversationRef = doc(db, "conversations", conversationId);
     currentConversationId = conversationId;
     currentRecipient = recipient;
+    currentRecipientPresence = null;
+    recipientSeenMessageId = null;
+    lastSeenMessageId = null;
+    clearTimeout(typingTimer);
+    typingTimer = null;
     document.getElementById("chatRecipientName").textContent = recipient.displayName;
     setAvatar(document.getElementById("chatRecipientAvatar"), recipient);
     const recipientStatus = document.getElementById("chatRecipientStatus");
     recipientStatus.dataset.presenceUid = recipient.uid;
     recipientStatus.querySelector("span:last-child").textContent = "Private conversation · Offline";
+    document.getElementById("chatTypingStatus").hidden = true;
     document.getElementById("chatThread").hidden = false;
     document.getElementById("chatEmptyState").hidden = true;
     chatApp.dataset.chatOpen = "true";
@@ -1023,15 +1155,27 @@ if (!isConfigured) {
     event.preventDefault();
     const text = messageInput.value.trim();
     if (!text) return;
+    stopTyping();
     sendChatMessage({ text });
   });
+  messageInput.addEventListener("input", updateTypingStatus);
 
-  function saveChatTheme(conversationId, theme) {
+  function saveChatTheme(conversationId, theme, color = chatCustomThemeColor.value) {
     if (!CHAT_THEMES.includes(theme)) return;
     try {
       localStorage.setItem(`loveplay-chat-theme-${conversationId}`, theme);
+      if (theme === "custom" && /^#[0-9a-f]{6}$/i.test(color)) {
+        localStorage.setItem(`loveplay-chat-theme-color-${conversationId}`, color);
+      }
       chatApp.dataset.chatTheme = theme;
       chatThemeSelect.value = theme;
+      chatCustomThemeColor.hidden = theme !== "custom";
+      if (theme === "custom" && /^#[0-9a-f]{6}$/i.test(color)) {
+        chatApp.style.setProperty("--chat-custom-accent", color);
+        chatCustomThemeColor.value = color;
+      } else {
+        chatApp.style.removeProperty("--chat-custom-accent");
+      }
     } catch (error) {
       setStatus("Could not save this chat's color theme.", true);
     }
@@ -1039,18 +1183,31 @@ if (!isConfigured) {
 
   function applyChatTheme(conversationId) {
     let theme = "berry";
+    let color = "#87516f";
     try {
       const savedTheme = localStorage.getItem(`loveplay-chat-theme-${conversationId}`);
       if (CHAT_THEMES.includes(savedTheme)) theme = savedTheme;
+      const savedColor = localStorage.getItem(`loveplay-chat-theme-color-${conversationId}`);
+      if (savedColor && /^#[0-9a-f]{6}$/i.test(savedColor)) color = savedColor;
     } catch (error) {
       setStatus("Could not load this chat's color theme.", true);
     }
     chatApp.dataset.chatTheme = theme;
     chatThemeSelect.value = theme;
+    chatCustomThemeColor.hidden = theme !== "custom";
+    chatCustomThemeColor.value = color;
+    if (theme === "custom") chatApp.style.setProperty("--chat-custom-accent", color);
+    else chatApp.style.removeProperty("--chat-custom-accent");
   }
 
   chatThemeSelect.addEventListener("change", () => {
+    chatCustomThemeColor.hidden = chatThemeSelect.value !== "custom";
     if (currentConversationId) saveChatTheme(currentConversationId, chatThemeSelect.value);
+  });
+  chatCustomThemeColor.addEventListener("input", () => {
+    if (currentConversationId && chatThemeSelect.value === "custom") {
+      saveChatTheme(currentConversationId, "custom", chatCustomThemeColor.value);
+    }
   });
 
   async function resizeChatImage(file) {
@@ -1058,21 +1215,33 @@ if (!isConfigured) {
     if (file.size > 8 * 1024 * 1024) throw new Error("Choose a photo smaller than 8 MB.");
     const bitmap = await createImageBitmap(file);
     try {
-      const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
       const canvas = document.createElement("canvas");
-      canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-      canvas.height = Math.max(1, Math.round(bitmap.height * scale));
       const context = canvas.getContext("2d");
       if (!context) throw new Error("Your browser could not process that photo.");
-      context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-      const blob = await new Promise((resolve, reject) => {
-        canvas.toBlob(result => {
-          if (result) resolve(result);
-          else reject(new Error("Your browser could not prepare that photo."));
-        }, "image/jpeg", 0.82);
-      });
-      if (blob.size > 8 * 1024 * 1024) throw new Error("That photo is too large to send.");
-      return blob;
+      let scale = Math.min(1, 1440 / Math.max(bitmap.width, bitmap.height));
+      let quality = 0.8;
+      for (let attempt = 0; attempt < 8; attempt += 1) {
+        canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+        canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+        context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        const blob = await new Promise((resolve, reject) => {
+          canvas.toBlob(result => {
+            if (result) resolve(result);
+            else reject(new Error("Your browser could not prepare that photo."));
+          }, "image/jpeg", quality);
+        });
+        if (blob.size <= 640 * 1024) {
+          return await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.addEventListener("load", () => resolve(reader.result), { once: true });
+            reader.addEventListener("error", () => reject(new Error("Your browser could not prepare that photo.")), { once: true });
+            reader.readAsDataURL(blob);
+          });
+        }
+        scale *= 0.84;
+        quality = Math.max(0.45, quality - 0.06);
+      }
+      throw new Error("That photo could not be compressed small enough to send. Try a smaller image.");
     } finally {
       bitmap.close();
     }
@@ -1083,8 +1252,8 @@ if (!isConfigured) {
     const file = imageInput.files?.[0];
     if (!file) return;
     try {
-      const blob = await resizeChatImage(file);
-      await sendChatMessage({ type: "image", text: "Photo", blob });
+      const mediaUrl = await resizeChatImage(file);
+      await sendChatMessage({ type: "image", text: "Photo", mediaUrl });
     } catch (error) {
       setStatus(error.message || describeError(error, "Preparing photo"), true);
     } finally {

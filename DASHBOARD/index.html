@@ -300,6 +300,11 @@
         <button class="button button-primary" type="submit">Search</button>
       </form>
       <p class="music-search-note">Listen through official services. Download only music the artist or label has authorized for download.</p>
+      <div class="music-search-collection" id="musicSearchCollection" hidden>
+        <p id="musicSearchCollectionDescription"></p>
+        <a class="button button-primary" id="musicSearchCollectionLink" href="https://open.spotify.com/search/OPM" target="_blank" rel="noopener noreferrer">Explore on Spotify ↗</a>
+        <a class="music-download-link" id="musicSearchDownloadLink" href="https://bandcamp.com/search?q=OPM" target="_blank" rel="noopener noreferrer">Find artist-authorized downloads on Bandcamp ↗</a>
+      </div>
       <div class="music-layout">
         <div class="album-art">
           <div class="album-heart" id="musicMoodIcon" aria-hidden="true">♥</div>
@@ -324,11 +329,6 @@
             rel="noopener noreferrer">
             Open on Spotify ↗
           </a>
-          <div class="music-search-collection" id="musicSearchCollection" hidden>
-            <p id="musicSearchCollectionDescription"></p>
-            <a class="button button-primary" id="musicSearchCollectionLink" href="https://open.spotify.com/search/OPM" target="_blank" rel="noopener noreferrer">Explore on Spotify ↗</a>
-            <a class="music-download-link" id="musicSearchDownloadLink" href="https://bandcamp.com/search?q=OPM" target="_blank" rel="noopener noreferrer">Find artist-authorized downloads on Bandcamp ↗</a>
-          </div>
         </div>
       </div>
     </section>
@@ -577,7 +577,10 @@
       <div class="photo-gallery-view" id="photoGalleryView" hidden>
         <div class="photo-gallery-toolbar">
           <button class="button button-dark photo-gallery-back" id="closePhotoAlbum" type="button">‹ Albums</button>
-          <h3 class="photo-gallery-title" id="photoGalleryTitle">Our photos</h3>
+          <div class="photo-gallery-title-group">
+            <h3 class="photo-gallery-title" id="photoGalleryTitle">Our photos</h3>
+            <button class="photo-gallery-add-album" id="addPhotoAlbumInline" type="button">＋ Album</button>
+          </div>
           <button class="button button-primary" id="addPhotoButton" type="button" disabled>＋ Add photo</button>
         </div>
         <div class="photo-grid" id="photoGrid" aria-label="Our photo gallery"></div>
@@ -604,7 +607,7 @@
 
     <section class="section-wrap content-section tab-panel" id="chat" role="tabpanel" aria-labelledby="tab-chat" tabindex="0" hidden>
       <header class="mobile-chat-header">
-        <h2>LOVEPLAY CHAT</h2>
+        <h2><span aria-hidden="true">♥</span> LOVEPLAY CHAT</h2>
         <button class="mobile-chat-settings" id="chatSettingsButton" type="button" aria-haspopup="dialog" aria-controls="chatSettingsDialog">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V4a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2.9Z"/></svg>
           <span>Settings</span>
@@ -759,6 +762,7 @@
                   <div class="messenger-thread-copy">
                     <h3 id="chatRecipientName"></h3>
                     <p class="messenger-recipient-status" id="chatRecipientStatus"><span class="messenger-presence-dot" aria-hidden="true"></span><span>Private conversation · Offline</span></p>
+                    <p class="messenger-typing-indicator" id="chatTypingStatus" hidden aria-live="polite">Typing…</p>
                   </div>
                   <label class="visually-hidden" for="chatThemeSelect">Chat color theme</label>
                   <select class="messenger-chat-theme" id="chatThemeSelect" aria-label="Chat theme">
@@ -766,7 +770,10 @@
                     <option value="ocean">Ocean</option>
                     <option value="lavender">Lavender</option>
                     <option value="mint">Mint</option>
+                    <option value="custom">Custom</option>
                   </select>
+                  <label class="visually-hidden" for="chatCustomThemeColor">Choose chat color</label>
+                  <input class="messenger-custom-theme-color" id="chatCustomThemeColor" type="color" value="#87516f" aria-label="Choose custom chat color" hidden>
                 </header>
                 <ol class="messenger-messages" id="chatMessages" aria-live="polite" aria-label="Chat messages"></ol>
                 <form class="messenger-compose" id="chatMessageForm">
@@ -827,7 +834,7 @@
       <span>Home</span>
     </a>
     <a class="mobile-tab-link" href="#games">
-      <span class="mobile-tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 8h10a4 4 0 0 1 3.9 3.1l1 4.6a2.4 2.4 0 0 1-4 2.2L15.5 16h-7l-2.4 1.9a2.4 2.4 0 0 1-4-2.2l1-4.6A4 4 0 0 1 7 8Z"/><path d="M8 11v4m-2-2h4m6-1h.01m2 2h.01"/></svg></span>
+      <span class="mobile-tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 8h10a4 4 0 0 1 3.9 3.1l1 4.6a2.4 2.4 0 0 1-4 2.2L15.5 16h-7l-2.4 1.9a2.4 2.4 0 0 1-4-2.2l1-4.6A4 4 0 0 1 7 8Z"/><path d="M8 11v4m-2-2h4"/><path d="M16.1 11.2c-.8-.7-2.1-.1-2.1.9 0 1 2.1 2.3 2.1 2.3s2.1-1.3 2.1-2.3c0-1-1.3-1.6-2.1-.9Z"/></svg></span>
       <span>Games</span>
     </a>
     <a class="mobile-tab-link" href="#music">

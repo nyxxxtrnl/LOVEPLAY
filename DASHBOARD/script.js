@@ -1842,11 +1842,15 @@ document.getElementById("closePhotoAlbum")
     renderPhotoGallery();
   });
 
+function openCreateAlbumDialog() {
+  document.getElementById("createAlbumModal").hidden = false;
+  document.getElementById("newAlbumName").focus();
+}
+
 document.getElementById("addPhotoAlbum")
-  .addEventListener("click", () => {
-    document.getElementById("createAlbumModal").hidden = false;
-    document.getElementById("newAlbumName").focus();
-  });
+  .addEventListener("click", openCreateAlbumDialog);
+document.getElementById("addPhotoAlbumInline")
+  .addEventListener("click", openCreateAlbumDialog);
 
 document.getElementById("createAlbumForm")
   .addEventListener("submit", createPhotoAlbum);
