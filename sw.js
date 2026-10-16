@@ -1,4 +1,4 @@
-const CACHE_NAME = "loveplay-shell-v11";
+const CACHE_NAME = "loveplay-shell-v12";
 const APP_FILES = [
   "index.html",
   "manifest.webmanifest",
@@ -19,7 +19,12 @@ self.addEventListener("install", event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
     const appRoot = self.registration.scope;
-    await cache.addAll(APP_FILES.map(file => new URL(file, appRoot).href));
+    await Promise.all(APP_FILES.map(async file => {
+      const url = new URL(file, appRoot).href;
+      const response = await fetch(new Request(url, { cache: "reload" }));
+      if (!response.ok) throw new Error(`Could not cache ${file} (${response.status}).`);
+      await cache.put(url, response);
+    }));
     await self.skipWaiting();
   })());
 });
@@ -40,7 +45,7 @@ self.addEventListener("fetch", event => {
 
   event.respondWith((async () => {
     try {
-      const response = await fetch(request);
+      const response = await fetch(new Request(request, { cache: "reload" }));
       if (response.ok) {
         const cache = await caches.open(CACHE_NAME);
         await cache.put(request, response.clone());
