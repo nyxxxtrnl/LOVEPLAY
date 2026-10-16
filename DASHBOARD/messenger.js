@@ -48,8 +48,10 @@ const messagesList = document.getElementById("chatMessages");
 const messageForm = document.getElementById("chatMessageForm");
 const messageInput = document.getElementById("chatMessageInput");
 const activeToggle = document.getElementById("chatActiveToggle");
+const settingsActiveToggle = document.getElementById("chatSettingsActiveToggle");
 const profileForm = document.getElementById("chatProfileForm");
 const profileDialog = document.getElementById("chatProfileDialog");
+const settingsDialog = document.getElementById("chatSettingsDialog");
 const profileNameInput = document.getElementById("chatProfileName");
 const profilePhotoInput = document.getElementById("chatProfilePhoto");
 const chatApp = document.getElementById("messengerApp");
@@ -135,7 +137,15 @@ if (!isConfigured) {
   let presenceConnectionUnsubscribe = null;
   let latestConversations = [];
   let selectedAvatarDataUrl = null;
+  let returnToSettingsAfterProfileEdit = false;
   const presenceSubscriptions = new Map();
+
+  function syncActiveToggleControls(checked, disabled) {
+    [activeToggle, settingsActiveToggle].forEach(toggle => {
+      toggle.checked = checked;
+      toggle.disabled = disabled;
+    });
+  }
 
   function clearSubscriptions() {
     if (unsubscribeConversations) unsubscribeConversations();
@@ -204,19 +214,18 @@ if (!isConfigured) {
 
   async function startPresence(user) {
     if (!realtimeDatabase) {
-      activeToggle.checked = false;
-      activeToggle.disabled = true;
+      syncActiveToggleControls(false, true);
       setStatus(`Signed in as ${currentProfile.displayName}. Add the Firebase Realtime Database URL and rules to enable active status.`);
       return;
     }
 
-    activeToggle.disabled = false;
+    syncActiveToggleControls(false, false);
     try {
       const savedPreference = await getRealtimeValue(realtimeRef(realtimeDatabase, `presence/${user.uid}/showActive`));
       currentShowActive = savedPreference.val() !== false;
-      activeToggle.checked = currentShowActive;
+      syncActiveToggleControls(currentShowActive, false);
     } catch (error) {
-      activeToggle.disabled = true;
+      syncActiveToggleControls(currentShowActive, true);
       setStatus(describeError(error, "Loading active-status preference"), true);
       return;
     }
@@ -275,9 +284,13 @@ if (!isConfigured) {
   function renderCurrentProfile() {
     document.getElementById("chatAccountName").textContent = currentProfile.displayName;
     setAvatar(document.getElementById("chatAccountAvatar"), currentProfile);
+    document.getElementById("chatSettingsName").textContent = currentProfile.displayName;
+    setAvatar(document.getElementById("chatSettingsAvatar"), currentProfile);
   }
 
-  function openProfileEditor() {
+  function openProfileEditor(fromSettings = false) {
+    returnToSettingsAfterProfileEdit = fromSettings;
+    if (settingsDialog.open) settingsDialog.close();
     profileNameInput.value = currentProfile.displayName;
     selectedAvatarDataUrl = null;
     profilePhotoInput.value = "";
@@ -605,9 +618,23 @@ if (!isConfigured) {
   profileDialog.addEventListener("close", () => {
     selectedAvatarDataUrl = null;
     profilePhotoInput.value = "";
+    if (returnToSettingsAfterProfileEdit && currentUser) {
+      returnToSettingsAfterProfileEdit = false;
+      settingsDialog.showModal();
+    }
+  });
+  document.getElementById("chatSettingsButton").addEventListener("click", () => {
+    if (currentUser) settingsDialog.showModal();
+  });
+  document.getElementById("chatCloseSettings").addEventListener("click", () => {
+    settingsDialog.close();
+  });
+  document.getElementById("chatSettingsEditProfile").addEventListener("click", () => {
+    openProfileEditor(true);
   });
   document.getElementById("chatBackToList").addEventListener("click", () => {
     chatApp.dataset.chatOpen = "false";
+    document.getElementById("chatEmptyState").hidden = true;
     document.getElementById("chatUserSearch").focus();
   });
 
@@ -783,7 +810,8 @@ if (!isConfigured) {
     }
   });
 
-  document.getElementById("chatSignOut").addEventListener("click", async () => {
+  async function signOutCurrentUser() {
+    settingsDialog.close();
     try {
       stopPresence();
       await signOut(auth);
@@ -791,12 +819,12 @@ if (!isConfigured) {
     } catch (error) {
       setStatus(describeError(error, "Sign out"), true);
     }
-  });
+  }
 
-  activeToggle.addEventListener("change", async () => {
+  async function updateActiveStatus(toggle) {
     if (!realtimeDatabase || !currentUser) return;
-    activeToggle.disabled = true;
-    const requestedPreference = activeToggle.checked;
+    const requestedPreference = toggle.checked;
+    syncActiveToggleControls(requestedPreference, true);
     try {
       await setRealtimeValue(
         realtimeRef(realtimeDatabase, `presence/${currentUser.uid}/showActive`),
@@ -805,12 +833,17 @@ if (!isConfigured) {
       currentShowActive = requestedPreference;
       setStatus(requestedPreference ? "Your active status is visible to signed-in users." : "Your active status is hidden.");
     } catch (error) {
-      activeToggle.checked = currentShowActive;
+      syncActiveToggleControls(currentShowActive, false);
       setStatus(describeError(error, "Updating active status"), true);
     } finally {
-      activeToggle.disabled = false;
+      syncActiveToggleControls(currentShowActive, false);
     }
-  });
+  }
+
+  activeToggle.addEventListener("change", () => updateActiveStatus(activeToggle));
+  settingsActiveToggle.addEventListener("change", () => updateActiveStatus(settingsActiveToggle));
+  [document.getElementById("chatSignOut"), document.getElementById("chatSettingsSignOut")]
+    .forEach(button => button.addEventListener("click", signOutCurrentUser));
 
   onAuthStateChanged(auth, async user => {
     clearSubscriptions();

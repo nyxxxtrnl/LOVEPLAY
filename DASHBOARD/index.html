@@ -586,14 +586,11 @@
 
     <section class="section-wrap content-section tab-panel" id="chat" role="tabpanel" aria-labelledby="tab-chat" tabindex="0" hidden>
       <header class="mobile-chat-header">
-        <a class="mobile-chat-back" href="#home" aria-label="Back to LovePlay home">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6M9 12h12"/></svg>
-        </a>
-        <h2>Chat</h2>
-        <span class="mobile-chat-heart" aria-label="Hearts collected">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.8 4.8a5.4 5.4 0 0 0-7.6 0L12 6l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6l1.2 1.2L12 21l7.6-7.4 1.2-1.2a5.4 5.4 0 0 0 0-7.6Z"/></svg>
-          <span id="chatHeartCount">0</span>
-        </span>
+        <h2>LOVEPLAY CHAT</h2>
+        <button class="mobile-chat-settings" id="chatSettingsButton" type="button" aria-haspopup="dialog" aria-controls="chatSettingsDialog">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V4a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2.9Z"/></svg>
+          <span>Settings</span>
+        </button>
       </header>
       <div class="section-heading">
         <div>
@@ -647,6 +644,34 @@
               <button class="button button-quiet" id="chatSignOut" type="button">Sign out</button>
             </div>
           </div>
+          <dialog class="messenger-settings-dialog" id="chatSettingsDialog" aria-labelledby="chatSettingsTitle">
+            <div class="messenger-settings-content">
+              <div class="messenger-profile-heading">
+                <div>
+                  <h3 id="chatSettingsTitle">Chat settings</h3>
+                  <p>Manage your LovePlay chat profile and status.</p>
+                </div>
+                <button class="messenger-icon-button" id="chatCloseSettings" type="button" aria-label="Close chat settings">×</button>
+              </div>
+              <div class="messenger-settings-profile">
+                <span class="messenger-avatar messenger-avatar-large" id="chatSettingsAvatar" aria-hidden="true"><img alt=""><span>?</span></span>
+                <div class="messenger-settings-profile-copy">
+                  <span>Your profile</span>
+                  <strong id="chatSettingsName"></strong>
+                  <button class="messenger-secondary-button" id="chatSettingsEditProfile" type="button">Edit profile</button>
+                </div>
+              </div>
+              <label class="messenger-settings-active" for="chatSettingsActiveToggle">
+                <span class="messenger-settings-active-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8m-4-4v8"/></svg></span>
+                <span class="messenger-settings-active-copy"><strong>Show me as active</strong><small>Let people see when you are online.</small></span>
+                <input id="chatSettingsActiveToggle" type="checkbox" checked>
+              </label>
+              <button class="messenger-settings-signout" id="chatSettingsSignOut" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5m5 5H3m9-9h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></svg>
+                <span>Sign out</span>
+              </button>
+            </div>
+          </dialog>
           <dialog class="messenger-profile-dialog" id="chatProfileDialog" aria-labelledby="chatProfileTitle">
             <form class="messenger-profile-form" id="chatProfileForm">
               <div class="messenger-profile-heading">
