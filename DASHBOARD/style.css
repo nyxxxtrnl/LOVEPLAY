@@ -293,7 +293,7 @@ a {
   top: 43%;
   left: 0;
   display: grid;
-  width: 20px;
+  width: 16px;
   min-height: 60px;
   padding: 0;
   border: 1px solid var(--line);
@@ -321,7 +321,7 @@ a {
 
 .dashboard-settings-tab:hover,
 .dashboard-settings-tab:focus-visible {
-  width: 20px;
+  width: 16px;
 }
 
 .dashboard-settings-close:hover {
