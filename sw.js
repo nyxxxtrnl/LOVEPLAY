@@ -1,4 +1,4 @@
-const CACHE_NAME = "loveplay-shell-v2";
+const CACHE_NAME = "loveplay-shell-v3";
 const APP_FILES = [
   "index.html",
   "manifest.webmanifest",
@@ -9,6 +9,7 @@ const APP_FILES = [
   "DASHBOARD/messenger.css",
   "DASHBOARD/firebase-config.js",
   "ASSETS/loveplay-icon.svg",
+  "ASSETS/avatar-default.svg",
   "ASSETS/roblox-logo.svg",
   "ASSETS/mlbb-logo.svg",
   ...Array.from({ length: 21 }, (_, index) => `ASSETS/memory-${index + 1}.jpg`)

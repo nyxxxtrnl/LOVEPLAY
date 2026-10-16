@@ -590,12 +590,15 @@
         <div class="messenger-app" id="messengerApp" hidden>
           <div class="messenger-account-bar">
             <div class="messenger-account-profile">
-              <div class="messenger-avatar" id="chatAccountAvatar" aria-hidden="true"><img alt="" hidden><span>?</span></div>
+              <button class="messenger-avatar-button" id="chatEditProfile" type="button" aria-label="Edit profile photo and name">
+                <span class="messenger-avatar" id="chatAccountAvatar" aria-hidden="true"><img alt=""><span>?</span></span>
+                <span class="messenger-avatar-camera" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M7 4.5 5.8 6H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-1.8L13 4.5H7ZM10 15a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.7a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6Z"/></svg></span>
+              </button>
               <div class="messenger-account-copy">
                 <span>Your profile</span>
                 <strong id="chatAccountName"></strong>
               </div>
-              <button class="messenger-secondary-button" id="chatEditProfile" type="button">Edit profile</button>
+              <button class="messenger-secondary-button" id="chatEditProfileDetails" type="button">Edit profile</button>
             </div>
             <div class="messenger-account-actions">
               <label class="messenger-active-toggle" for="chatActiveToggle">
@@ -605,33 +608,39 @@
               <button class="button button-quiet" id="chatSignOut" type="button">Sign out</button>
             </div>
           </div>
-          <form class="messenger-profile-form" id="chatProfileForm" hidden>
-            <div class="messenger-profile-heading">
-              <div>
-                <h3>Edit your profile</h3>
-                <p>Your photo and name are shown to people you chat with.</p>
-              </div>
-              <button class="messenger-icon-button" id="chatCancelProfile" type="button" aria-label="Close profile settings">×</button>
-            </div>
-            <div class="messenger-profile-fields">
-              <div class="messenger-profile-photo">
-                <div class="messenger-avatar messenger-avatar-large" id="chatProfileAvatar" aria-hidden="true"><img alt="" hidden><span>?</span></div>
+          <dialog class="messenger-profile-dialog" id="chatProfileDialog" aria-labelledby="chatProfileTitle">
+            <form class="messenger-profile-form" id="chatProfileForm">
+              <div class="messenger-profile-heading">
                 <div>
-                  <label class="messenger-secondary-button messenger-photo-picker" for="chatProfilePhoto">Choose photo</label>
-                  <input class="visually-hidden" id="chatProfilePhoto" type="file" accept="image/*">
-                  <button class="messenger-text-button" id="chatRemovePhoto" type="button">Remove photo</button>
+                  <h3 id="chatProfileTitle">Edit your profile</h3>
+                  <p>Your photo and name are shown to people you chat with.</p>
+                </div>
+                <button class="messenger-icon-button" id="chatCancelProfile" type="button" aria-label="Close profile settings">×</button>
+              </div>
+              <div class="messenger-profile-fields">
+                <div class="messenger-profile-photo">
+                  <label class="messenger-avatar-edit" for="chatProfilePhoto" aria-label="Change profile photo">
+                    <span class="messenger-avatar messenger-avatar-large" id="chatProfileAvatar" aria-hidden="true"><img alt=""><span>?</span></span>
+                    <span class="messenger-avatar-camera" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M7 4.5 5.8 6H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-1.8L13 4.5H7ZM10 15a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.7a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6Z"/></svg></span>
+                  </label>
+                  <div class="messenger-photo-actions">
+                    <label class="messenger-photo-picker" for="chatProfilePhoto">Choose a photo</label>
+                    <span>JPG, PNG, or another image · max 8 MB</span>
+                    <input class="visually-hidden" id="chatProfilePhoto" type="file" accept="image/*">
+                    <button class="messenger-text-button" id="chatRemovePhoto" type="button">Remove photo</button>
+                  </div>
+                </div>
+                <label class="messenger-profile-name" for="chatProfileName">
+                  Display name
+                  <input id="chatProfileName" type="text" maxlength="40" minlength="2" autocomplete="name" required>
+                </label>
+                <div class="messenger-profile-actions">
+                  <button class="messenger-secondary-button" id="chatCancelProfileFooter" type="button">Cancel</button>
+                  <button class="messenger-primary-button" type="submit">Save changes</button>
                 </div>
               </div>
-              <label class="messenger-profile-name" for="chatProfileName">
-                Display name
-                <input id="chatProfileName" type="text" maxlength="40" minlength="2" autocomplete="name" required>
-              </label>
-              <div class="messenger-profile-actions">
-                <button class="messenger-secondary-button" id="chatCancelProfileFooter" type="button">Cancel</button>
-                <button class="messenger-primary-button" type="submit">Save changes</button>
-              </div>
-            </div>
-          </form>
+            </form>
+          </dialog>
           <div class="messenger-workspace">
             <aside class="messenger-sidebar" aria-label="People and conversations">
               <div class="messenger-sidebar-heading">
@@ -656,7 +665,7 @@
               <div class="messenger-thread" id="chatThread" hidden>
                 <header class="messenger-thread-header">
                   <button class="messenger-back-button" id="chatBackToList" type="button"><span aria-hidden="true">‹</span> Chats</button>
-                  <div class="messenger-avatar" id="chatRecipientAvatar" aria-hidden="true"><img alt="" hidden><span>?</span></div>
+                  <div class="messenger-avatar" id="chatRecipientAvatar" aria-hidden="true"><img alt=""><span>?</span></div>
                   <div class="messenger-thread-copy">
                     <h3 id="chatRecipientName"></h3>
                     <p class="messenger-recipient-status" id="chatRecipientStatus"><span class="messenger-presence-dot" aria-hidden="true"></span><span>Private conversation · Offline</span></p>

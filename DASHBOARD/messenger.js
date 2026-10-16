@@ -49,6 +49,7 @@ const messageForm = document.getElementById("chatMessageForm");
 const messageInput = document.getElementById("chatMessageInput");
 const activeToggle = document.getElementById("chatActiveToggle");
 const profileForm = document.getElementById("chatProfileForm");
+const profileDialog = document.getElementById("chatProfileDialog");
 const profileNameInput = document.getElementById("chatProfileName");
 const profilePhotoInput = document.getElementById("chatProfilePhoto");
 const chatApp = document.getElementById("messengerApp");
@@ -259,11 +260,15 @@ if (!isConfigured) {
     const image = container.querySelector("img");
     const fallback = container.querySelector("span");
     const photoUrl = typeof profile.photoUrl === "string" ? profile.photoUrl : "";
-    image.hidden = !photoUrl;
-    image.alt = photoUrl ? `${profile.displayName} profile photo` : "";
-    if (photoUrl) image.src = photoUrl;
-    else image.removeAttribute("src");
-    fallback.hidden = Boolean(photoUrl);
+    image.hidden = false;
+    image.alt = photoUrl ? `${profile.displayName} profile photo` : "Default profile avatar";
+    image.onerror = () => {
+      image.onerror = null;
+      image.src = "../ASSETS/avatar-default.svg";
+      image.alt = "Default profile avatar";
+    };
+    image.src = photoUrl || "../ASSETS/avatar-default.svg";
+    fallback.hidden = true;
     fallback.textContent = profile.displayName.trim().charAt(0).toLocaleUpperCase() || "?";
   }
 
@@ -277,12 +282,12 @@ if (!isConfigured) {
     selectedAvatarDataUrl = null;
     profilePhotoInput.value = "";
     setAvatar(document.getElementById("chatProfileAvatar"), currentProfile);
-    profileForm.hidden = false;
+    profileDialog.showModal();
     profileNameInput.focus();
   }
 
   function closeProfileEditor() {
-    profileForm.hidden = true;
+    if (profileDialog.open) profileDialog.close();
     selectedAvatarDataUrl = null;
     profilePhotoInput.value = "";
   }
@@ -594,8 +599,13 @@ if (!isConfigured) {
   }
 
   document.getElementById("chatEditProfile").addEventListener("click", openProfileEditor);
+  document.getElementById("chatEditProfileDetails").addEventListener("click", openProfileEditor);
   document.getElementById("chatCancelProfile").addEventListener("click", closeProfileEditor);
   document.getElementById("chatCancelProfileFooter").addEventListener("click", closeProfileEditor);
+  profileDialog.addEventListener("close", () => {
+    selectedAvatarDataUrl = null;
+    profilePhotoInput.value = "";
+  });
   document.getElementById("chatBackToList").addEventListener("click", () => {
     chatApp.dataset.chatOpen = "false";
     document.getElementById("chatUserSearch").focus();
