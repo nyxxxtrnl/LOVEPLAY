@@ -3252,8 +3252,10 @@ renderTikTokVideo();
 const menuToggle = document.getElementById("menuToggle");
 const mainNav = document.getElementById("mainNav");
 const tabLinks = Array.from(mainNav.querySelectorAll('[role="tab"]'));
+const mobileTabLinks = Array.from(document.querySelectorAll(".mobile-tab-link"));
 const tabPanels = Array.from(document.querySelectorAll('main > [role="tabpanel"]'));
 const homePanel = document.getElementById("home");
+const dashboardPanelIds = new Set([homePanel, ...tabPanels].map(panel => panel.id));
 
 function activateTab(tabId) {
   const activePanel =
@@ -3272,12 +3274,28 @@ function activateTab(tabId) {
     link.setAttribute("aria-selected", String(selected));
     link.tabIndex = selected ? 0 : -1;
   });
+  mobileTabLinks.forEach(link => {
+    const selected = link.hash === `#${activePanel.id}` ||
+      (link.hash === "#more-apps" && !["home", "games", "music", "pictures"].includes(activePanel.id));
+    if (selected) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+  if (window.matchMedia("(max-width: 600px)").matches) {
+    window.scrollTo(0, 0);
+  }
   updateFeaturedRotation();
 }
 
 activateTab(window.location.hash.slice(1) || "home");
 
 window.addEventListener("hashchange", () => {
+  activateTab(window.location.hash.slice(1) || "home");
+});
+
+window.addEventListener("popstate", () => {
   activateTab(window.location.hash.slice(1) || "home");
 });
 
@@ -3305,13 +3323,31 @@ tabLinks.forEach((link, index) => {
   });
 });
 
+function closeNavigationMenu() {
+  mainNav.classList.remove("open");
+  menuToggle.setAttribute("aria-expanded", "false");
+  menuToggle.setAttribute("aria-label", "Open navigation menu");
+}
+
 menuToggle.addEventListener("click", () => {
-  mainNav.classList.toggle("open");
+  const isOpen = mainNav.classList.toggle("open");
+  menuToggle.setAttribute("aria-expanded", String(isOpen));
+  menuToggle.setAttribute("aria-label", isOpen ? "Close navigation menu" : "Open navigation menu");
 });
 
-mainNav.querySelectorAll("a").forEach(link => {
-  link.addEventListener("click", () => {
-    mainNav.classList.remove("open");
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  if (!dashboardPanelIds.has(link.hash.slice(1))) return;
+  link.addEventListener("click", event => {
+    if (window.matchMedia("(max-width: 600px)").matches) {
+      event.preventDefault();
+      if (window.location.hash !== link.hash) {
+        window.history.pushState(null, "", link.hash);
+      }
+      activateTab(link.hash.slice(1));
+    }
+    if (mainNav.contains(link) || mobileTabLinks.includes(link) || link.closest(".mobile-extra-links")) {
+      closeNavigationMenu();
+    }
   });
 });
 
