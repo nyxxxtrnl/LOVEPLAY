@@ -3489,11 +3489,36 @@ footer p {
   .ee-tool-layout { grid-template-columns: minmax(0, 1fr) minmax(125px, 0.85fr); }
   .ee-reference-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero {
+    position: relative;
+    min-height: 0;
     grid-template-columns: 1fr;
+    align-items: start;
     padding-block: 45px 25px;
-    text-align: center;
+    text-align: left;
   }
-  .hero-art { min-height: 240px; }
+  .hero > div:first-child {
+    width: 100%;
+  }
+  .hero h1 {
+    max-width: calc(100% - 58px);
+    font-size: clamp(2rem, 8vw, 2.5rem);
+  }
+  .hero-art {
+    position: absolute;
+    top: 82px;
+    right: 0;
+    width: 50px;
+    min-height: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+  .big-heart {
+    font-size: 2.5rem;
+    text-shadow: 0 5px 14px #d85d8835;
+  }
+  .floating-note {
+    display: none;
+  }
   .featured-showcase { min-height: 390px; aspect-ratio: auto; }
   .featured-copy { width: 100%; padding: 32px 24px 100px; }
   .featured-shade { background: linear-gradient(0deg, rgba(28, 14, 26, 0.88), rgba(28, 14, 26, 0.28)); }
