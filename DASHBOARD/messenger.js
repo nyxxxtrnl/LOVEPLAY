@@ -167,8 +167,9 @@ if (!isConfigured) {
   let currentRecipientPresence = null;
   let recipientSeenMessageId = null;
   let typingTimer = null;
+  let typingIdleTimer = null;
+  let recipientTypingTimer = null;
   let typingGeneration = 0;
-  let typingDisconnectConversationId = null;
   let lastSeenMessageId = null;
   let mediaRecorder = null;
   let recordingChunks = [];
@@ -296,7 +297,6 @@ if (!isConfigured) {
     currentRecipient = null;
     currentRecipientPresence = null;
     recipientSeenMessageId = null;
-    typingDisconnectConversationId = null;
     lastSeenMessageId = null;
     chatApp.dataset.chatOpen = "false";
     if (unsubscribeMessages) unsubscribeMessages();
@@ -305,12 +305,24 @@ if (!isConfigured) {
     document.getElementById("chatEmptyState").hidden = false;
     document.getElementById("chatEmptyState").textContent = "Search for a person to start a private chat.";
     document.getElementById("chatTypingStatus").hidden = true;
+    clearTimeout(recipientTypingTimer);
+    recipientTypingTimer = null;
     messagesList.replaceChildren();
   }
 
   function renderRecipientActivity() {
-    const typing = currentRecipientPresence?.typing?.[currentConversationId] === true;
+    clearTimeout(recipientTypingTimer);
+    recipientTypingTimer = null;
+    const typingStatus = currentRecipientPresence?.typing?.[currentConversationId];
+    const updatedAt = typingStatus && typeof typingStatus === "object"
+      ? typingStatus.updatedAt
+      : null;
+    const age = typeof updatedAt === "number" ? Date.now() - updatedAt : Infinity;
+    const typing = age >= 0 && age < 3000;
     document.getElementById("chatTypingStatus").hidden = !typing;
+    if (typing) {
+      recipientTypingTimer = setTimeout(renderRecipientActivity, 3000 - age);
+    }
   }
 
   function renderMessagesFromCurrentSnapshot() {
@@ -320,7 +332,9 @@ if (!isConfigured) {
   function stopTyping() {
     typingGeneration += 1;
     clearTimeout(typingTimer);
+    clearTimeout(typingIdleTimer);
     typingTimer = null;
+    typingIdleTimer = null;
     if (!realtimeDatabase || !currentUser || !currentConversationId) return;
     removeRealtimeValue(
       realtimeRef(realtimeDatabase, `presence/${currentUser.uid}/typing/${currentConversationId}`)
@@ -329,11 +343,13 @@ if (!isConfigured) {
 
   function updateTypingStatus() {
     clearTimeout(typingTimer);
+    clearTimeout(typingIdleTimer);
     const generation = ++typingGeneration;
     if (!realtimeDatabase || !currentUser || !currentConversationId) return;
+    const conversationId = currentConversationId;
     const typingRef = realtimeRef(
       realtimeDatabase,
-      `presence/${currentUser.uid}/typing/${currentConversationId}`
+      `presence/${currentUser.uid}/typing/${conversationId}`
     );
     if (!messageInput.value.trim()) {
       removeRealtimeValue(typingRef).catch(error => setStatus(describeError(error, "Updating typing status"), true));
@@ -341,20 +357,18 @@ if (!isConfigured) {
     }
     typingTimer = setTimeout(async () => {
       try {
-        await setRealtimeValue(typingRef, true);
-        if (generation !== typingGeneration) {
+        await onDisconnect(typingRef).remove();
+        if (generation !== typingGeneration || conversationId !== currentConversationId) return;
+        await setRealtimeValue(typingRef, { updatedAt: realtimeServerTimestamp() });
+        if (generation !== typingGeneration || conversationId !== currentConversationId) {
           await removeRealtimeValue(typingRef);
           return;
         }
-        if (typingDisconnectConversationId !== currentConversationId) {
-          typingDisconnectConversationId = currentConversationId;
-          await onDisconnect(typingRef).remove();
-        }
-        typingTimer = setTimeout(() => {
-          if (generation === typingGeneration) {
+        typingIdleTimer = setTimeout(() => {
+          if (generation === typingGeneration && conversationId === currentConversationId) {
             removeRealtimeValue(typingRef).catch(error => setStatus(describeError(error, "Updating typing status"), true));
           }
-        }, 2000);
+        }, 1800);
       } catch (error) {
         setStatus(describeError(error, "Updating typing status"), true);
       }
@@ -864,7 +878,6 @@ if (!isConfigured) {
   async function openConversation(recipient) {
     if (!currentUser || recipient.uid === currentUser.uid) return;
     stopTyping();
-    typingDisconnectConversationId = null;
     const participants = [currentUser.uid, recipient.uid].sort();
     const conversationId = `dm_${participants.join("_")}`;
     const conversationRef = doc(db, "conversations", conversationId);
@@ -873,6 +886,8 @@ if (!isConfigured) {
     currentRecipientPresence = null;
     recipientSeenMessageId = null;
     lastSeenMessageId = null;
+    clearTimeout(recipientTypingTimer);
+    recipientTypingTimer = null;
     clearTimeout(typingTimer);
     typingTimer = null;
     document.getElementById("chatRecipientName").textContent = recipient.displayName;
