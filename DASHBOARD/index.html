@@ -778,18 +778,9 @@
                   <div class="messenger-avatar" id="chatRecipientAvatar" aria-hidden="true"><img alt=""><span>?</span></div>
                   <div class="messenger-thread-copy">
                     <h3 id="chatRecipientName"></h3>
-                    <p class="messenger-recipient-status" id="chatRecipientStatus"><span class="messenger-presence-dot" aria-hidden="true"></span><span>Private conversation · Offline</span></p>
+                    <p class="messenger-recipient-status" id="chatRecipientStatus"><span class="messenger-presence-dot" aria-hidden="true"></span><span>Offline</span></p>
                   </div>
-                  <label class="visually-hidden" for="chatThemeSelect">Chat color theme</label>
-                  <select class="messenger-chat-theme" id="chatThemeSelect" aria-label="Chat theme">
-                    <option value="berry">Berry</option>
-                    <option value="ocean">Ocean</option>
-                    <option value="lavender">Lavender</option>
-                    <option value="mint">Mint</option>
-                    <option value="custom">Custom</option>
-                  </select>
-                  <label class="visually-hidden" for="chatCustomThemeColor">Choose chat color</label>
-                  <input class="messenger-custom-theme-color" id="chatCustomThemeColor" type="color" value="#87516f" aria-label="Choose custom chat color" hidden>
+                  <button class="messenger-info-button" id="chatInfoButton" type="button" aria-label="Conversation information" aria-haspopup="dialog" aria-controls="chatInfoDialog">i</button>
                 </header>
                 <ol class="messenger-messages" id="chatMessages" aria-live="polite" aria-label="Chat messages"></ol>
                 <form class="messenger-compose" id="chatMessageForm">
@@ -816,6 +807,52 @@
                     <button class="button button-primary" type="submit" aria-label="Send message"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4 20-7Zm0 0L11 13"/></svg><span>Send</span></button>
                   </div>
                 </form>
+                <dialog class="messenger-info-dialog" id="chatInfoDialog" aria-labelledby="chatInfoTitle">
+                  <div class="messenger-info-content">
+                    <div class="messenger-profile-heading">
+                      <div>
+                        <h3 id="chatInfoTitle">Conversation information</h3>
+                        <p id="chatInfoRecipientName"></p>
+                      </div>
+                      <button class="messenger-icon-button" id="chatCloseInfo" type="button" aria-label="Close conversation information">×</button>
+                    </div>
+                    <form class="messenger-nickname-form" id="chatNicknameForm">
+                      <label for="chatNicknameInput">Nickname (only you can see this)</label>
+                      <div class="messenger-nickname-row">
+                        <input id="chatNicknameInput" type="text" maxlength="40" autocomplete="off" required>
+                        <button class="messenger-secondary-button" type="submit">Save</button>
+                      </div>
+                    </form>
+                    <section class="messenger-info-section" aria-labelledby="chatSharedPhotosTitle">
+                      <h4 id="chatSharedPhotosTitle">Shared photos</h4>
+                      <button class="messenger-secondary-button" id="chatViewImages" type="button" aria-expanded="false" aria-controls="chatSharedPhotos">View images</button>
+                      <div class="messenger-shared-photos" id="chatSharedPhotos" hidden></div>
+                    </section>
+                    <section class="messenger-info-section" aria-labelledby="chatCustomizeTitle">
+                      <h4 id="chatCustomizeTitle">Customize chat</h4>
+                      <label for="chatThemeSelect">Chat theme</label>
+                      <select class="messenger-chat-theme" id="chatThemeSelect" aria-label="Chat theme">
+                        <option value="berry">Berry</option>
+                        <option value="ocean">Ocean</option>
+                        <option value="lavender">Lavender</option>
+                        <option value="mint">Mint</option>
+                        <option value="custom">Custom</option>
+                      </select>
+                      <div class="messenger-custom-color-control" id="chatCustomColorControl" hidden>
+                        <label class="messenger-custom-theme-label" for="chatCustomThemeColor">Choose custom color</label>
+                        <input class="messenger-custom-theme-color" id="chatCustomThemeColor" type="color" value="#87516f" aria-label="Choose custom chat color">
+                      </div>
+                    </section>
+                    <div class="messenger-info-actions">
+                      <button class="messenger-secondary-button" id="chatBlockButton" type="button">Block</button>
+                      <button class="messenger-danger-button" id="chatDeleteConversation" type="button">Delete chat</button>
+                    </div>
+                  </div>
+                </dialog>
+                <dialog class="messenger-image-preview" id="chatImagePreview" aria-label="Shared image preview">
+                  <button class="messenger-icon-button" id="chatCloseImagePreview" type="button" aria-label="Close image preview">×</button>
+                  <img id="chatImagePreviewImage" alt="Shared image">
+                </dialog>
                 <dialog class="messenger-gif-dialog" id="chatGifDialog" aria-labelledby="chatGifTitle">
                   <form class="messenger-gif-form" id="chatGifForm">
                     <div class="messenger-profile-heading">

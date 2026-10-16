@@ -27,6 +27,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 import {
   collection,
+  arrayRemove,
+  arrayUnion,
   deleteDoc,
   deleteField,
   doc,
@@ -64,6 +66,13 @@ const gifDialog = document.getElementById("chatGifDialog");
 const gifForm = document.getElementById("chatGifForm");
 const chatThemeSelect = document.getElementById("chatThemeSelect");
 const chatCustomThemeColor = document.getElementById("chatCustomThemeColor");
+const chatCustomColorControl = document.getElementById("chatCustomColorControl");
+const chatInfoDialog = document.getElementById("chatInfoDialog");
+const chatNicknameForm = document.getElementById("chatNicknameForm");
+const chatNicknameInput = document.getElementById("chatNicknameInput");
+const chatSharedPhotos = document.getElementById("chatSharedPhotos");
+const chatImagePreview = document.getElementById("chatImagePreview");
+const chatImagePreviewImage = document.getElementById("chatImagePreviewImage");
 const activeToggle = document.getElementById("chatActiveToggle");
 const settingsActiveToggle = document.getElementById("chatSettingsActiveToggle");
 const profileForm = document.getElementById("chatProfileForm");
@@ -151,9 +160,11 @@ if (!isConfigured) {
   let currentUser = null;
   let currentProfile = null;
   let currentConversationId = null;
+  let currentConversationData = {};
   let currentRecipient = null;
   let latestMessageSnapshot = null;
   let unsubscribeConversations = null;
+  let unsubscribeConversation = null;
   let unsubscribeMessages = null;
   let searchTimer = null;
   let searchRequest = 0;
@@ -183,8 +194,10 @@ if (!isConfigured) {
 
   function clearSubscriptions() {
     if (unsubscribeConversations) unsubscribeConversations();
+    if (unsubscribeConversation) unsubscribeConversation();
     if (unsubscribeMessages) unsubscribeMessages();
     unsubscribeConversations = null;
+    unsubscribeConversation = null;
     unsubscribeMessages = null;
   }
 
@@ -210,7 +223,7 @@ if (!isConfigured) {
       if (label) label.textContent = online ? "Active" : "Offline";
       if (element.id === "chatRecipientStatus") {
         const description = element.querySelector("span:last-child");
-        if (description) description.textContent = `Private conversation · ${online ? "Active" : "Offline"}`;
+        if (description) description.textContent = online ? "Active" : "Offline";
       }
     });
   }
@@ -287,7 +300,12 @@ if (!isConfigured) {
   }
 
   function clearConversation() {
+    if (unsubscribeConversation) unsubscribeConversation();
+    unsubscribeConversation = null;
+    if (chatInfoDialog.open) chatInfoDialog.close();
+    if (chatImagePreview.open) chatImagePreview.close();
     currentConversationId = null;
+    currentConversationData = {};
     currentRecipient = null;
     currentRecipientPresence = null;
     recipientSeenMessageId = null;
@@ -299,6 +317,53 @@ if (!isConfigured) {
     document.getElementById("chatEmptyState").hidden = false;
     document.getElementById("chatEmptyState").textContent = "Search for a person to start a private chat.";
     messagesList.replaceChildren();
+    chatSharedPhotos.replaceChildren();
+    chatSharedPhotos.hidden = true;
+    document.getElementById("chatViewImages").setAttribute("aria-expanded", "false");
+    messageForm.querySelectorAll("textarea, button").forEach(control => {
+      control.disabled = false;
+    });
+  }
+
+  function nicknameStorageKey(profile) {
+    return `loveplay-chat-nickname-${currentUser.uid}-${profile.uid}`;
+  }
+
+  function recipientDisplayName(profile) {
+    try {
+      return localStorage.getItem(nicknameStorageKey(profile)) || profile.displayName;
+    } catch (error) {
+      setStatus("Could not load this conversation's nickname.", true);
+      return profile.displayName;
+    }
+  }
+
+  function conversationIsBlocked() {
+    return Array.isArray(currentConversationData.blockedBy) && currentConversationData.blockedBy.includes(currentRecipient?.uid);
+  }
+
+  function syncConversationInfo() {
+    if (!currentConversationId || !currentRecipient) return;
+    const nickname = recipientDisplayName(currentRecipient);
+    document.getElementById("chatRecipientName").textContent = nickname;
+    document.getElementById("chatInfoRecipientName").textContent = currentRecipient.displayName;
+    if (chatNicknameInput !== document.activeElement) chatNicknameInput.value = nickname;
+    const blockedBy = Array.isArray(currentConversationData.blockedBy) ? currentConversationData.blockedBy : [];
+    const blockedByMe = blockedBy.includes(currentUser.uid);
+    const blockedByOther = blockedBy.includes(currentRecipient.uid);
+    const blockButton = document.getElementById("chatBlockButton");
+    blockButton.textContent = blockedByMe ? "Unblock" : blockedByOther ? "Blocked" : "Block";
+    blockButton.disabled = blockedByOther && !blockedByMe;
+    const blocked = blockedByOther;
+    chatApp.dataset.conversationBlocked = String(blocked);
+    messageForm.querySelectorAll("textarea, button").forEach(control => {
+      control.disabled = blocked;
+    });
+    if (blocked) {
+      setStatus("This person has blocked you.");
+    } else {
+      setStatus("");
+    }
   }
 
   function renderMessagesFromCurrentSnapshot() {
@@ -440,7 +505,7 @@ if (!isConfigured) {
     const copy = document.createElement("div");
     copy.className = "messenger-person-copy";
     const name = document.createElement("strong");
-    name.textContent = profile.displayName;
+    name.textContent = recipientDisplayName(profile);
     const detail = document.createElement("span");
     detail.textContent = subtitle;
     copy.append(name, detail);
@@ -511,6 +576,10 @@ if (!isConfigured) {
 
   async function sendChatMessage({ type = "text", text = "", blob = null, mediaUrl = "" } = {}) {
     if (!currentConversationId || !currentRecipient || !currentUser) return;
+    if (conversationIsBlocked()) {
+      setStatus("This person has blocked you.", true);
+      return;
+    }
     const conversationId = currentConversationId;
     const conversationRef = doc(db, "conversations", conversationId);
     const messageRef = doc(collection(db, "conversations", conversationId, "messages"));
@@ -808,23 +877,27 @@ if (!isConfigured) {
 
   async function openConversation(recipient) {
     if (!currentUser || recipient.uid === currentUser.uid) return;
+    if (unsubscribeConversation) unsubscribeConversation();
+    unsubscribeConversation = null;
     const participants = [currentUser.uid, recipient.uid].sort();
     const conversationId = `dm_${participants.join("_")}`;
     const conversationRef = doc(db, "conversations", conversationId);
     currentConversationId = conversationId;
+    currentConversationData = {};
     currentRecipient = recipient;
     currentRecipientPresence = null;
     recipientSeenMessageId = null;
     lastSeenMessageId = null;
-    document.getElementById("chatRecipientName").textContent = recipient.displayName;
+    document.getElementById("chatRecipientName").textContent = recipientDisplayName(recipient);
     setAvatar(document.getElementById("chatRecipientAvatar"), recipient);
     const recipientStatus = document.getElementById("chatRecipientStatus");
     recipientStatus.dataset.presenceUid = recipient.uid;
-    recipientStatus.querySelector("span:last-child").textContent = "Private conversation · Offline";
+    recipientStatus.querySelector("span:last-child").textContent = "Offline";
     document.getElementById("chatThread").hidden = false;
     document.getElementById("chatEmptyState").hidden = true;
     chatApp.dataset.chatOpen = "true";
     applyChatTheme(conversationId);
+    syncConversationInfo();
     messagesList.replaceChildren();
     syncPresenceSubscriptions();
 
@@ -837,9 +910,22 @@ if (!isConfigured) {
           updatedAt: serverTimestamp(),
           lastMessage: ""
         });
+        currentConversationData = { participants };
+      } else {
+        currentConversationData = existing.data();
+        if (Array.isArray(currentConversationData.hiddenFor) && currentConversationData.hiddenFor.includes(currentUser.uid)) {
+          await updateDoc(conversationRef, { hiddenFor: arrayRemove(currentUser.uid) });
+        }
       }
+      unsubscribeConversation = onSnapshot(conversationRef, snapshot => {
+        if (currentConversationId !== conversationId || !snapshot.exists()) return;
+        currentConversationData = snapshot.data();
+        syncConversationInfo();
+      }, error => {
+        setStatus(describeError(error, "Loading conversation information"), true);
+      });
       subscribeToMessages(conversationId);
-      setStatus(`Private chat with ${recipient.displayName}.`);
+      syncConversationInfo();
       messageInput.focus();
     } catch (error) {
       setStatus(describeError(error, "Opening chat"), true);
@@ -855,6 +941,7 @@ if (!isConfigured) {
     });
     const items = await Promise.all(conversations.map(async conversationSnapshot => {
       const conversation = conversationSnapshot.data();
+      if (conversation.hiddenFor?.includes(currentUser.uid) || conversation.blockedBy?.includes(currentUser.uid)) return null;
       const recipientId = conversation.participants.find(uid => uid !== currentUser.uid);
       if (!recipientId) return null;
       const profile = await getProfile(recipientId);
@@ -926,6 +1013,102 @@ if (!isConfigured) {
 
   document.getElementById("chatEditProfile").addEventListener("click", openProfileEditor);
   document.getElementById("chatEditProfileDetails").addEventListener("click", openProfileEditor);
+  document.getElementById("chatInfoButton").addEventListener("click", () => {
+    if (!currentRecipient || !currentConversationId) return;
+    syncConversationInfo();
+    chatInfoDialog.showModal();
+  });
+  document.getElementById("chatCloseInfo").addEventListener("click", () => {
+    chatInfoDialog.close();
+  });
+  chatNicknameForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!currentRecipient || !currentUser) return;
+    const nickname = chatNicknameInput.value.trim();
+    if (nickname.length < 1 || nickname.length > 40) {
+      setStatus("Nickname must be between 1 and 40 characters.", true);
+      return;
+    }
+    try {
+      const key = nicknameStorageKey(currentRecipient);
+      if (nickname === currentRecipient.displayName) localStorage.removeItem(key);
+      else localStorage.setItem(key, nickname);
+      syncConversationInfo();
+      await renderConversations({ docs: latestConversations });
+      setStatus("Nickname saved on this device.");
+    } catch (error) {
+      setStatus("Could not save this conversation's nickname.", true);
+    }
+  });
+  document.getElementById("chatViewImages").addEventListener("click", () => {
+    const button = document.getElementById("chatViewImages");
+    const opening = chatSharedPhotos.hidden;
+    chatSharedPhotos.hidden = !opening;
+    button.setAttribute("aria-expanded", String(opening));
+    if (!opening) return;
+
+    chatSharedPhotos.replaceChildren();
+    const imageMessages = latestMessageSnapshot?.docs
+      .map(messageSnapshot => messageSnapshot.data())
+      .filter(message => (message.type === "image" || message.type === "gif") && typeof message.mediaUrl === "string") || [];
+    if (!imageMessages.length) {
+      const empty = document.createElement("p");
+      empty.textContent = "No images have been shared in this conversation yet.";
+      chatSharedPhotos.append(empty);
+      return;
+    }
+    imageMessages.reverse().forEach((message, index) => {
+      const tile = document.createElement("div");
+      const button = document.createElement("button");
+      button.type = "button";
+      button.setAttribute("aria-label", `View shared image ${index + 1}`);
+      const image = document.createElement("img");
+      image.src = message.mediaUrl;
+      image.alt = `Shared ${message.type === "gif" ? "GIF" : "photo"}`;
+      image.loading = "lazy";
+      button.append(image);
+      button.addEventListener("click", () => {
+        chatImagePreviewImage.src = message.mediaUrl;
+        chatImagePreviewImage.alt = image.alt;
+        chatImagePreview.showModal();
+      });
+      tile.append(button);
+      chatSharedPhotos.append(tile);
+    });
+  });
+  document.getElementById("chatCloseImagePreview").addEventListener("click", () => {
+    chatImagePreview.close();
+  });
+  document.getElementById("chatBlockButton").addEventListener("click", async () => {
+    if (!currentConversationId || !currentUser || !currentRecipient) return;
+    const blockedBy = Array.isArray(currentConversationData.blockedBy) ? currentConversationData.blockedBy : [];
+    const blockedByMe = blockedBy.includes(currentUser.uid);
+    if (!blockedByMe && blockedBy.some(uid => uid !== currentUser.uid)) return;
+    const action = blockedByMe ? "Unblock" : "Block";
+    if (!window.confirm(`${action} ${recipientDisplayName(currentRecipient)}?`)) return;
+    try {
+      await updateDoc(doc(db, "conversations", currentConversationId), {
+        blockedBy: blockedByMe ? arrayRemove(currentUser.uid) : arrayUnion(currentUser.uid)
+      });
+      setStatus(blockedByMe ? "This conversation was unblocked." : "This conversation was blocked.");
+    } catch (error) {
+      setStatus(describeError(error, `${action} conversation`), true);
+    }
+  });
+  document.getElementById("chatDeleteConversation").addEventListener("click", async () => {
+    if (!currentConversationId || !currentUser) return;
+    if (!window.confirm("Remove this chat from your conversation list? The other person will still have their chat history.")) return;
+    try {
+      await updateDoc(doc(db, "conversations", currentConversationId), {
+        hiddenFor: arrayUnion(currentUser.uid)
+      });
+      chatInfoDialog.close();
+      clearConversation();
+      setStatus("Chat removed from your conversation list.");
+    } catch (error) {
+      setStatus(describeError(error, "Deleting chat"), true);
+    }
+  });
   document.getElementById("chatCancelProfile").addEventListener("click", closeProfileEditor);
   document.getElementById("chatCancelProfileFooter").addEventListener("click", closeProfileEditor);
   profileDialog.addEventListener("close", () => {
@@ -1107,7 +1290,7 @@ if (!isConfigured) {
       }
       chatApp.dataset.chatTheme = theme;
       chatThemeSelect.value = theme;
-      chatCustomThemeColor.hidden = theme !== "custom";
+      chatCustomColorControl.hidden = theme !== "custom";
       if (theme === "custom" && /^#[0-9a-f]{6}$/i.test(color)) {
         chatApp.style.setProperty("--chat-custom-accent", color);
         chatCustomThemeColor.value = color;
@@ -1132,14 +1315,14 @@ if (!isConfigured) {
     }
     chatApp.dataset.chatTheme = theme;
     chatThemeSelect.value = theme;
-    chatCustomThemeColor.hidden = theme !== "custom";
+    chatCustomColorControl.hidden = theme !== "custom";
     chatCustomThemeColor.value = color;
     if (theme === "custom") chatApp.style.setProperty("--chat-custom-accent", color);
     else chatApp.style.removeProperty("--chat-custom-accent");
   }
 
   chatThemeSelect.addEventListener("change", () => {
-    chatCustomThemeColor.hidden = chatThemeSelect.value !== "custom";
+    chatCustomColorControl.hidden = chatThemeSelect.value !== "custom";
     if (currentConversationId) saveChatTheme(currentConversationId, chatThemeSelect.value);
   });
   chatCustomThemeColor.addEventListener("input", () => {
