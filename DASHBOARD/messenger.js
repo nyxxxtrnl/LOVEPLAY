@@ -164,6 +164,7 @@ if (!isConfigured) {
   let latestConversations = [];
   let selectedAvatarDataUrl = null;
   let returnToSettingsAfterProfileEdit = false;
+  let currentRecipientPresence = null;
   let recipientSeenMessageId = null;
   let lastSeenMessageId = null;
   let mediaRecorder = null;
@@ -241,6 +242,7 @@ if (!isConfigured) {
           const seenMessageId = status?.seen?.[currentConversationId]?.messageId || null;
           const seenChanged = seenMessageId !== recipientSeenMessageId;
           recipientSeenMessageId = seenMessageId;
+          currentRecipientPresence = status || {};
           if (seenChanged) renderMessagesFromCurrentSnapshot();
         }
       }, error => {
@@ -287,6 +289,7 @@ if (!isConfigured) {
   function clearConversation() {
     currentConversationId = null;
     currentRecipient = null;
+    currentRecipientPresence = null;
     recipientSeenMessageId = null;
     lastSeenMessageId = null;
     chatApp.dataset.chatOpen = "false";
@@ -809,6 +812,7 @@ if (!isConfigured) {
     const conversationRef = doc(db, "conversations", conversationId);
     currentConversationId = conversationId;
     currentRecipient = recipient;
+    currentRecipientPresence = null;
     recipientSeenMessageId = null;
     lastSeenMessageId = null;
     document.getElementById("chatRecipientName").textContent = recipient.displayName;
