@@ -10,6 +10,7 @@
   <meta name="apple-mobile-web-app-title" content="LovePlay">
   <link rel="apple-touch-icon" href="../ASSETS/loveplay-icon.svg">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="messenger.css">
 </head>
 <body>
   <header class="topbar">
@@ -22,6 +23,7 @@
       <a class="tab-button" id="tab-tiktok" href="#tiktok" role="tab" aria-controls="tiktok" aria-selected="false" tabindex="-1">TikTok</a>
       <a class="tab-button" id="tab-pictures" href="#pictures" role="tab" aria-controls="pictures" aria-selected="false" tabindex="-1">Pictures</a>
       <a class="tab-button" id="tab-messages" href="#messages" role="tab" aria-controls="messages" aria-selected="false" tabindex="-1">Messages</a>
+      <a class="tab-button" id="tab-chat" href="#chat" role="tab" aria-controls="chat" aria-selected="false" tabindex="-1">Chat</a>
       <a class="tab-button" id="tab-calculator" href="#calculator" role="tab" aria-controls="calculator" aria-selected="false" tabindex="-1">EE Calculator</a>
       <a class="tab-button" id="tab-more-apps" href="#more-apps" role="tab" aria-controls="more-apps" aria-selected="false" tabindex="-1">More Apps</a>
     </nav>
@@ -275,6 +277,7 @@
           <h2>Pick a mood and press play.</h2>
         </div>
       </div>
+      <p class="music-playback-note">Spotify may only play a preview until you sign in. For the full song, sign in to Spotify in the player or open the track there; playback depends on Spotify availability and your account.</p>
       <div class="music-tabs" role="tablist" aria-label="Music genres">
         <button class="music-tab" id="music-tab-arthur" type="button" role="tab" aria-controls="music-player-panel" aria-selected="true" tabindex="0" data-music="arthur">Arthur Nery</button>
         <button class="music-tab" id="music-tab-hiphop" type="button" role="tab" aria-controls="music-player-panel" aria-selected="false" tabindex="-1" data-music="hiphop">Hip-Hop</button>
@@ -552,6 +555,84 @@
       </div>
     </section>
 
+    <section class="section-wrap content-section tab-panel" id="chat" role="tabpanel" aria-labelledby="tab-chat" tabindex="0" hidden>
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">LOVEPLAY MESSENGER</span>
+          <h2>Chat with people. ♡</h2>
+        </div>
+        <p>Sign in or create an account to find people and chat privately.</p>
+      </div>
+      <div class="messenger-card">
+        <p class="messenger-status" id="messengerStatus" role="status" aria-live="polite">Loading chat...</p>
+        <div class="messenger-auth" id="messengerAuth" hidden>
+          <form class="messenger-auth-form" id="chatLoginForm">
+            <h3>Welcome back</h3>
+            <label for="chatLoginEmail">Email</label>
+            <input id="chatLoginEmail" type="email" autocomplete="email" required>
+            <label for="chatLoginPassword">Password</label>
+            <input id="chatLoginPassword" type="password" autocomplete="current-password" required>
+            <button class="button button-primary" type="submit">Sign in</button>
+            <p>New here? <button class="messenger-text-button" type="button" data-chat-view="signup">Create an account</button></p>
+          </form>
+          <form class="messenger-auth-form" id="chatSignupForm" hidden>
+            <h3>Create your account</h3>
+            <label for="chatSignupName">Name shown to other users</label>
+            <input id="chatSignupName" type="text" maxlength="40" autocomplete="name" required>
+            <label for="chatSignupEmail">Email</label>
+            <input id="chatSignupEmail" type="email" autocomplete="email" required>
+            <label for="chatSignupPassword">Password (at least 8 characters)</label>
+            <input id="chatSignupPassword" type="password" minlength="8" autocomplete="new-password" required>
+            <button class="button button-primary" type="submit">Create account</button>
+            <p>Already registered? <button class="messenger-text-button" type="button" data-chat-view="login">Sign in</button></p>
+          </form>
+        </div>
+        <div class="messenger-app" id="messengerApp" hidden>
+          <div class="messenger-account-bar">
+            <span>Signed in as <strong id="chatAccountName"></strong></span>
+            <div class="messenger-account-actions">
+              <label class="messenger-active-toggle" for="chatActiveToggle">
+                <input id="chatActiveToggle" type="checkbox" checked>
+                <span>Show me as active</span>
+              </label>
+              <button class="button button-quiet" id="chatSignOut" type="button">Sign out</button>
+            </div>
+          </div>
+          <div class="messenger-workspace">
+            <aside class="messenger-sidebar" aria-label="People and conversations">
+              <form id="chatSearchForm">
+                <label for="chatUserSearch">Find people</label>
+                <input id="chatUserSearch" type="search" maxlength="40" placeholder="Type at least 2 letters">
+              </form>
+              <div class="messenger-list-block">
+                <h3>People</h3>
+                <ul class="messenger-list" id="chatSearchResults" aria-live="polite"></ul>
+              </div>
+              <div class="messenger-list-block">
+                <h3>Recent chats</h3>
+                <ul class="messenger-list" id="chatConversationList" aria-live="polite"></ul>
+              </div>
+            </aside>
+            <div class="messenger-conversation" id="chatConversation">
+              <div class="messenger-empty" id="chatEmptyState">Search for a person to start a private chat.</div>
+              <div class="messenger-thread" id="chatThread" hidden>
+                <header class="messenger-thread-header">
+                  <h3 id="chatRecipientName"></h3>
+                  <p class="messenger-recipient-status" id="chatRecipientStatus"><span class="messenger-presence-dot" aria-hidden="true"></span><span>Private conversation · Offline</span></p>
+                </header>
+                <ol class="messenger-messages" id="chatMessages" aria-live="polite" aria-label="Chat messages"></ol>
+                <form class="messenger-compose" id="chatMessageForm">
+                  <label class="visually-hidden" for="chatMessageInput">Write a message</label>
+                  <textarea id="chatMessageInput" maxlength="2000" rows="2" placeholder="Write a message..." required></textarea>
+                  <button class="button button-primary" type="submit">Send</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <footer>
@@ -741,6 +822,7 @@
 
   <div class="toast" id="toast" role="status"></div>
   <script src="script.js"></script>
+  <script type="module" src="messenger.js"></script>
   <script>
     if ("serviceWorker" in navigator && window.isSecureContext) {
       navigator.serviceWorker.register("../sw.js", { scope: "../" }).catch(error => {
