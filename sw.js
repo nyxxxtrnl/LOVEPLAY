@@ -1,4 +1,4 @@
-const CACHE_NAME = "loveplay-shell-v24";
+const CACHE_NAME = "loveplay-shell-v25";
 const APP_FILES = [
   "index.html",
   "manifest.webmanifest",
@@ -9,6 +9,8 @@ const APP_FILES = [
   "DASHBOARD/messenger.css",
   "DASHBOARD/firebase-config.js",
   "ASSETS/loveplay-app-icon.png",
+  "ASSETS/loveplay-app-icon-192.png",
+  "ASSETS/loveplay-app-icon-180.png",
   "ASSETS/avatar-default.svg",
   "ASSETS/roblox-logo.svg",
   "ASSETS/mlbb-logo.svg",
