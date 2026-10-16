@@ -3769,6 +3769,114 @@ body[data-theme="dark"] .photo-filter-none {
     text-align: center;
   }
 
+  .home-feature-row {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: start;
+    gap: 10px;
+  }
+
+  .home-feature-row .background-music-card {
+    width: 100%;
+    max-width: 170px;
+    min-height: 190px;
+    padding: 14px 10px;
+    gap: 8px;
+    border-radius: 16px;
+    justify-self: center;
+  }
+
+  .home-feature-row .background-music-copy .eyebrow {
+    font-size: 0.55rem;
+    letter-spacing: 0.8px;
+  }
+
+  .home-feature-row .background-music-copy h2 {
+    font-size: 1.2rem;
+    overflow-wrap: anywhere;
+  }
+
+  .home-feature-row .background-music-copy p {
+    font-size: 0.78rem;
+  }
+
+  .home-feature-row .background-music-actions .button {
+    flex: 1 1 auto;
+    padding: 10px 7px;
+    font-size: 0.72rem;
+  }
+
+  .home-feature-row .background-music-player {
+    position: relative;
+    width: 100%;
+  }
+
+  .home-feature-row .background-music-player > div {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .home-feature-row .background-music-player > iframe {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .home-feature-row .background-music-player .helper-text {
+    display: none;
+  }
+
+  .home-feature-row .background-music-open-link {
+    margin-top: 0;
+    font-size: 0.68rem;
+    line-height: 1.25;
+  }
+
+  .home-feature-row .featured-showcase {
+    flex: none;
+    min-height: 0;
+    aspect-ratio: 1.2 / 1;
+    border-radius: 16px;
+  }
+
+  .home-feature-row .featured-copy {
+    padding: 12px;
+  }
+
+  .home-feature-row .featured-copy h2 {
+    margin: 6px 0;
+    font-size: 1rem;
+  }
+
+  .home-feature-row .featured-copy p {
+    display: none;
+  }
+
+  .home-feature-row .featured-link {
+    padding: 8px 10px;
+    font-size: 0.68rem;
+  }
+
+  .home-feature-row .featured-controls {
+    right: 7px;
+    bottom: 7px;
+    gap: 3px;
+  }
+
+  .home-feature-row .featured-count {
+    font-size: 0.58rem;
+  }
+
+  .home-feature-row .featured-control {
+    flex-basis: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
   .background-music-actions {
     justify-content: center;
     flex-wrap: wrap;
