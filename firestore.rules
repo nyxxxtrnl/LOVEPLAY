@@ -86,6 +86,16 @@ service cloud.firestore {
           );
       }
 
+      function validSelfClearTimestamp() {
+        let oldClearTimes = resource.data.get('clearedAt', {});
+        let newClearTimes = request.resource.data.get('clearedAt', {});
+        return oldClearTimes is map
+          && newClearTimes is map
+          && newClearTimes.keys().hasOnly(resource.data.participants)
+          && newClearTimes.diff(oldClearTimes).affectedKeys().hasOnly([request.auth.uid])
+          && newClearTimes.get(request.auth.uid, null) == request.time;
+      }
+
       allow get: if signedIn()
         && (
           !exists(/databases/$(database)/documents/conversations/$(conversationId))
@@ -121,6 +131,15 @@ service cloud.firestore {
           )
           || (
             request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hiddenFor'])
+            && validSelfMembershipChange('hiddenFor')
+          )
+          || (
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['clearedAt'])
+            && validSelfClearTimestamp()
+          )
+          || (
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['clearedAt', 'hiddenFor'])
+            && validSelfClearTimestamp()
             && validSelfMembershipChange('hiddenFor')
           )
         );

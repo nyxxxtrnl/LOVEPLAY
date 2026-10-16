@@ -370,6 +370,16 @@ if (!isConfigured) {
     if (latestMessageSnapshot) renderMessages(latestMessageSnapshot);
   }
 
+  function visibleMessageSnapshots(snapshot) {
+    const clearedAt = currentConversationData.clearedAt?.[currentUser.uid]?.toMillis?.();
+    if (typeof clearedAt !== "number") return snapshot.docs.slice();
+    return snapshot.docs.filter(messageSnapshot => {
+      if (messageSnapshot.metadata.hasPendingWrites) return true;
+      const createdAt = messageSnapshot.data().createdAt?.toMillis?.();
+      return typeof createdAt === "number" && createdAt > clearedAt;
+    });
+  }
+
   function markLatestIncomingAsSeen(messages) {
     if (!realtimeDatabase || !currentUser || !currentConversationId) return;
     const latestIncoming = messages.slice().reverse()
@@ -744,7 +754,8 @@ if (!isConfigured) {
 
   function renderMessages(snapshot) {
     latestMessageSnapshot = snapshot;
-    const messages = snapshot.docs.slice().reverse();
+    const visibleSnapshots = visibleMessageSnapshots(snapshot);
+    const messages = visibleSnapshots.slice().reverse();
     messagesList.replaceChildren();
     if (messages.length === 0) {
       const item = document.createElement("li");
@@ -921,6 +932,7 @@ if (!isConfigured) {
         if (currentConversationId !== conversationId || !snapshot.exists()) return;
         currentConversationData = snapshot.data();
         syncConversationInfo();
+        renderMessagesFromCurrentSnapshot();
       }, error => {
         setStatus(describeError(error, "Loading conversation information"), true);
       });
@@ -946,9 +958,14 @@ if (!isConfigured) {
       if (!recipientId) return null;
       const profile = await getProfile(recipientId);
       if (!profile) return null;
+      const clearedAt = conversation.clearedAt?.[currentUser.uid]?.toMillis?.();
+      const updatedAt = conversation.updatedAt?.toMillis?.();
+      const lastMessage = typeof clearedAt === "number" && typeof updatedAt === "number" && updatedAt <= clearedAt
+        ? ""
+        : conversation.lastMessage;
       const { item, button } = makePersonButton(
         profile,
-        conversation.lastMessage || "No messages yet",
+        lastMessage || "No messages yet",
         conversationSnapshot.id === currentConversationId
       );
       button.addEventListener("click", () => openConversation(profile));
@@ -1048,9 +1065,11 @@ if (!isConfigured) {
     if (!opening) return;
 
     chatSharedPhotos.replaceChildren();
-    const imageMessages = latestMessageSnapshot?.docs
-      .map(messageSnapshot => messageSnapshot.data())
-      .filter(message => (message.type === "image" || message.type === "gif") && typeof message.mediaUrl === "string") || [];
+    const imageMessages = latestMessageSnapshot
+      ? visibleMessageSnapshots(latestMessageSnapshot)
+        .map(messageSnapshot => messageSnapshot.data())
+        .filter(message => (message.type === "image" || message.type === "gif") && typeof message.mediaUrl === "string")
+      : [];
     if (!imageMessages.length) {
       const empty = document.createElement("p");
       empty.textContent = "No images have been shared in this conversation yet.";
@@ -1097,14 +1116,15 @@ if (!isConfigured) {
   });
   document.getElementById("chatDeleteConversation").addEventListener("click", async () => {
     if (!currentConversationId || !currentUser) return;
-    if (!window.confirm("Remove this chat from your conversation list? The other person will still have their chat history.")) return;
+    if (!window.confirm("Delete this chat for you? Old messages will disappear only from your side. The other person keeps their history, and new messages will appear in the chat.")) return;
     try {
       await updateDoc(doc(db, "conversations", currentConversationId), {
+        [`clearedAt.${currentUser.uid}`]: serverTimestamp(),
         hiddenFor: arrayUnion(currentUser.uid)
       });
       chatInfoDialog.close();
       clearConversation();
-      setStatus("Chat removed from your conversation list.");
+      setStatus("Chat deleted for you. The other person still has their messages.");
     } catch (error) {
       setStatus(describeError(error, "Deleting chat"), true);
     }

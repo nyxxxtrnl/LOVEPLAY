@@ -41,17 +41,19 @@ Firebase Storage; Storage rules limit audio uploads to 10 MB. Message reactions
 and sender-only deletion are validated by Firestore rules. Chat color themes
 and personal conversation nicknames are saved on the current device. Blocking
 prevents the blocked person from sending messages to the blocker. Deleting a
-chat hides it only from the current user's conversation list and preserves the
-other participant's history.
+chat clears the old messages only for the current user and preserves the other
+participant's history. Future messages stay in the conversation and are visible
+to both participants.
 Read receipts use the existing Realtime Database presence rules.
 
 Publish the current contents of [`firestore.rules`](./firestore.rules) in
 Firebase Console → Firestore Database → Rules, and publish
 [`storage.rules`](./storage.rules) in Firebase Console → Storage → Rules.
 Pushing to GitHub does not automatically deploy Firebase security rules. New
-message sends, photo messages, reactions, blocking, and hiding a chat will fail
-until the current Firestore rules are published. Voice uploads also require an
-active Storage bucket and its current rules.
+message sends, photo messages, reactions, blocking, hiding a chat, and clearing
+a chat for the current user will fail until the current Firestore rules are
+published. Voice uploads also require an active Storage bucket and its current
+rules.
 
 ## Sign-in troubleshooting
 
