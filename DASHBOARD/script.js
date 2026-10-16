@@ -1850,6 +1850,9 @@ function openCreateAlbumDialog() {
 document.getElementById("addPhotoAlbum")
   .addEventListener("click", openCreateAlbumDialog);
 
+document.getElementById("addPhotoAlbumInline")
+  ?.addEventListener("click", openCreateAlbumDialog);
+
 document.getElementById("createAlbumForm")
   .addEventListener("submit", createPhotoAlbum);
 
