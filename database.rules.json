@@ -5,6 +5,14 @@
         ".read": "auth != null",
         ".write": "auth != null && auth.uid === $uid"
       }
+    },
+    "pushTokens": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$tokenKey": {
+          ".write": "auth != null && auth.uid === $uid"
+        }
+      }
     }
   }
 }

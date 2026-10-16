@@ -1,0 +1,45 @@
+name: Build LovePlay Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "manifest.webmanifest"
+      - "sw.js"
+      - "ASSETS/**"
+      - "DASHBOARD/**"
+      - "native/**"
+      - "scripts/**"
+      - "android/**"
+      - "capacitor.config.json"
+      - "package.json"
+      - "package-lock.json"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npm run build:web
+      - run: npx cap sync android
+      - run: chmod +x android/gradlew
+      - run: cd android && ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: loveplay-android-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

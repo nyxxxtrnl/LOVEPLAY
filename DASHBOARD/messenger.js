@@ -159,6 +159,8 @@ if (!isConfigured) {
   const profileCache = new Map();
   let currentUser = null;
   let currentProfile = null;
+  let nativePushToken = null;
+  let nativePushTokenOwner = null;
   let currentConversationId = null;
   let currentConversationData = {};
   let currentRecipient = null;
@@ -184,6 +186,59 @@ if (!isConfigured) {
   const presenceSubscriptions = new Map();
   const REACTION_EMOJIS = ["❤️", "😂", "👍", "😮", "😢", "👏"];
   const CHAT_THEMES = ["berry", "ocean", "lavender", "mint", "custom"];
+
+  function nativePushTokenPath(uid, token) {
+    const tokenKey = btoa(token).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    return `pushTokens/${uid}/${tokenKey}`;
+  }
+
+  async function saveNativePushToken(uid, token, platform) {
+    if (!realtimeDatabase) {
+      throw new Error("Push notifications need the LovePlay Realtime Database connection.");
+    }
+    if (nativePushTokenOwner && nativePushTokenOwner !== uid) {
+      await removeRealtimeValue(realtimeRef(
+        realtimeDatabase,
+        nativePushTokenPath(nativePushTokenOwner, token)
+      ));
+    }
+    await setRealtimeValue(
+      realtimeRef(realtimeDatabase, nativePushTokenPath(uid, token)),
+      { token, platform, updatedAt: realtimeServerTimestamp() }
+    );
+    nativePushTokenOwner = uid;
+  }
+
+  async function openConversationFromPush(conversationId) {
+    if (!currentUser || typeof conversationId !== "string") return;
+    const conversationSnapshot = await getDoc(doc(db, "conversations", conversationId));
+    const participants = conversationSnapshot.data()?.participants;
+    if (!Array.isArray(participants) || !participants.includes(currentUser.uid)) {
+      throw new Error("That conversation is not available for this account.");
+    }
+    const recipientId = participants.find(uid => uid !== currentUser.uid);
+    const recipient = recipientId ? await getProfile(recipientId) : null;
+    if (!recipient) throw new Error("Could not find the person in that conversation.");
+    await openConversation(recipient);
+    window.LovePlayPendingConversationId = null;
+  }
+
+  document.addEventListener("loveplay:push-token", event => {
+    const { token, platform } = event.detail || {};
+    if (typeof token !== "string" || !token) return;
+    nativePushToken = token;
+    if (currentUser) {
+      saveNativePushToken(currentUser.uid, token, platform).catch(error => {
+        setStatus(describeError(error, "Saving notification settings"), true);
+      });
+    }
+  });
+
+  document.addEventListener("loveplay:open-conversation", event => {
+    openConversationFromPush(event.detail?.conversationId).catch(error => {
+      setStatus(describeError(error, "Opening the notification conversation"), true);
+    });
+  });
 
   function syncActiveToggleControls(checked, disabled) {
     [activeToggle, settingsActiveToggle].forEach(toggle => {
@@ -1496,6 +1551,17 @@ if (!isConfigured) {
     settingsDialog.close();
     try {
       stopPresence();
+      if (nativePushTokenOwner && nativePushToken && realtimeDatabase) {
+        try {
+          await removeRealtimeValue(realtimeRef(
+            realtimeDatabase,
+            nativePushTokenPath(nativePushTokenOwner, nativePushToken)
+          ));
+          nativePushTokenOwner = null;
+        } catch (error) {
+          console.warn("Could not remove this device's push token before signing out.", error);
+        }
+      }
       await signOut(auth);
       setStatus("You are signed out.");
     } catch (error) {
@@ -1548,6 +1614,12 @@ if (!isConfigured) {
     setStatus("Loading your account...");
     try {
       await activateAccount(user);
+      if (nativePushToken && nativePushTokenOwner !== user.uid) {
+        await saveNativePushToken(user.uid, nativePushToken, window.LovePlayNative?.platform || "unknown");
+      }
+      if (window.LovePlayPendingConversationId) {
+        await openConversationFromPush(window.LovePlayPendingConversationId);
+      }
     } catch (error) {
       currentUser = null;
       currentProfile = null;

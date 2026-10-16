@@ -1,0 +1,15 @@
+node_modules/
+www/
+android/app/src/main/assets/public/
+android/.gradle/
+android/local.properties
+android/.idea/
+ios/App/App/public/
+ios/Pods/
+ios/App/DerivedData/
+ios/App/xcuserdata/
+*.xcuserstate
+GoogleService-Info.plist
+google-services.json
+functions/node_modules/
+functions/.runtimeconfig.json

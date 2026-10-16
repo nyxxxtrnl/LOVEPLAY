@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">LovePlay</string>
+    <string name="title_activity_main">LovePlay</string>
+    <string name="package_name">com.loveplay.app</string>
+    <string name="custom_url_scheme">com.loveplay.app</string>
+</resources>

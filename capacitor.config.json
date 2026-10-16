@@ -1,0 +1,11 @@
+{
+  "appId": "com.loveplay.app",
+  "appName": "LovePlay",
+  "webDir": "www",
+  "androidScheme": "https",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  }
+}

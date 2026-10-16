@@ -3123,6 +3123,25 @@ footer p {
   margin: 0;
 }
 
+.native-share-button {
+  padding: 9px 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: white;
+  color: var(--plum);
+  font-weight: 700;
+}
+
+.native-share-button:hover {
+  border-color: var(--rose);
+  color: var(--rose);
+}
+
+.native-share-button:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
+}
+
 .modal {
   position: fixed;
   inset: 0;
