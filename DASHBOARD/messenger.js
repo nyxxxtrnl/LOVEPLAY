@@ -1158,7 +1158,17 @@ if (!isConfigured) {
     stopTyping();
     sendChatMessage({ text });
   });
-  messageInput.addEventListener("input", updateTypingStatus);
+  messageInput.addEventListener("input", event => {
+    if ([
+      "insertText",
+      "insertCompositionText",
+      "deleteContentBackward",
+      "deleteContentForward"
+    ].includes(event.inputType)) {
+      updateTypingStatus();
+    }
+  });
+  messageInput.addEventListener("blur", stopTyping);
 
   function saveChatTheme(conversationId, theme, color = chatCustomThemeColor.value) {
     if (!CHAT_THEMES.includes(theme)) return;

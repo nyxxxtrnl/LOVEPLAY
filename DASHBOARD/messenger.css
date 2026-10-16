@@ -908,27 +908,29 @@ body[data-theme="dark"] #messengerApp[data-chat-theme="custom"] .messenger-compo
   }
 
   .photo-gallery-title-group {
-    display: flex;
+    display: grid;
     grid-column: 2;
     grid-row: 1;
     min-width: 0;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: flex-end;
     gap: 8px;
   }
 
   .photo-gallery-title-group .photo-gallery-title {
-    flex: 1;
     min-width: 0;
-    order: initial;
+    order: 0;
     text-align: left;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .photo-gallery-add-album {
     display: inline-flex;
     min-height: 36px;
     flex: 0 0 auto;
+    order: 1;
     align-items: center;
     justify-content: center;
     padding: 6px 10px;
@@ -2577,17 +2579,10 @@ body[data-theme="dark"] .messenger-message[data-own="true"] .messenger-message-b
     #chat .mobile-chat-header {
       position: static;
       min-height: 54px;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 12px;
+      grid-template-columns: auto;
+      justify-content: end;
       padding: 6px 16px;
       background: rgba(255, 250, 247, 0.98);
-    }
-
-    #chat .mobile-chat-header h2 {
-      font-family: inherit;
-      font-size: 0.96rem;
-      letter-spacing: 0.045em;
-      text-align: left;
     }
 
     #chat .mobile-chat-settings {
@@ -2645,10 +2640,6 @@ body[data-theme="dark"] .messenger-message[data-own="true"] .messenger-message-b
       background: rgba(33, 26, 35, 0.98);
     }
 
-    body[data-theme="dark"] #chat .mobile-chat-header h2 {
-      color: #f8dce8;
-    }
-
     body[data-theme="dark"] #chat .mobile-chat-settings {
       border-color: #594454;
       background: #302431;
@@ -2696,7 +2687,7 @@ body[data-theme="dark"] .messenger-message[data-own="true"] .messenger-message-b
   }
 
   body:has(#chat:not([hidden])) .topbar {
-    display: flex;
+    display: none;
   }
 
   body .topbar nav,
