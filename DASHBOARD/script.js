@@ -1963,7 +1963,27 @@ function setDashboardSettingsOpen(open) {
 }
 
 dashboardSettingsToggle.addEventListener("click", () => {
+  if (dashboardSettingsToggle.dataset.skipClick === "true") {
+    delete dashboardSettingsToggle.dataset.skipClick;
+    return;
+  }
   setDashboardSettingsOpen(dashboardSettings.dataset.open !== "true");
+});
+let settingsHandleStartX = null;
+dashboardSettingsToggle.addEventListener("pointerdown", event => {
+  settingsHandleStartX = event.clientX;
+  dashboardSettingsToggle.setPointerCapture(event.pointerId);
+});
+dashboardSettingsToggle.addEventListener("pointerup", event => {
+  if (settingsHandleStartX === null) return;
+  const distance = event.clientX - settingsHandleStartX;
+  settingsHandleStartX = null;
+  if (Math.abs(distance) < 36) return;
+  dashboardSettingsToggle.dataset.skipClick = "true";
+  setDashboardSettingsOpen(distance > 0);
+});
+dashboardSettingsToggle.addEventListener("pointercancel", () => {
+  settingsHandleStartX = null;
 });
 document.getElementById("dashboardSettingsClose").addEventListener("click", () => setDashboardSettingsOpen(false));
 document.getElementById("dashboardSettingsBackdrop").addEventListener("click", () => setDashboardSettingsOpen(false));
