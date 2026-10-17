@@ -2105,6 +2105,10 @@ a.ee-app-choice:focus-visible {
   text-align: center;
 }
 
+.game-launch-mobile {
+  display: none;
+}
+
 .connect-art {
   color: #b95164;
 }
@@ -3942,6 +3946,18 @@ body[data-theme="dark"] .photo-filter-none {
 }
 
 @media (max-width: 600px) {
+  footer {
+    display: none;
+  }
+
+  .game-launch-desktop {
+    display: none;
+  }
+
+  .game-launch-mobile {
+    display: inline;
+  }
+
   .topbar {
     gap: 10px;
     padding-inline: 4%;

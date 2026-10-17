@@ -1778,6 +1778,69 @@ document.getElementById("startSnake")
 document.getElementById("startTicTacToe")
   .addEventListener("click", startTicTacToe);
 
+const mobileGameLaunchers = {
+  chess: {
+    android: `intent://www.chess.com/play/computer#Intent;scheme=https;package=com.chess;S.browser_fallback_url=${encodeURIComponent("https://play.google.com/store/apps/details?id=com.chess")};end`,
+    native: "chess://",
+    ios: "chess://",
+    playStore: "https://play.google.com/store/apps/details?id=com.chess",
+    appStore: "https://apps.apple.com/app/id329218549"
+  },
+  roblox: {
+    android: `intent://#Intent;scheme=roblox;package=com.roblox.client;S.browser_fallback_url=${encodeURIComponent("https://play.google.com/store/apps/details?id=com.roblox.client")};end`,
+    native: "roblox://",
+    ios: "roblox://",
+    playStore: "https://play.google.com/store/apps/details?id=com.roblox.client",
+    appStore: "https://apps.apple.com/app/id431946152"
+  },
+  mlbb: {
+    android: `intent://#Intent;scheme=mobilelegends;package=com.mobile.legends;S.browser_fallback_url=${encodeURIComponent("https://play.google.com/store/apps/details?id=com.mobile.legends")};end`,
+    native: "mobilelegends://",
+    ios: "mobilelegends://",
+    playStore: "https://play.google.com/store/apps/details?id=com.mobile.legends",
+    appStore: "https://apps.apple.com/app/id1160056295"
+  }
+};
+
+function openGameAppOrStore(appUrl, storeUrl) {
+  let fallbackTimer;
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      window.clearTimeout(fallbackTimer);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    }
+  };
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+  window.location.assign(appUrl);
+  fallbackTimer = window.setTimeout(() => {
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+    if (!document.hidden) window.location.assign(storeUrl);
+  }, 1200);
+}
+
+document.querySelector(".game-grid").addEventListener("click", event => {
+  const link = event.target.closest("a[data-game-app]");
+  if (!link || !window.matchMedia("(max-width: 600px)").matches) return;
+  const launcher = mobileGameLaunchers[link.dataset.gameApp];
+  if (!launcher) return;
+
+  event.preventDefault();
+  if (/Android/i.test(navigator.userAgent)) {
+    if (window.LovePlayNative?.platform === "android") {
+      openGameAppOrStore(launcher.native, launcher.playStore);
+    } else {
+      window.location.assign(launcher.android);
+    }
+    return;
+  }
+  if (/iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
+    openGameAppOrStore(launcher.ios, launcher.appStore);
+    return;
+  }
+  window.location.assign(launcher.appStore);
+});
+
 document.getElementById("closeGame")
   .addEventListener("click", closeGame);
 
