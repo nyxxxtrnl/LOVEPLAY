@@ -1,4 +1,4 @@
-const CACHE_NAME = "loveplay-shell-v32";
+const CACHE_NAME = "loveplay-shell-v33";
 const APP_FILES = [
   "index.html",
   "manifest.webmanifest",
@@ -12,6 +12,14 @@ const APP_FILES = [
   "ASSETS/loveplay-app-icon-192.png",
   "ASSETS/loveplay-app-icon-180.png",
   "ASSETS/avatar-default.svg",
+  "ASSETS/app-icons/autocad.svg",
+  "ASSETS/app-icons/wechat.svg",
+  "ASSETS/app-icons/facebook.svg",
+  "ASSETS/app-icons/messenger.svg",
+  "ASSETS/app-icons/chatgpt.svg",
+  "ASSETS/app-icons/gmail.svg",
+  "ASSETS/app-icons/viber.svg",
+  "ASSETS/app-icons/telegram.svg",
   "ASSETS/roblox-logo.svg",
   "ASSETS/mlbb-logo.svg",
   "ASSETS/game-icons/roblox.png",

@@ -1,4 +1,5 @@
 import { Capacitor } from "@capacitor/core";
+import { AppLauncher } from "@capacitor/app-launcher";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 import { FirebaseMessaging } from "@capacitor-firebase/messaging";
 import { Share } from "@capacitor/share";
@@ -28,6 +29,40 @@ function dispatchPushToken(token) {
   document.dispatchEvent(new CustomEvent("loveplay:push-token", {
     detail: { token, platform: Capacitor.getPlatform() }
   }));
+}
+
+async function openNativeAppLink(link) {
+  const platform = Capacitor.getPlatform();
+  const appUrl = platform === "android" ? link.dataset.androidPackage : link.dataset.appScheme;
+  const storeUrl = platform === "android"
+    ? `market://details?id=${link.dataset.androidPackage}`
+    : link.dataset.iosStore.replace("https://apps.apple.com/", "itms-apps://apps.apple.com/");
+  const storeFallback = platform === "android" ? link.dataset.androidStore : link.dataset.iosStore;
+
+  try {
+    const { value: canOpen } = await AppLauncher.canOpenUrl({ url: appUrl });
+    if (canOpen) {
+      const { completed } = await AppLauncher.openUrl({ url: appUrl });
+      if (completed) return;
+    }
+  } catch (error) {
+    console.error(`Could not open ${link.querySelector("strong")?.textContent || "the selected app"}.`, error);
+  }
+
+  showToast("App not installed. Opening its store listing.");
+  try {
+    const { completed } = await AppLauncher.openUrl({ url: storeUrl });
+    if (completed) return;
+  } catch (error) {
+    console.error("Could not open the app store.", error);
+  }
+
+  try {
+    window.location.assign(storeFallback);
+  } catch (error) {
+    console.error("Could not open the app store listing.", error);
+    showError("Could not open the app or its store listing.");
+  }
 }
 
 const pushListenersReady = isNative
@@ -82,6 +117,12 @@ async function chooseNativePhoto(input) {
 if (isNative) {
   document.addEventListener("click", event => {
     const target = event.target instanceof Element ? event.target : null;
+    const appLink = target?.closest("a[data-mobile-app-link]");
+    if (appLink) {
+      event.preventDefault();
+      void openNativeAppLink(appLink);
+      return;
+    }
     const input = target?.closest('input[type="file"][accept*="image"]');
     if (!input) return;
     event.preventDefault();

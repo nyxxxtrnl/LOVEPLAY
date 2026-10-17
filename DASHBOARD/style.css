@@ -1874,13 +1874,15 @@ a.ee-app-choice:focus-visible {
   width: 54px;
   height: 54px;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--app-accent, var(--rose)) 20%, white);
-  border-radius: 17px;
-  background: color-mix(in srgb, var(--app-accent, var(--rose)) 12%, white);
-  color: color-mix(in srgb, var(--app-accent, var(--rose)) 78%, var(--plum));
-  font-size: 1.2rem;
-  font-weight: 800;
-  box-shadow: 0 5px 12px color-mix(in srgb, var(--app-accent, var(--rose)) 12%, transparent);
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.ee-app-choice-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .ee-app-choice strong,
@@ -3824,6 +3826,9 @@ footer p {
 
 @media (max-width: 380px) {
   .ee-app-grid { grid-template-columns: 1fr; }
+  .ee-app-choice { grid-template-columns: 46px minmax(0, 1fr) auto; gap: 10px; min-height: 76px; padding: 12px; }
+  .ee-app-choice-icon { width: 46px; height: 46px; }
+  .ee-app-choice small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mobile-game-launchers { gap: 10px 5px; padding-inline: 7px; }
   .game-app-icon { border-radius: 16px; }
   .game-app-name { font-size: 0.62rem; }
@@ -3973,9 +3978,7 @@ body[data-theme="dark"] .ee-app-choice strong {
 }
 
 body[data-theme="dark"] .ee-app-choice-icon {
-  border-color: color-mix(in srgb, var(--app-accent) 24%, #2a222d);
-  background: color-mix(in srgb, var(--app-accent) 24%, #2a222d);
-  color: color-mix(in srgb, var(--app-accent) 70%, white);
+  background: transparent;
 }
 
 body[data-theme="dark"] .background-music-player {

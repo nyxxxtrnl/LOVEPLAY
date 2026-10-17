@@ -17,6 +17,53 @@ const DEFAULT_BACKGROUND_MUSIC = {
   trackId: "0tgVpDi06FyKpA1z0VMD4v"
 };
 
+let appLaunchFallbackTimer;
+
+function isIosDevice() {
+  return /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+function isMobileAppLinkContext() {
+  return /Android/i.test(navigator.userAgent) || isIosDevice();
+}
+
+function openMobileAppLink(link) {
+  const androidPackage = link.dataset.androidPackage;
+  const androidStore = link.dataset.androidStore;
+  const iosStore = link.dataset.iosStore;
+  const appScheme = link.dataset.appScheme;
+
+  if (/Android/i.test(navigator.userAgent) && androidPackage) {
+    const intentUrl = `intent://#Intent;scheme=${appScheme.split(":")[0]};package=${androidPackage};S.browser_fallback_url=${encodeURIComponent(androidStore)};end`;
+    window.location.assign(intentUrl);
+    return;
+  }
+
+  if (isIosDevice()) {
+    window.location.assign(appScheme);
+    window.clearTimeout(appLaunchFallbackTimer);
+    appLaunchFallbackTimer = window.setTimeout(() => {
+      if (!document.hidden) window.location.assign(iosStore);
+    }, 1200);
+    return;
+  }
+
+  window.location.assign(androidStore);
+}
+
+document.addEventListener("click", event => {
+  const target = event.target instanceof Element ? event.target : null;
+  const link = target?.closest("a[data-mobile-app-link]");
+  if (!link || !isMobileAppLinkContext() || window.LovePlayNative?.isNative) return;
+  event.preventDefault();
+  openMobileAppLink(link);
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) window.clearTimeout(appLaunchFallbackTimer);
+});
+
 const gamePanel = document.getElementById("gamePanel");
 const gameContent = document.getElementById("gameContent");
 const gameFeedback = document.getElementById("gameFeedback");
