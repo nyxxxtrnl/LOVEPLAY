@@ -35,7 +35,7 @@ function openMobileAppLink(link) {
   const appScheme = link.dataset.appScheme;
 
   if (/Android/i.test(navigator.userAgent) && androidPackage) {
-    const intentUrl = `intent://#Intent;scheme=${appScheme.split(":")[0]};package=${androidPackage};S.browser_fallback_url=${encodeURIComponent(androidStore)};end`;
+    const intentUrl = `intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=${androidPackage};S.browser_fallback_url=${encodeURIComponent(androidStore)};end`;
     window.location.assign(intentUrl);
     return;
   }
