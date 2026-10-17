@@ -4135,7 +4135,9 @@ body[data-theme="dark"] .photo-filter-none {
 
   .topbar {
     gap: 10px;
+    min-height: 56px;
     padding-inline: 4%;
+    padding-block: 6px;
   }
 
   .heart-counter {
