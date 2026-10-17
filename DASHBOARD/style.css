@@ -4427,3 +4427,236 @@ body[data-theme="light"][data-palette="sage"] {
   background: var(--cream);
   color: var(--ink);
 }
+
+.ee-app {
+  --ee-bg: var(--cream);
+  --ee-panel: color-mix(in srgb, var(--cream) 88%, var(--blush));
+  --ee-panel-raised: var(--blush);
+  --ee-border: var(--line);
+  --ee-text: var(--ink);
+  --ee-muted: var(--muted);
+  --ee-accent: var(--rose);
+  --ee-accent-soft: var(--blush);
+  background: var(--ee-bg);
+  color: var(--ee-text);
+}
+
+.ee-sidebar,
+.ee-topbar,
+.ee-category-card,
+.ee-tool-reference,
+.ee-reference {
+  border-color: var(--ee-border);
+  background: var(--ee-panel);
+}
+
+.ee-workspace {
+  background: var(--ee-bg);
+}
+
+.ee-sidebar-brand,
+.ee-sidebar-brand strong,
+.ee-topbar nav a,
+.ee-mobile-brand,
+.ee-category-heading h3,
+.ee-reference > h2 {
+  color: var(--ee-text);
+}
+
+.ee-sidebar-brand small,
+.ee-sidebar-motto,
+.ee-topbar nav,
+.ee-nav-item,
+.ee-field,
+.ee-tool-reference p,
+.ee-formula-help,
+.ee-formula-status,
+.ee-disclaimer {
+  color: var(--ee-muted);
+}
+
+.ee-brand-bolt,
+.ee-sidebar-mark,
+.ee-nav-item > span:first-child,
+.ee-category-icon,
+.ee-eyebrow,
+.ee-reference-item h3 {
+  color: var(--rose);
+}
+
+.ee-nav-item:hover,
+.ee-nav-item.is-active,
+.ee-tool-tab:hover,
+.ee-tool-tab[aria-selected="true"] {
+  border-color: var(--line);
+  background: var(--blush);
+  color: var(--plum);
+}
+
+.ee-welcome {
+  border-color: var(--line);
+  background: linear-gradient(135deg, var(--blush), var(--cream));
+}
+
+.ee-welcome-art {
+  color: var(--rose);
+  text-shadow: 0 0 30px color-mix(in srgb, var(--rose) 35%, transparent);
+}
+
+.ee-welcome h2 {
+  color: var(--plum);
+}
+
+.ee-welcome p {
+  color: var(--ink);
+}
+
+.ee-category-card {
+  --ee-accent: var(--rose);
+  --ee-accent-soft: var(--blush);
+  box-shadow: var(--shadow);
+}
+
+.ee-category-heading {
+  background: color-mix(in srgb, var(--blush) 72%, var(--cream));
+}
+
+.ee-tool-tab {
+  border-color: var(--line);
+  background: var(--cream);
+  color: var(--muted);
+}
+
+.ee-tool-layout:not([data-ee-info-open="true"]) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.ee-tool-form-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  margin-bottom: 2px;
+}
+
+.ee-tool-form-heading h4 {
+  min-width: 0;
+  margin: 0;
+  color: var(--plum);
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+.ee-tool-info {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--blush);
+  color: var(--plum);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ee-tool-info:hover,
+.ee-tool-info[aria-expanded="true"] {
+  border-color: var(--rose);
+  background: var(--plum);
+  color: var(--cream);
+}
+
+.ee-tool-info:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 2px;
+}
+
+.ee-field input,
+.ee-field select,
+.ee-formula-editor {
+  border-color: var(--line);
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.ee-field input::placeholder {
+  color: var(--muted);
+}
+
+.ee-calculate-button {
+  background: var(--plum);
+  color: var(--cream);
+}
+
+.ee-tool-reference {
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.ee-tool-reference strong {
+  color: var(--rose);
+}
+
+.ee-tool-reference pre,
+.ee-reference-item pre {
+  color: var(--ink);
+}
+
+.ee-formula-save,
+.ee-formula-reset {
+  border-color: var(--line);
+  background: var(--blush);
+  color: var(--plum);
+}
+
+.ee-formula-save:hover,
+.ee-formula-reset:hover {
+  background: var(--plum);
+  color: var(--cream);
+}
+
+.ee-formula-status.has-error,
+.ee-tool-result.has-error {
+  color: var(--rose);
+}
+
+.ee-tool-result {
+  border-color: var(--rose);
+  background: var(--blush);
+  color: var(--ink);
+}
+
+.ee-reference-item {
+  border-color: var(--line);
+}
+
+.ee-mobile-news h2 {
+  color: var(--plum);
+}
+
+.ee-news-card {
+  border-color: var(--line);
+  background: var(--ee-panel);
+  color: var(--ink);
+}
+
+.ee-news-card strong,
+.ee-news-icon,
+.ee-news-arrow {
+  color: var(--plum);
+}
+
+.ee-news-card small {
+  color: var(--muted);
+}
+
+@media (max-width: 600px) {
+  .ee-tool-layout[data-ee-info-open="true"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

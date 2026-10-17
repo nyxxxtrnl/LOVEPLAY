@@ -3269,6 +3269,21 @@ function renderEeCategories() {
       const form = document.createElement("form");
       form.className = "ee-tool-form";
       form.dataset.eeTool = tool.id;
+      const formHeading = document.createElement("div");
+      formHeading.className = "ee-tool-form-heading";
+      const formTitle = document.createElement("h4");
+      formTitle.textContent = tool.title;
+      const infoButton = document.createElement("button");
+      infoButton.type = "button";
+      infoButton.className = "ee-tool-info";
+      infoButton.dataset.eeInfo = tool.id;
+      infoButton.setAttribute("aria-expanded", "false");
+      infoButton.setAttribute("aria-controls", `ee-info-${tool.id}`);
+      infoButton.setAttribute("aria-label", `Show formula and edit options for ${tool.title}`);
+      infoButton.title = "Show formula and edit options";
+      infoButton.textContent = "i";
+      formHeading.append(formTitle, infoButton);
+      form.append(formHeading);
       tool.fields.forEach(field => form.append(createEeField(tool.id, field)));
       form.append(createEeField(tool.id, {
         key: "multiplier",
@@ -3299,6 +3314,8 @@ function renderEeCategories() {
 
       const reference = document.createElement("aside");
       reference.className = "ee-tool-reference";
+      reference.id = `ee-info-${tool.id}`;
+      reference.hidden = true;
       const formulaTitle = document.createElement("strong");
       formulaTitle.textContent = "Formulas";
       const formulaText = document.createElement("pre");
@@ -3342,6 +3359,7 @@ function renderEeCategories() {
 
       const toolLayout = document.createElement("div");
       toolLayout.className = "ee-tool-layout";
+      toolLayout.dataset.eeInfoOpen = "false";
       toolLayout.append(form, reference);
       panel.append(toolLayout, output);
       panels.append(panel);
@@ -3652,18 +3670,31 @@ function persistEeFormulas(nextFormulas) {
 
 renderEeCategories();
 document.getElementById("calculator").dataset.eeSelection = "home";
+document.getElementById("ee-formula-reference").hidden = true;
+
+function closeEeFormulaInfo(root) {
+  root.querySelectorAll(".ee-tool-reference").forEach(reference => {
+    reference.hidden = true;
+  });
+  root.querySelectorAll("[data-ee-info]").forEach(button => {
+    button.setAttribute("aria-expanded", "false");
+    button.setAttribute("aria-label", `Show formula and edit options for ${button.closest(".ee-tool-form-heading").querySelector("h4").textContent}`);
+    button.closest(".ee-tool-layout").dataset.eeInfoOpen = "false";
+  });
+}
 
 document.getElementById("eeSidebarNav").addEventListener("click", event => {
   const button = event.target.closest("[data-ee-nav]");
   if (!button) return;
   const selection = button.dataset.eeNav;
+  closeEeFormulaInfo(eeCategoriesRoot);
   document.getElementById("calculator").dataset.eeSelection = selection;
   document.querySelectorAll(".ee-nav-item").forEach(item => item.classList.toggle("is-active", item === button));
   document.querySelectorAll("[data-ee-category]").forEach(card => {
     card.hidden = selection !== "home" && card.dataset.eeCategory !== selection;
   });
   document.getElementById("eeWelcome").hidden = selection !== "home";
-  document.getElementById("ee-formula-reference").hidden = selection !== "home" && selection !== "reference";
+  document.getElementById("ee-formula-reference").hidden = selection !== "reference";
 });
 
 document.querySelector(".ee-topbar nav").addEventListener("click", event => {
@@ -3676,6 +3707,18 @@ document.querySelector(".ee-topbar nav").addEventListener("click", event => {
 });
 
 document.getElementById("eeCategories").addEventListener("click", event => {
+  const infoButton = event.target.closest("[data-ee-info]");
+  if (infoButton) {
+    const toolLayout = infoButton.closest(".ee-tool-layout");
+    const reference = document.getElementById(infoButton.getAttribute("aria-controls"));
+    const isOpen = infoButton.getAttribute("aria-expanded") === "true";
+    reference.hidden = isOpen;
+    infoButton.setAttribute("aria-expanded", String(!isOpen));
+    infoButton.setAttribute("aria-label", `${isOpen ? "Show" : "Hide"} formula and edit options for ${infoButton.closest(".ee-tool-form-heading").querySelector("h4").textContent}`);
+    toolLayout.dataset.eeInfoOpen = String(!isOpen);
+    return;
+  }
+
   const saveButton = event.target.closest("[data-ee-save-formula]");
   const resetButton = event.target.closest("[data-ee-reset-formula]");
   if (saveButton || resetButton) {
@@ -3713,6 +3756,7 @@ document.getElementById("eeCategories").addEventListener("click", event => {
     item.setAttribute("aria-selected", String(selected));
     item.tabIndex = selected ? 0 : -1;
   });
+  closeEeFormulaInfo(panelRoot);
   panelRoot.querySelectorAll(".ee-tool-panel").forEach(panel => {
     panel.hidden = panel.id !== tab.getAttribute("aria-controls");
   });
