@@ -1,4 +1,4 @@
-const CACHE_NAME = "loveplay-shell-v31";
+const CACHE_NAME = "loveplay-shell-v32";
 const APP_FILES = [
   "index.html",
   "manifest.webmanifest",

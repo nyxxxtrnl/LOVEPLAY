@@ -2160,39 +2160,59 @@ function resumeBackgroundMusicOnInteraction() {
 document.addEventListener("pointerdown", resumeBackgroundMusicOnInteraction);
 document.addEventListener("keydown", resumeBackgroundMusicOnInteraction);
 
-let currentThemePalette = "white";
-const allowedThemePalettes = new Set(["white", "dark"]);
+let currentThemePalette = "rose";
+const allowedThemePalettes = new Set(["rose", "ocean", "lavender", "sage", "white", "black"]);
 
-function applyTheme(theme) {
+function applyTheme(theme, palette = currentThemePalette) {
   const dark = theme === "dark";
-  currentThemePalette = dark ? "dark" : "white";
+  currentThemePalette = allowedThemePalettes.has(palette) ? palette : "rose";
   document.body.dataset.theme = dark ? "dark" : "light";
   document.body.dataset.palette = currentThemePalette;
+  const toggle = document.getElementById("themeToggle");
+  toggle.setAttribute("aria-checked", String(dark));
+  toggle.setAttribute("aria-label", dark ? "Turn off dark mode" : "Turn on dark mode");
   document.querySelectorAll("[data-theme-palette]").forEach(button => {
     button.setAttribute("aria-pressed", String(button.dataset.themePalette === currentThemePalette));
   });
-  document.querySelector('meta[name="theme-color"]').content = dark ? "#17131b" : "#fffaf7";
+  const themeColors = {
+    rose: dark ? "#17131b" : "#fffaf7",
+    ocean: dark ? "#131b24" : "#f5fbfd",
+    lavender: dark ? "#19151f" : "#fbf9ff",
+    sage: dark ? "#141d17" : "#fafcf7",
+    white: dark ? "#171717" : "#ffffff",
+    black: dark ? "#000000" : "#f7f7f7"
+  };
+  document.querySelector('meta[name="theme-color"]').content = themeColors[currentThemePalette];
 }
 
 try {
   const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem("loveplay-chat-theme-v1");
-  const legacyPalette = localStorage.getItem(THEME_PALETTE_STORAGE_KEY);
-  const theme = savedTheme === "dark" || legacyPalette === "dark" ? "dark" : "light";
-  applyTheme(theme);
+  const savedPalette = localStorage.getItem(THEME_PALETTE_STORAGE_KEY);
+  const migratedPalette = savedPalette === "dark" ? "black" : savedPalette;
+  applyTheme(savedTheme === "dark" ? "dark" : "light", migratedPalette);
 } catch (error) {
   applyTheme("light");
 }
 
+function toggleTheme() {
+  const theme = document.body.dataset.theme === "dark" ? "light" : "dark";
+  applyTheme(theme, currentThemePalette);
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch (error) {
+    showToast(error.message || "Could not save your theme preference.");
+  }
+}
+
+document.getElementById("themeToggle").addEventListener("click", toggleTheme);
 document.querySelectorAll("[data-theme-palette]").forEach(button => {
   button.addEventListener("click", () => {
     const palette = button.dataset.themePalette;
     if (!allowedThemePalettes.has(palette)) {
       throw new Error(`Unsupported LovePlay theme palette: ${palette}`);
     }
-    const theme = palette === "dark" ? "dark" : "light";
-    applyTheme(theme);
+    applyTheme(document.body.dataset.theme, palette);
     try {
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
       localStorage.setItem(THEME_PALETTE_STORAGE_KEY, palette);
     } catch (error) {
       showToast(error.message || "Could not save your theme preference.");
@@ -2261,7 +2281,7 @@ const settingsInfoPages = {
     title: "LovePlay guide",
     paragraphs: [
       "Use the bottom navigation to switch between Home, Games, Chat, Music, and More.",
-      "Tap the small handle at the left edge to open Quick Settings. Choose the White or Dark app theme, or open an information page there.",
+      "Tap the small handle at the left edge to open Quick Settings. Choose Rose, Ocean, Lavender, Sage, White, or Black, and use the separate Dark mode switch to change the appearance.",
       "In Games, tap an app icon to open the installed game when supported, or its official store page. Chat requires an account and internet connection."
     ]
   },
