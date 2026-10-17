@@ -3379,32 +3379,14 @@ footer p {
     overflow: hidden;
     border: 1px solid rgba(50, 35, 48, 0.1);
     border-radius: 19px;
-    color: #fff;
     box-shadow: 0 5px 12px rgba(55, 35, 50, 0.16), inset 0 1px rgba(255, 255, 255, 0.35);
   }
-  .game-app-mark {
-    font-size: 1.65rem;
-    font-weight: 850;
-    line-height: 1;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  .game-app-icon img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
-  .app-roblox .game-app-icon { background: linear-gradient(145deg, #272631, #09090b); }
-  .app-chess .game-app-icon { background: linear-gradient(145deg, #416a52, #1e3a2b); }
-  .app-mlbb .game-app-icon { background: linear-gradient(145deg, #3599d0, #372d89); }
-  .app-clash .game-app-icon { background: linear-gradient(145deg, #e8b458, #b94232); }
-  .app-tongits .game-app-icon { background: linear-gradient(145deg, #df657d, #8f254c); }
-  .app-genshin .game-app-icon { background: linear-gradient(145deg, #75cce0, #6770b4); }
-  .app-cod .game-app-icon { background: linear-gradient(145deg, #8a9b69, #313a2b); }
-  .app-pubg .game-app-icon { background: linear-gradient(145deg, #edb34b, #8e4b27); }
-  .app-pubg .game-app-mark { font-size: 0.72rem; }
-  .app-freefire .game-app-icon { background: linear-gradient(145deg, #ffac44, #d83d2e); }
-  .app-brawl .game-app-icon { background: linear-gradient(145deg, #f5c44d, #df5a30); }
-  .app-minecraft .game-app-icon { background: linear-gradient(145deg, #79b95c, #426b3f); }
-  .app-fortnite .game-app-icon { background: linear-gradient(145deg, #8c7ad4, #433c80); }
-  .app-amongus .game-app-icon { background: linear-gradient(145deg, #e85d62, #8e1f35); }
-  .app-terraria .game-app-icon { background: linear-gradient(145deg, #82c95e, #347848); }
-  .app-stumble .game-app-icon { background: linear-gradient(145deg, #63b9f0, #6259cc); }
-  .app-8ball .game-app-icon { background: linear-gradient(145deg, #4a70a7, #17284d); }
   .game-app-name {
     display: -webkit-box;
     min-height: 2.35em;
