@@ -31,13 +31,11 @@ function dispatchPushToken(token) {
   }));
 }
 
-async function openNativeAppLink(link) {
+async function openNativeAppUrl(appUrl, storeFallback, label, androidPackage) {
   const platform = Capacitor.getPlatform();
-  const appUrl = platform === "android" ? link.dataset.androidPackage : link.dataset.appScheme;
-  const storeUrl = platform === "android"
-    ? `market://details?id=${link.dataset.androidPackage}`
-    : link.dataset.iosStore.replace("https://apps.apple.com/", "itms-apps://apps.apple.com/");
-  const storeFallback = platform === "android" ? link.dataset.androidStore : link.dataset.iosStore;
+  const storeUrl = platform === "android" && androidPackage
+    ? `market://details?id=${androidPackage}`
+    : storeFallback.replace("https://apps.apple.com/", "itms-apps://apps.apple.com/");
 
   try {
     const { value: canOpen } = await AppLauncher.canOpenUrl({ url: appUrl });
@@ -46,7 +44,7 @@ async function openNativeAppLink(link) {
       if (completed) return;
     }
   } catch (error) {
-    console.error(`Could not open ${link.querySelector("strong")?.textContent || "the selected app"}.`, error);
+    console.error(`Could not open ${label}.`, error);
   }
 
   showToast("App not installed. Opening its store listing.");
@@ -63,6 +61,14 @@ async function openNativeAppLink(link) {
     console.error("Could not open the app store listing.", error);
     showError("Could not open the app or its store listing.");
   }
+}
+
+async function openNativeAppLink(link) {
+  const platform = Capacitor.getPlatform();
+  const appUrl = platform === "android" ? link.dataset.androidPackage : link.dataset.appScheme;
+  const storeFallback = platform === "android" ? link.dataset.androidStore : link.dataset.iosStore;
+  const label = link.querySelector("strong")?.textContent || "the selected app";
+  await openNativeAppUrl(appUrl, storeFallback, label, link.dataset.androidPackage);
 }
 
 const pushListenersReady = isNative
@@ -183,5 +189,6 @@ enablePushButton?.addEventListener("click", async () => {
 
 window.LovePlayNative = Object.freeze({
   isNative,
-  platform: Capacitor.getPlatform()
+  platform: Capacitor.getPlatform(),
+  openExternalApp: openNativeAppUrl
 });

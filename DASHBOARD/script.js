@@ -1925,14 +1925,14 @@ const mobileGameLaunchers = {
     native: "heartopia://",
     ios: "heartopia://",
     playStore: "https://play.google.com/store/apps/details?id=com.xd.xdtglobal.gp",
-    appStore: "https://apps.apple.com/ph/search?term=Heartopia"
+    appStore: "https://apps.apple.com/ph/app/heartopia/id6746151928"
   },
   coffee: {
     android: "https://play.google.com/store/apps/details?id=com.tapblaze.coffeebusiness",
     native: "coffeebusiness://",
     ios: "coffeebusiness://",
     playStore: "https://play.google.com/store/apps/details?id=com.tapblaze.coffeebusiness",
-    appStore: "https://apps.apple.com/ph/search?term=Good%20Coffee%20Great%20Coffee"
+    appStore: "https://apps.apple.com/ph/app/good-coffee-great-coffee/id1603584945"
   },
   subway: {
     android: "https://play.google.com/store/apps/details?id=com.kiloo.subwaysurf",
@@ -1953,7 +1953,7 @@ const mobileGameLaunchers = {
     native: "cookingmama://",
     ios: "cookingmama://",
     playStore: "https://play.google.com/store/apps/details?id=jp.co.ofcr.cm00",
-    appStore: "https://apps.apple.com/ph/search?term=Cooking%20Mama%20Lets%20cook"
+    appStore: "https://apps.apple.com/ph/app/cooking-mama-lets-cook/id987360477"
   },
   candycrush: {
     android: "https://play.google.com/store/apps/details?id=com.king.candycrushsaga",
@@ -2058,6 +2058,15 @@ document.querySelector(".mobile-game-launchers").addEventListener("click", event
   }
   if (/iPhone|iPad|iPod/i.test(navigator.userAgent) ||
       (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
+    const openNativeApp = window.LovePlayNative?.openExternalApp;
+    if (window.LovePlayNative?.platform === "ios" && typeof openNativeApp === "function") {
+      void openNativeApp(
+        launcher.ios,
+        launcher.appStore,
+        link.getAttribute("aria-label") || "the selected game"
+      );
+      return;
+    }
     openGameAppOrStore(launcher.ios, launcher.appStore);
     return;
   }
