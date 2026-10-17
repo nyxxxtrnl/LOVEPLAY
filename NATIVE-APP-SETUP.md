@@ -40,12 +40,12 @@ Install on a personal device using Xcode signing, or distribute through TestFlig
 
 Push delivery is not active until the Firebase native apps and server function are configured:
 
-1. Register Android package `com.loveplay.app` and the chosen iOS bundle ID as native apps in Firebase.
-2. Put the Android `google-services.json` in `android/app/`. Add `GoogleService-Info.plist` to the iOS app target in Xcode.
+1. The Android package `com.loveplay.app` and iOS bundle ID `com.loveplay.app` are registered in Firebase. Their downloaded config files are excluded from Git; the local iOS plist is included in the Xcode app resources.
+2. For GitHub APK builds, add the contents of `android/app/google-services.json` as the `FIREBASE_ANDROID_CONFIG` repository Actions secret under **Settings → Secrets and variables → Actions**.
 3. Upload an APNs authentication key in Firebase Console for iOS push delivery.
    In Xcode, enable the **Push Notifications** capability for the iOS app target.
-4. Enable Cloud Functions and its required billing plan for the Firebase project.
-5. Deploy the Realtime Database rules and message trigger:
+5. Enable Cloud Functions and its required billing plan for the Firebase project.
+6. Deploy the Realtime Database rules and message trigger:
 
    ```sh
    firebase deploy --only database,functions
