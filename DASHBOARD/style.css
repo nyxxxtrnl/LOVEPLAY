@@ -3588,7 +3588,7 @@ footer p {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
-    margin: 20px 0 30px;
+    margin: 14px 0 24px;
   }
   .mobile-extra-link {
     display: grid;
@@ -3608,9 +3608,16 @@ footer p {
     width: 38px;
     height: 38px;
     place-items: center;
+    overflow: hidden;
     border-radius: 12px;
-    background: var(--blush);
-    color: var(--rose);
+    background: transparent;
+    box-shadow: 0 3px 9px rgba(55, 35, 50, 0.12);
+  }
+  .mobile-extra-icon img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .mobile-extra-icon svg,
   .mobile-extra-arrow {
@@ -3664,6 +3671,14 @@ footer p {
   }
   .toast {
     bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+  .ee-more-apps {
+    padding-top: 12px;
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+  }
+  .ee-more-apps-heading h2 {
+    margin-top: 4px;
+    font-size: clamp(1.8rem, 8vw, 2.25rem);
   }
   .ee-app { display: block; min-height: calc(100vh - 72px); }
   .ee-sidebar {
