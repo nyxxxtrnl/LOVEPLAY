@@ -1133,6 +1133,10 @@ h1 span,
   gap: 22px;
 }
 
+.mobile-game-launchers {
+  display: none;
+}
+
 .movie-note {
   margin: -8px 0 22px;
   color: var(--muted);
@@ -3328,6 +3332,91 @@ footer p {
   }
   .topbar nav.open { display: flex; }
   .topbar nav .tab-button { width: 100%; }
+  #games .section-heading {
+    position: relative;
+    padding-right: 42px;
+  }
+  #games .section-heading::after {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    color: #d87b9a;
+    content: "♡";
+    font-size: 2.35rem;
+    line-height: 1;
+    transform: rotate(12deg);
+  }
+  .mobile-game-launchers {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px 8px;
+    margin-top: 14px;
+    padding: 16px 10px;
+    border: 1px solid rgba(212, 174, 192, 0.55);
+    border-radius: 22px;
+    background: linear-gradient(145deg, #fff1f5, #fff9f5);
+    box-shadow: 0 12px 30px rgba(75, 38, 62, 0.07);
+  }
+  .mobile-game-app {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 1px;
+    border-radius: 15px;
+    color: var(--ink);
+    text-align: center;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-game-app:active { transform: scale(0.96); }
+  .game-app-icon {
+    display: grid;
+    width: min(100%, 68px);
+    aspect-ratio: 1;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid rgba(50, 35, 48, 0.1);
+    border-radius: 19px;
+    color: #fff;
+    box-shadow: 0 5px 12px rgba(55, 35, 50, 0.16), inset 0 1px rgba(255, 255, 255, 0.35);
+  }
+  .game-app-mark {
+    font-size: 1.65rem;
+    font-weight: 850;
+    line-height: 1;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  }
+  .app-roblox .game-app-icon { background: linear-gradient(145deg, #272631, #09090b); }
+  .app-chess .game-app-icon { background: linear-gradient(145deg, #416a52, #1e3a2b); }
+  .app-mlbb .game-app-icon { background: linear-gradient(145deg, #3599d0, #372d89); }
+  .app-clash .game-app-icon { background: linear-gradient(145deg, #e8b458, #b94232); }
+  .app-tongits .game-app-icon { background: linear-gradient(145deg, #df657d, #8f254c); }
+  .app-genshin .game-app-icon { background: linear-gradient(145deg, #75cce0, #6770b4); }
+  .app-cod .game-app-icon { background: linear-gradient(145deg, #8a9b69, #313a2b); }
+  .app-pubg .game-app-icon { background: linear-gradient(145deg, #edb34b, #8e4b27); }
+  .app-pubg .game-app-mark { font-size: 0.72rem; }
+  .app-freefire .game-app-icon { background: linear-gradient(145deg, #ffac44, #d83d2e); }
+  .app-brawl .game-app-icon { background: linear-gradient(145deg, #f5c44d, #df5a30); }
+  .app-minecraft .game-app-icon { background: linear-gradient(145deg, #79b95c, #426b3f); }
+  .app-fortnite .game-app-icon { background: linear-gradient(145deg, #8c7ad4, #433c80); }
+  .app-amongus .game-app-icon { background: linear-gradient(145deg, #e85d62, #8e1f35); }
+  .app-terraria .game-app-icon { background: linear-gradient(145deg, #82c95e, #347848); }
+  .app-stumble .game-app-icon { background: linear-gradient(145deg, #63b9f0, #6259cc); }
+  .app-8ball .game-app-icon { background: linear-gradient(145deg, #4a70a7, #17284d); }
+  .game-app-name {
+    display: -webkit-box;
+    min-height: 2.35em;
+    overflow: hidden;
+    font-size: 0.66rem;
+    font-weight: 650;
+    line-height: 1.18;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  .game-grid { display: none; }
   .mobile-tabbar {
     position: fixed;
     z-index: 30;
@@ -3635,6 +3724,9 @@ footer p {
 
 @media (max-width: 380px) {
   .ee-app-grid { grid-template-columns: 1fr; }
+  .mobile-game-launchers { gap: 10px 5px; padding-inline: 7px; }
+  .game-app-icon { border-radius: 16px; }
+  .game-app-name { font-size: 0.62rem; }
 }
 
 body[data-theme="dark"] {

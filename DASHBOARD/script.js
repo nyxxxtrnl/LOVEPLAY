@@ -171,14 +171,14 @@ function updateProgress() {
   document.getElementById("surpriseDescription").textContent =
     unlocked
       ? "You did it! Your final letter is ready."
-      : `Collect ${HEART_GOAL} hearts by completing the games to unlock your special letter.`;
+      : `Choose ${HEART_GOAL} game apps to collect hearts and unlock your special letter.`;
 }
 
 // EACH GAME CAN AWARD A HEART ONLY ONCE
 function awardHeart(gameId) {
   if (progress.completed.includes(gameId)) {
     showToast(
-      "You already earned a heart for this game. Play again for fun! ♡"
+      "You already earned a heart for this game. Open it again for fun! ♡"
     );
     return;
   }
@@ -1757,48 +1757,120 @@ function initializePhotoGallery() {
 const galleryReady = initializePhotoGallery();
 
 // EVENT LISTENERS
-document.getElementById("startMatch")
-  .addEventListener("click", startMatch);
-
-document.getElementById("startQuiz")
-  .addEventListener("click", startQuiz);
-
-document.getElementById("editQuizQuestions")
-  .addEventListener("click", openQuizEditor);
-
-document.getElementById("quizEditorForm")
-  .addEventListener("submit", saveQuizEditor);
-
-document.getElementById("startConnectFour")
-  .addEventListener("click", startConnectFour);
-
-document.getElementById("startSnake")
-  .addEventListener("click", startSnake);
-
-document.getElementById("startTicTacToe")
-  .addEventListener("click", startTicTacToe);
 
 const mobileGameLaunchers = {
   chess: {
-    android: `intent://www.chess.com/play/computer#Intent;scheme=https;package=com.chess;S.browser_fallback_url=${encodeURIComponent("https://play.google.com/store/apps/details?id=com.chess")};end`,
+    android: "https://play.google.com/store/apps/details?id=com.chess",
     native: "chess://",
     ios: "chess://",
     playStore: "https://play.google.com/store/apps/details?id=com.chess",
     appStore: "https://apps.apple.com/app/id329218549"
   },
   roblox: {
-    android: `intent://#Intent;scheme=roblox;package=com.roblox.client;S.browser_fallback_url=${encodeURIComponent("https://play.google.com/store/apps/details?id=com.roblox.client")};end`,
+    android: "https://play.google.com/store/apps/details?id=com.roblox.client",
     native: "roblox://",
     ios: "roblox://",
     playStore: "https://play.google.com/store/apps/details?id=com.roblox.client",
     appStore: "https://apps.apple.com/app/id431946152"
   },
   mlbb: {
-    android: `intent://#Intent;scheme=mobilelegends;package=com.mobile.legends;S.browser_fallback_url=${encodeURIComponent("https://play.google.com/store/apps/details?id=com.mobile.legends")};end`,
+    android: "https://play.google.com/store/apps/details?id=com.mobile.legends",
     native: "mobilelegends://",
     ios: "mobilelegends://",
     playStore: "https://play.google.com/store/apps/details?id=com.mobile.legends",
     appStore: "https://apps.apple.com/app/id1160056295"
+  },
+  clash: {
+    android: "https://play.google.com/store/apps/details?id=com.supercell.clashofclans",
+    native: "clashofclans://",
+    ios: "clashofclans://",
+    playStore: "https://play.google.com/store/apps/details?id=com.supercell.clashofclans",
+    appStore: "https://apps.apple.com/app/id529479190"
+  },
+  tongits: {
+    android: "https://play.google.com/store/apps/details?id=com.tongitsgo.play",
+    native: "tongitsgo://",
+    ios: "tongitsgo://",
+    playStore: "https://play.google.com/store/apps/details?id=com.tongitsgo.play",
+    appStore: "https://apps.apple.com/ph/search?term=Tongits%20Go"
+  },
+  genshin: {
+    android: "https://play.google.com/store/apps/details?id=com.miHoYo.GenshinImpact",
+    native: "genshinimpact://",
+    ios: "genshinimpact://",
+    playStore: "https://play.google.com/store/apps/details?id=com.miHoYo.GenshinImpact",
+    appStore: "https://apps.apple.com/app/id1517783697"
+  },
+  cod: {
+    android: "https://play.google.com/store/apps/details?id=com.garena.game.codm",
+    native: "codm://",
+    ios: "codm://",
+    playStore: "https://play.google.com/store/apps/details?id=com.garena.game.codm",
+    appStore: "https://apps.apple.com/app/id1287282214"
+  },
+  pubg: {
+    android: "https://play.google.com/store/apps/details?id=com.tencent.ig",
+    native: "pubgmobile://",
+    ios: "pubgmobile://",
+    playStore: "https://play.google.com/store/apps/details?id=com.tencent.ig",
+    appStore: "https://apps.apple.com/app/id1330123889"
+  },
+  freefire: {
+    android: "https://play.google.com/store/apps/details?id=com.dts.freefireth",
+    native: "freefire://",
+    ios: "freefire://",
+    playStore: "https://play.google.com/store/apps/details?id=com.dts.freefireth",
+    appStore: "https://apps.apple.com/app/id1300146617"
+  },
+  brawl: {
+    android: "https://play.google.com/store/apps/details?id=com.supercell.brawlstars",
+    native: "brawlstars://",
+    ios: "brawlstars://",
+    playStore: "https://play.google.com/store/apps/details?id=com.supercell.brawlstars",
+    appStore: "https://apps.apple.com/app/id1229016807"
+  },
+  minecraft: {
+    android: "https://play.google.com/store/apps/details?id=com.mojang.minecraftpe",
+    native: "minecraft://",
+    ios: "minecraft://",
+    playStore: "https://play.google.com/store/apps/details?id=com.mojang.minecraftpe",
+    appStore: "https://apps.apple.com/app/id479516143"
+  },
+  fortnite: {
+    android: "https://store.epicgames.com/en-US/mobile/android",
+    packageId: "com.epicgames.fortnite",
+    native: "com.epicgames.fortnite://",
+    ios: "fortnite://",
+    playStore: "https://play.google.com/store/search?q=Fortnite&c=apps",
+    appStore: "https://apps.apple.com/ph/search?term=Fortnite"
+  },
+  amongus: {
+    android: "https://play.google.com/store/apps/details?id=com.innersloth.spacemafia",
+    native: "amongus://",
+    ios: "amongus://",
+    playStore: "https://play.google.com/store/apps/details?id=com.innersloth.spacemafia",
+    appStore: "https://apps.apple.com/app/id1351168404"
+  },
+  terraria: {
+    android: "https://play.google.com/store/apps/details?id=com.and.games505.TerrariaPaid",
+    native: "terraria://",
+    ios: "terraria://",
+    playStore: "https://play.google.com/store/apps/details?id=com.and.games505.TerrariaPaid",
+    appStore: "https://apps.apple.com/app/id640364616"
+  },
+  stumble: {
+    android: "https://play.google.com/store/apps/details?id=com.kitkagames.fallbuddies",
+    native: "stumbleguys://",
+    ios: "stumbleguys://",
+    playStore: "https://play.google.com/store/apps/details?id=com.kitkagames.fallbuddies",
+    appStore: "https://apps.apple.com/app/id1541153375"
+  },
+  "8ball": {
+    android: "https://play.google.com/store/apps/details?id=com.miniclip.eightballpool",
+    native: "miniclip://",
+    ios: "miniclip://",
+    playStore: "https://play.google.com/store/apps/details?id=com.miniclip.eightballpool",
+    appStore: "https://apps.apple.com/app/id543186831"
   }
 };
 
@@ -1818,18 +1890,23 @@ function openGameAppOrStore(appUrl, storeUrl) {
   }, 1200);
 }
 
-document.querySelector(".game-grid").addEventListener("click", event => {
-  const link = event.target.closest("a[data-game-app]");
+document.querySelector(".mobile-game-launchers").addEventListener("click", event => {
+  const target = event.target instanceof Element ? event.target : null;
+  const link = target?.closest("a[data-game-app]");
   if (!link || !window.matchMedia("(max-width: 600px)").matches) return;
   const launcher = mobileGameLaunchers[link.dataset.gameApp];
   if (!launcher) return;
 
   event.preventDefault();
+  awardHeart(link.dataset.gameApp);
   if (/Android/i.test(navigator.userAgent)) {
     if (window.LovePlayNative?.platform === "android") {
-      openGameAppOrStore(launcher.native, launcher.playStore);
+      openGameAppOrStore(launcher.native, launcher.android);
     } else {
-      window.location.assign(launcher.android);
+      const packageId = launcher.packageId || new URL(link.href).searchParams.get("id");
+      const fallback = encodeURIComponent(launcher.android);
+      const scheme = launcher.native.replace(/:\/\/$/, "");
+      window.location.assign(`intent://#Intent;scheme=${scheme};package=${packageId};S.browser_fallback_url=${fallback};end`);
     }
     return;
   }
@@ -2192,7 +2269,7 @@ document.getElementById("openGift")
     }
 
     document.getElementById("surprise").scrollIntoView({ behavior: "smooth", block: "center" });
-    showToast(`Play games to collect ${HEART_GOAL - progress.hearts} more heart${HEART_GOAL - progress.hearts === 1 ? "" : "s"} and open your gift.`);
+    showToast(`Choose ${HEART_GOAL - progress.hearts} more game app${HEART_GOAL - progress.hearts === 1 ? "" : "s"} to collect hearts and open your gift.`);
   });
 
 const musicCollections = {
