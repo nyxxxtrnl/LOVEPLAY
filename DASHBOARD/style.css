@@ -2168,10 +2168,6 @@ a.ee-app-choice:focus-visible {
   overflow-wrap: anywhere;
 }
 
-.ee-tool-result-inline {
-  display: none;
-}
-
 .ee-tool-result.has-error {
   border-color: #ff6678;
   color: #ffb8c2;
@@ -3925,41 +3921,6 @@ body[data-theme="dark"] .photo-nav-button {
     font-size: 0.7rem;
   }
 
-  .ee-tool-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .ee-field {
-    gap: 5px;
-    font-size: 0.72rem;
-  }
-
-  .ee-field input,
-  .ee-field select {
-    height: 38px;
-    padding: 7px 9px;
-    font-size: 0.78rem;
-  }
-
-  .ee-calculate-button {
-    min-height: 40px;
-    padding: 8px 12px;
-    font-size: 0.82rem;
-  }
-
-  .ee-tool-panel > .ee-tool-result {
-    display: none;
-  }
-
-  .ee-tool-form > .ee-tool-result-inline {
-    display: block;
-    margin-top: 4px;
-    padding: 11px 12px;
-    border-left-width: 3px;
-    border-radius: 0 8px 8px 0;
-    font-size: 0.88rem;
-    line-height: 1.5;
-  }
   color: #fff;
 }
 
@@ -4521,14 +4482,32 @@ body[data-theme="light"][data-palette="sage"] {
   background: color-mix(in srgb, var(--blush) 72%, var(--cream));
 }
 
+.ee-category-title {
+  min-width: 0;
+}
+
+.ee-category-title small {
+  display: block;
+  margin-top: 2px;
+  color: var(--rose);
+  font-size: 0.58rem;
+  font-weight: 750;
+  letter-spacing: 0.13em;
+}
+
 .ee-tool-tab {
   border-color: var(--line);
   background: var(--cream);
   color: var(--muted);
 }
 
-.ee-tool-layout:not([data-ee-info-open="true"]) {
-  grid-template-columns: minmax(0, 1fr);
+.ee-tool-layout {
+  display: block;
+}
+
+.ee-tool-form {
+  gap: 12px;
+  padding: 10px;
 }
 
 .ee-tool-form-heading {
@@ -4544,7 +4523,99 @@ body[data-theme="light"][data-palette="sage"] {
   min-width: 0;
   margin: 0;
   color: var(--plum);
-  font-size: 0.72rem;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.ee-result-card {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: linear-gradient(140deg, color-mix(in srgb, var(--rose) 13%, var(--cream)), var(--blush));
+}
+
+.ee-result-heading,
+.ee-input-values h5 {
+  display: block;
+  margin: 0;
+  color: var(--plum);
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+
+.ee-tool-result {
+  display: grid;
+  min-height: 82px;
+  place-items: center;
+  margin: 9px 0 0;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-left: 0;
+  border-radius: 11px;
+  background: var(--cream);
+  color: var(--plum);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.ee-tool-result.has-error {
+  color: var(--rose);
+}
+
+.ee-input-values {
+  display: grid;
+  gap: 11px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--ee-panel);
+}
+
+.ee-input-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.ee-field {
+  min-width: 0;
+  gap: 6px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 0.74rem;
+}
+
+.ee-field-caption {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 24px;
+}
+
+.ee-field-icon {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid var(--rose);
+  border-radius: 50%;
+  background: var(--blush);
+  color: var(--plum);
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.ee-field-label {
+  min-width: 0;
   line-height: 1.3;
 }
 
@@ -4584,13 +4655,122 @@ body[data-theme="light"][data-palette="sage"] {
   color: var(--ink);
 }
 
+.ee-field input,
+.ee-field select {
+  height: 42px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  font-size: 0.82rem;
+}
+
 .ee-field input::placeholder {
   color: var(--muted);
 }
 
+.ee-multiplier-field {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--ee-panel);
+}
+
 .ee-calculate-button {
+  min-height: 50px;
+  margin: 0;
+  border-radius: 13px;
+  background: linear-gradient(105deg, var(--rose), var(--plum));
+  color: var(--cream);
+  font-size: 0.95rem;
+}
+
+.ee-tool-reference {
+  position: fixed;
+  inset: 0;
+  width: min(560px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(84dvh, 760px);
+  margin: auto;
+  padding: 22px 18px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 24px 80px color-mix(in srgb, var(--plum) 30%, transparent);
+  color: var(--ink);
+}
+
+.ee-tool-reference::backdrop {
+  background: rgba(25, 17, 27, 0.55);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.ee-formula-close {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  float: right;
+  width: 34px;
+  height: 34px;
+  margin: -8px -5px 4px 8px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--plum);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.ee-formula-close:hover {
   background: var(--plum);
   color: var(--cream);
+}
+
+.ee-tool-reference > strong {
+  clear: both;
+  padding-top: 4px;
+  font-size: 0.82rem;
+}
+
+.ee-tool-reference > pre,
+.ee-tool-reference > p,
+.ee-tool-reference > textarea,
+.ee-tool-reference > small,
+.ee-tool-reference > .ee-formula-actions {
+  clear: both;
+}
+
+.ee-tool-reference > pre {
+  margin: 6px 0 15px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--cream);
+  font-size: 0.86rem;
+}
+
+.ee-tool-reference > p {
+  margin-bottom: 15px;
+  font-size: 0.82rem;
+}
+
+.ee-formula-editor {
+  min-height: 120px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+}
+
+.ee-formula-help,
+.ee-formula-status {
+  font-size: 0.7rem;
+}
+
+.ee-formula-save,
+.ee-formula-reset {
+  min-height: 40px;
+  border-radius: 9px;
+  font-size: 0.74rem;
 }
 
 .ee-tool-reference {
@@ -4656,7 +4836,33 @@ body[data-theme="light"][data-palette="sage"] {
 }
 
 @media (max-width: 600px) {
-  .ee-tool-layout[data-ee-info-open="true"] {
-    grid-template-columns: minmax(0, 1fr);
+  .ee-tool-reference {
+    width: calc(100vw - 24px);
+    max-height: calc(100dvh - 32px);
+    padding: 18px 14px;
+    border-radius: 17px;
+  }
+
+  .ee-input-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .ee-field {
+    padding: 7px;
+    font-size: 0.67rem;
+  }
+
+  .ee-field-icon {
+    flex-basis: 25px;
+    width: 25px;
+    height: 25px;
+  }
+
+  .ee-field input,
+  .ee-field select {
+    height: 40px;
+    padding-inline: 7px;
+    font-size: 0.74rem;
   }
 }

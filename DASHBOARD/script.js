@@ -3162,13 +3162,28 @@ const eeSidebarNav = document.getElementById("eeSidebarNav");
 const eeCategoriesRoot = document.getElementById("eeCategories");
 const eeFormulaReference = document.getElementById("eeFormulaReference");
 const eeCalculatorNumber = value => calculatorNumber(value);
+const eeFieldIcons = {
+  v: "ϟ", v1: "ϟ", voltage: "ϟ",
+  i: "A", i1: "A", current: "A",
+  n1: "∿", n2: "∿", poles: "∿",
+  p: "P", pf: "φ", f: "f",
+  multiplier: "×", r: "Ω", a: "A"
+};
 
 function createEeField(toolId, field) {
   const label = document.createElement("label");
   label.className = "ee-field";
+  const captionRow = document.createElement("span");
+  captionRow.className = "ee-field-caption";
+  const icon = document.createElement("span");
+  icon.className = "ee-field-icon";
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = eeFieldIcons[field.key] || "•";
   const caption = document.createElement("span");
+  caption.className = "ee-field-label";
   caption.textContent = field.label;
-  label.append(caption);
+  captionRow.append(icon, caption);
+  label.append(captionRow);
 
   let input;
   if (field.type === "select") {
@@ -3238,7 +3253,12 @@ function renderEeCategories() {
     icon.textContent = category.icon;
     const title = document.createElement("h3");
     title.textContent = `${categoryIndex + 1}. ${category.title}`;
-    heading.append(icon, title);
+    const titleCopy = document.createElement("div");
+    titleCopy.className = "ee-category-title";
+    const subtitle = document.createElement("small");
+    subtitle.textContent = "QUICK CALCULATOR";
+    titleCopy.append(title, subtitle);
+    heading.append(icon, titleCopy);
 
     const tabs = document.createElement("div");
     tabs.className = "ee-tool-tabs";
@@ -3283,39 +3303,52 @@ function renderEeCategories() {
       infoButton.title = "Show formula and edit options";
       infoButton.textContent = "i";
       formHeading.append(formTitle, infoButton);
-      form.append(formHeading);
-      tool.fields.forEach(field => form.append(createEeField(tool.id, field)));
-      form.append(createEeField(tool.id, {
+      const resultCard = document.createElement("section");
+      resultCard.className = "ee-result-card";
+      resultCard.setAttribute("aria-label", `${tool.title} result`);
+      const resultHeading = document.createElement("strong");
+      resultHeading.className = "ee-result-heading";
+      resultHeading.textContent = "RESULT";
+      const result = document.createElement("p");
+      result.className = "ee-tool-result";
+      result.dataset.eeResult = tool.id;
+      result.setAttribute("role", "status");
+      result.setAttribute("aria-live", "polite");
+      result.textContent = "Enter values, then calculate.";
+      resultCard.append(resultHeading, result);
+
+      const inputsSection = document.createElement("section");
+      inputsSection.className = "ee-input-values";
+      const inputsHeading = document.createElement("h5");
+      inputsHeading.textContent = "INPUT VALUES";
+      const inputsGrid = document.createElement("div");
+      inputsGrid.className = "ee-input-grid";
+      tool.fields.forEach(field => inputsGrid.append(createEeField(tool.id, field)));
+      inputsSection.append(inputsHeading, inputsGrid);
+
+      const multiplierField = createEeField(tool.id, {
         key: "multiplier",
         label: "Result multiplier (×)",
         placeholder: "1 = no adjustment",
         default: 1
-      }));
+      });
+      multiplierField.classList.add("ee-multiplier-field");
       const submit = document.createElement("button");
       submit.className = "ee-calculate-button";
       submit.type = "submit";
       submit.textContent = "Calculate";
-      form.append(submit);
+      form.append(formHeading, resultCard, inputsSection, multiplierField, submit);
 
-      const inlineOutput = document.createElement("p");
-      inlineOutput.className = "ee-tool-result ee-tool-result-inline";
-      inlineOutput.dataset.eeResult = tool.id;
-      inlineOutput.setAttribute("role", "status");
-      inlineOutput.setAttribute("aria-live", "polite");
-      inlineOutput.textContent = "Enter values and calculate.";
-      form.append(inlineOutput);
-
-      const output = document.createElement("p");
-      output.className = "ee-tool-result";
-      output.dataset.eeResult = tool.id;
-      output.setAttribute("role", "status");
-      output.setAttribute("aria-live", "polite");
-      output.textContent = "Enter values and calculate.";
-
-      const reference = document.createElement("aside");
+      const reference = document.createElement("dialog");
       reference.className = "ee-tool-reference";
       reference.id = `ee-info-${tool.id}`;
-      reference.hidden = true;
+      reference.setAttribute("aria-label", `${tool.title} formula and edit options`);
+      const closeInfo = document.createElement("button");
+      closeInfo.type = "button";
+      closeInfo.className = "ee-formula-close";
+      closeInfo.dataset.eeCloseFormula = tool.id;
+      closeInfo.setAttribute("aria-label", "Close formula details");
+      closeInfo.textContent = "×";
       const formulaTitle = document.createElement("strong");
       formulaTitle.textContent = "Formulas";
       const formulaText = document.createElement("pre");
@@ -3353,15 +3386,18 @@ function renderEeCategories() {
       formulaStatus.dataset.eeFormulaStatus = tool.id;
       formulaStatus.setAttribute("role", "status");
       reference.append(
-        formulaTitle, formulaText, exampleTitle, exampleText,
+        closeInfo, formulaTitle, formulaText, exampleTitle, exampleText,
         editableFormulaTitle, formulaEditor, formulaHelp, formulaActions, formulaStatus
       );
+      reference.addEventListener("close", () => {
+        infoButton.setAttribute("aria-expanded", "false");
+        infoButton.setAttribute("aria-label", `Show formula and edit options for ${tool.title}`);
+      });
 
       const toolLayout = document.createElement("div");
       toolLayout.className = "ee-tool-layout";
-      toolLayout.dataset.eeInfoOpen = "false";
       toolLayout.append(form, reference);
-      panel.append(toolLayout, output);
+      panel.append(toolLayout);
       panels.append(panel);
     });
 
@@ -3634,7 +3670,7 @@ function calculateEeFormula(toolId, values, formulaText, fillSamples = false) {
     const result = evaluateEeExpression(expression, context) * multiplier;
     if (!Number.isFinite(result)) throw new Error("The adjusted result is not finite. Check the multiplier and input values.");
     return label + " = " + eeCalculatorNumber(result);
-  }).join(" | ") + (multiplier === 1 ? "" : ` | Multiplier × ${eeCalculatorNumber(multiplier)}`);
+  }).join("\n") + (multiplier === 1 ? "" : `\nMultiplier × ${eeCalculatorNumber(multiplier)}`);
 }
 
 function validateEeFormula(toolId, formulaText) {
@@ -3674,12 +3710,11 @@ document.getElementById("ee-formula-reference").hidden = true;
 
 function closeEeFormulaInfo(root) {
   root.querySelectorAll(".ee-tool-reference").forEach(reference => {
-    reference.hidden = true;
-  });
-  root.querySelectorAll("[data-ee-info]").forEach(button => {
+    if (reference.open) reference.close();
+    const button = reference.parentElement.querySelector(`[aria-controls="${reference.id}"]`);
+    if (!button) return;
     button.setAttribute("aria-expanded", "false");
     button.setAttribute("aria-label", `Show formula and edit options for ${button.closest(".ee-tool-form-heading").querySelector("h4").textContent}`);
-    button.closest(".ee-tool-layout").dataset.eeInfoOpen = "false";
   });
 }
 
@@ -3709,13 +3744,31 @@ document.querySelector(".ee-topbar nav").addEventListener("click", event => {
 document.getElementById("eeCategories").addEventListener("click", event => {
   const infoButton = event.target.closest("[data-ee-info]");
   if (infoButton) {
-    const toolLayout = infoButton.closest(".ee-tool-layout");
     const reference = document.getElementById(infoButton.getAttribute("aria-controls"));
     const isOpen = infoButton.getAttribute("aria-expanded") === "true";
-    reference.hidden = isOpen;
-    infoButton.setAttribute("aria-expanded", String(!isOpen));
-    infoButton.setAttribute("aria-label", `${isOpen ? "Show" : "Hide"} formula and edit options for ${infoButton.closest(".ee-tool-form-heading").querySelector("h4").textContent}`);
-    toolLayout.dataset.eeInfoOpen = String(!isOpen);
+    if (isOpen) {
+      reference.close();
+      infoButton.focus({ preventScroll: true });
+    } else {
+      closeEeFormulaInfo(eeCategoriesRoot);
+      reference.showModal();
+      infoButton.setAttribute("aria-expanded", "true");
+      infoButton.setAttribute("aria-label", `Hide formula and edit options for ${infoButton.closest(".ee-tool-form-heading").querySelector("h4").textContent}`);
+    }
+    return;
+  }
+
+  const closeInfoButton = event.target.closest("[data-ee-close-formula]");
+  if (closeInfoButton) {
+    const reference = closeInfoButton.closest(".ee-tool-reference");
+    reference.close();
+    reference.parentElement.querySelector(`[aria-controls="${reference.id}"]`).focus({ preventScroll: true });
+    return;
+  }
+
+  const formulaDialog = event.target.closest(".ee-tool-reference");
+  if (formulaDialog && event.target === formulaDialog) {
+    formulaDialog.close();
     return;
   }
 
