@@ -1632,6 +1632,10 @@ h1 span,
     linear-gradient(110deg, #0b2340, #3678a6 60%, #f2a56d);
 }
 
+.ee-mobile-news {
+  display: none;
+}
+
 .ee-welcome > div:first-child {
   position: relative;
   z-index: 1;
@@ -2038,6 +2042,10 @@ a.ee-app-choice:focus-visible {
   font-size: 0.62rem;
   line-height: 1.45;
   overflow-wrap: anywhere;
+}
+
+.ee-tool-result-inline {
+  display: none;
 }
 
 .ee-tool-result.has-error {
@@ -3648,6 +3656,112 @@ body[data-theme="dark"] .button-primary,
 body[data-theme="dark"] .button-dark,
 body[data-theme="dark"] .photo-nav-button {
   background: #60405a;
+}
+
+@media (max-width: 600px) {
+  .ee-app[data-ee-selection="home"] .ee-category-grid {
+    display: none;
+  }
+
+  .ee-app[data-ee-selection="home"] .ee-mobile-news {
+    display: block;
+    margin: 10px 0 10px 12px;
+  }
+
+  .ee-mobile-news h2 {
+    margin: 0 0 7px;
+    color: #eaf4ff;
+    font-size: 0.82rem;
+  }
+
+  .ee-news-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .ee-news-card {
+    display: grid;
+    grid-template-columns: 25px minmax(0, 1fr) 14px;
+    align-items: center;
+    gap: 6px;
+    min-height: 66px;
+    padding: 9px 7px;
+    border: 1px solid #284d69;
+    border-radius: 9px;
+    background: linear-gradient(145deg, #102a40, #0b1d30);
+    color: #eaf4ff;
+    text-decoration: none;
+  }
+
+  .ee-news-icon {
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border-radius: 7px;
+    background: #153951;
+    color: #55d9ce;
+    font-size: 0.85rem;
+  }
+
+  .ee-news-card strong,
+  .ee-news-card small {
+    display: block;
+  }
+
+  .ee-news-card strong {
+    font-size: 0.62rem;
+    line-height: 1.25;
+  }
+
+  .ee-news-card small {
+    margin-top: 3px;
+    color: #a9bfd2;
+    font-size: 0.53rem;
+    line-height: 1.3;
+  }
+
+  .ee-news-arrow {
+    color: #55d9ce;
+    font-size: 0.7rem;
+  }
+
+  .ee-tool-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ee-field {
+    gap: 5px;
+    font-size: 0.72rem;
+  }
+
+  .ee-field input,
+  .ee-field select {
+    height: 38px;
+    padding: 7px 9px;
+    font-size: 0.78rem;
+  }
+
+  .ee-calculate-button {
+    min-height: 40px;
+    padding: 8px 12px;
+    font-size: 0.82rem;
+  }
+
+  .ee-tool-panel > .ee-tool-result {
+    display: none;
+  }
+
+  .ee-tool-form > .ee-tool-result-inline {
+    display: block;
+    margin-top: 4px;
+    padding: 11px 12px;
+    border-left-width: 3px;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
   color: #fff;
 }
 

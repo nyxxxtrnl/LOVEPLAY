@@ -2510,6 +2510,78 @@ const eeCategories = [
         ]
       },
       {
+        id: "generator-current-rpm",
+        tab: "Generator",
+        title: "Generator Current & RPM",
+        description: "Estimate line current from real power and calculate synchronous speed from frequency and pole count.",
+        formula: "S = P / PF\n1φ: I = P × 1000 / (V × PF)\n3φ: I = P × 1000 / (√3 × VL × PF)\nSynchronous RPM = 120f / poles",
+        example: "Uses electrical output power and ideal synchronous speed; actual loaded speed can differ.",
+        fields: [
+          { key: "p", label: "Real output power (kW)", placeholder: "Enter kW" },
+          { key: "v", label: "Voltage (V)", placeholder: "Line voltage for 3-phase" },
+          { key: "pf", label: "Power factor (0–1)", placeholder: "e.g. 0.8" },
+          { key: "phase", label: "System", type: "select", options: [["single", "Single-phase"], ["three", "Three-phase"]] },
+          { key: "f", label: "Frequency (Hz)", placeholder: "e.g. 60" },
+          { key: "poles", label: "Number of poles", placeholder: "e.g. 4" }
+        ]
+      },
+      {
+        id: "transformer-losses",
+        tab: "Transformer Loss",
+        title: "Transformer Total Loss",
+        description: "Estimate core and load-dependent copper losses at the entered transformer load.",
+        formula: "Load ratio = Load kVA / Rated kVA\nCopper loss = Full-load copper loss × Load ratio²\nTotal loss = Core loss + Copper loss",
+        example: "Assumes copper loss varies with the square of load; use test-sheet loss values.",
+        fields: [
+          { key: "rated_kva", label: "Rated transformer (kVA)", placeholder: "Enter rated kVA" },
+          { key: "load_kva", label: "Actual load (kVA)", placeholder: "Enter load kVA" },
+          { key: "core_loss", label: "Core / no-load loss (W)", placeholder: "From test sheet" },
+          { key: "full_load_copper_loss", label: "Full-load copper loss (W)", placeholder: "From test sheet" }
+        ]
+      },
+      {
+        id: "transformer-impedance",
+        tab: "Impedance %",
+        title: "Transformer % Impedance",
+        description: "Calculate percentage impedance and equivalent impedance from rated voltage and short-circuit test voltage.",
+        formula: "Z% = (Vsc / Vrated) × 100\nZbase = Vrated² / Rated VA\nZΩ = (Z% / 100) × Zbase",
+        example: "Enter short-circuit test voltage at rated current and the matching rated voltage and kVA.",
+        fields: [
+          { key: "v", label: "Rated voltage (V)", placeholder: "Enter rated voltage" },
+          { key: "vsc", label: "Short-circuit test voltage (V)", placeholder: "Enter test voltage" },
+          { key: "kva", label: "Rated transformer (kVA)", placeholder: "Enter rated kVA" }
+        ]
+      },
+      {
+        id: "short-circuit-current",
+        tab: "Short-Circuit",
+        title: "Transformer Short-Circuit Current",
+        description: "Estimate symmetrical bolted-fault current at transformer terminals from rating and impedance.",
+        formula: "1φ: Irated = kVA × 1000 / V\n3φ: Irated = kVA × 1000 / (√3 × VL)\nIsc ≈ Irated / (Z% / 100)",
+        example: "Assumes an infinite upstream source and ignores cable and utility impedance; not for protection coordination.",
+        fields: [
+          { key: "kva", label: "Transformer rating (kVA)", placeholder: "Enter rated kVA" },
+          { key: "v", label: "Secondary voltage (V)", placeholder: "Line voltage for 3-phase" },
+          { key: "z_pct", label: "Transformer impedance (%)", placeholder: "From nameplate" },
+          { key: "phase", label: "System", type: "select", options: [["single", "Single-phase"], ["three", "Three-phase"]] }
+        ]
+      },
+      {
+        id: "transformer-load-sharing",
+        tab: "Load Sharing",
+        title: "Transformer Parallel Load Sharing",
+        description: "Estimate two parallel transformers' load shares using their ratings and percent impedances.",
+        formula: "Share₁ = Total load × (kVA₁ / Z%₁) / Σ(kVA / Z%)\nShare₂ = Total load − Share₁",
+        example: "Assumes compatible voltage ratios, phase sequence, polarity, and impedance characteristics.",
+        fields: [
+          { key: "s1", label: "Transformer 1 rating (kVA)", placeholder: "Enter kVA" },
+          { key: "z1", label: "Transformer 1 impedance (%)", placeholder: "Enter Z%" },
+          { key: "s2", label: "Transformer 2 rating (kVA)", placeholder: "Enter kVA" },
+          { key: "z2", label: "Transformer 2 impedance (%)", placeholder: "Enter Z%" },
+          { key: "load", label: "Combined load (kVA)", placeholder: "Enter total load" }
+        ]
+      },
+      {
         id: "motor-generator",
         tab: "Motor / Generator",
         title: "Machine Power Estimate",
@@ -2588,6 +2660,45 @@ const eeCategories = [
           { key: "pf", label: "Power factor (0–1)", placeholder: "e.g. 0.9" },
           { key: "phase", label: "System", type: "select", options: [["single", "Single-phase"], ["three", "Three-phase"]] }
         ]
+      },
+      {
+        id: "earthing-conductor",
+        tab: "Earthing Lead",
+        title: "Earthing Conductor Resistance",
+        description: "Estimate the resistance of a straight grounding conductor from its material, length, and cross-sectional area.",
+        formula: "R = ρL / A\nCopper ρ ≈ 0.01724 Ω·mm²/m\nAluminum ρ ≈ 0.0282 Ω·mm²/m",
+        example: "This estimates conductor resistance, not soil or ground-electrode resistance.",
+        fields: [
+          { key: "l", label: "Conductor length (m)", placeholder: "Enter length" },
+          { key: "a", label: "Conductor area (mm²)", placeholder: "Enter area" },
+          { key: "material", label: "Conductor", type: "select", options: [["copper", "Copper"], ["aluminum", "Aluminum"]] }
+        ]
+      },
+      {
+        id: "ngr-sizing",
+        tab: "NGR",
+        title: "Neutral Grounding Resistor Sizing",
+        description: "Estimate resistor ohms, short-time power, and energy for a specified ground-fault current.",
+        formula: "3φ: Vphase = VL / √3\nR = Vphase / Ifault\nP = Vphase × Ifault",
+        example: "A preliminary estimate only; verify grounding method, duty time, ratings, and protection design.",
+        fields: [
+          { key: "v", label: "System voltage (V)", placeholder: "Line-to-line for 3-phase" },
+          { key: "phase", label: "System", type: "select", options: [["single", "Single-phase / line-to-neutral"], ["three", "Three-phase / line-to-line"]] },
+          { key: "i", label: "Target ground-fault current (A)", placeholder: "Enter current" },
+          { key: "time", label: "Fault duration (seconds)", placeholder: "e.g. 10" }
+        ]
+      },
+      {
+        id: "conductor-capacity",
+        tab: "Cable / Busbar",
+        title: "Cable & Busbar Current Estimate",
+        description: "Estimate current from conductor area and a user-supplied current density.",
+        formula: "I ≈ A × J\nA = conductor area (mm²)\nJ = selected current density (A/mm²)",
+        example: "Screening estimate only, not code ampacity. Set current density for the actual material, insulation, installation, and temperature.",
+        fields: [
+          { key: "a", label: "Conductor area (mm²)", placeholder: "Enter area" },
+          { key: "j", label: "Selected current density (A/mm²)", placeholder: "Use applicable design value" }
+        ]
       }
     ]
   },
@@ -2606,6 +2717,22 @@ const eeCategories = [
         fields: [
           { key: "a", label: "Side a", placeholder: "Enter side a" },
           { key: "b", label: "Side b", placeholder: "Enter side b" }
+        ]
+      },
+      {
+        id: "load-conversion",
+        tab: "kW / kVA / HP",
+        title: "kW–kVA–HP & Current Conversion",
+        description: "Convert kW, kVA, or motor horsepower to power values and estimate line current.",
+        formula: "1 HP = 0.746 kW mechanical\nkVA = electrical kW / PF\nI = electrical kW × 1000 / (phase factor × V × PF)",
+        example: "For HP input, enter motor efficiency. Current is an estimate; verify nameplate and design data.",
+        fields: [
+          { key: "quantity", label: "Power quantity", placeholder: "Enter kW, kVA, or HP" },
+          { key: "quantity_type", label: "Entered unit", type: "select", options: [["kw", "kW"], ["kva", "kVA"], ["hp", "HP"]] },
+          { key: "pf", label: "Power factor (0–1)", placeholder: "e.g. 0.85" },
+          { key: "eff", label: "Motor efficiency (%)", placeholder: "e.g. 90", default: 100 },
+          { key: "v", label: "Supply voltage (V)", placeholder: "Line voltage for 3-phase" },
+          { key: "phase", label: "System", type: "select", options: [["single", "Single-phase"], ["three", "Three-phase"]] }
         ]
       },
       {
@@ -2646,12 +2773,21 @@ const eeDefaultCalculationFormulas = {
   "three-phase": "Real power (W) = sqrt(3) * v * i * pf\nApparent power (VA) = sqrt(3) * v * i\nReactive power (var) = sqrt(3) * v * i * sqrt(1 - pf^2)",
   "pf-correction": "Required capacitor bank (kVAr) = p * (tan(acos(pf1)) - tan(acos(pf2)))\nCapacitance per phase (uF) = p * 1000 * (tan(acos(pf1)) - tan(acos(pf2))) / (2 * pi * f * v^2 * phase_count) * 1000000",
   transformer: "Secondary voltage (V) = v1 * n2 / n1\nTurns ratio (N2/N1) = n2 / n1",
+  "generator-current-rpm": "Apparent power (kVA) = p / pf\nGenerator line current (A) = p * 1000 / (phase_factor * v * pf)\nSynchronous speed (RPM) = 120 * f / poles",
+  "transformer-losses": "Load ratio = load_kva / rated_kva\nCopper loss at load (W) = full_load_copper_loss * (load_kva / rated_kva)^2\nTotal transformer loss (W) = core_loss + full_load_copper_loss * (load_kva / rated_kva)^2",
+  "transformer-impedance": "Transformer impedance (%) = vsc / v * 100\nBase impedance (ohm) = v^2 / (kva * 1000)\nEquivalent impedance (ohm) = vsc / v * v^2 / (kva * 1000)",
+  "short-circuit-current": "Rated line current (A) = kva * 1000 / (phase_factor * v)\nEstimated terminal short-circuit current (A) = kva * 1000 / (phase_factor * v) / (z_pct / 100)",
+  "transformer-load-sharing": "Transformer 1 share (kVA) = load * (s1 / z1) / (s1 / z1 + s2 / z2)\nTransformer 2 share (kVA) = load - load * (s1 / z1) / (s1 / z1 + s2 / z2)\nTransformer 1 loading (%) = (load * (s1 / z1) / (s1 / z1 + s2 / z2)) / s1 * 100\nTransformer 2 loading (%) = (load - load * (s1 / z1) / (s1 / z1 + s2 / z2)) / s2 * 100",
   "motor-generator": "Apparent power (VA) = phase_factor * v * i\nInput power (W) = phase_factor * v * i * pf\nEstimated output power (W) = phase_factor * v * i * pf * eff / 100",
   efficiency: "Efficiency (percent) = pout / pin * 100\nPower losses (W) = pin - pout",
   "wire-sizing": "Estimated minimum conductor area (mm2) = circuit_factor * rho * l * i / (v * drop / 100)",
   "voltage-drop": "Voltage drop (V) = circuit_factor * rho * l * i / a\nVoltage drop (percent) = circuit_factor * rho * l * i / a / v * 100",
   load: "Total load (W) = sum(loads)\nEstimated line current (A) = sum(loads) / (phase_factor * v * pf)",
+  "earthing-conductor": "Earthing conductor resistance (ohm) = rho * l / a",
+  "ngr-sizing": "Phase-to-ground voltage (V) = v * phase_voltage_factor\nNGR resistance (ohm) = v * phase_voltage_factor / i\nResistor duty power (kW) = v * phase_voltage_factor * i / 1000\nEnergy for selected duration (kJ) = v * phase_voltage_factor * i * time / 1000",
+  "conductor-capacity": "Estimated conductor current (A) = a * j",
   triangle: "Hypotenuse = sqrt(a^2 + b^2)\nArea = a * b / 2",
+  "load-conversion": "Electrical real power (kW) = kw\nApparent power (kVA) = kva\nMechanical output (HP) = hp\nEstimated line current (A) = kw * 1000 / (phase_factor * v * pf)",
   quadratic: "Discriminant = b^2 - 4 * a * c\nRoot 1 = (-b + sqrt(b^2 - 4 * a * c)) / (2 * a)\nRoot 2 = (-b - sqrt(b^2 - 4 * a * c)) / (2 * a)",
   trigonometry: "Sine = sin(angle * pi / 180)\nCosine = cos(angle * pi / 180)\nTangent = tan(angle * pi / 180)"
 };
@@ -2700,6 +2836,7 @@ function createEeField(toolId, field) {
       else input.min = "0";
       input.step = "any";
     }
+    if (field.default !== undefined) input.value = String(field.default);
     input.required = !field.optional;
   }
   input.name = field.key;
@@ -2780,11 +2917,25 @@ function renderEeCategories() {
       form.className = "ee-tool-form";
       form.dataset.eeTool = tool.id;
       tool.fields.forEach(field => form.append(createEeField(tool.id, field)));
+      form.append(createEeField(tool.id, {
+        key: "multiplier",
+        label: "Result multiplier (×)",
+        placeholder: "1 = no adjustment",
+        default: 1
+      }));
       const submit = document.createElement("button");
       submit.className = "ee-calculate-button";
       submit.type = "submit";
       submit.textContent = "Calculate";
       form.append(submit);
+
+      const inlineOutput = document.createElement("p");
+      inlineOutput.className = "ee-tool-result ee-tool-result-inline";
+      inlineOutput.dataset.eeResult = tool.id;
+      inlineOutput.setAttribute("role", "status");
+      inlineOutput.setAttribute("aria-live", "polite");
+      inlineOutput.textContent = "Enter values and calculate.";
+      form.append(inlineOutput);
 
       const output = document.createElement("p");
       output.className = "ee-tool-result";
@@ -2813,7 +2964,7 @@ function renderEeCategories() {
       formulaEditor.value = eeSavedFormulas[tool.id] ?? eeDefaultCalculationFormulas[tool.id];
       const formulaHelp = document.createElement("small");
       formulaHelp.className = "ee-formula-help";
-      formulaHelp.textContent = `Inputs: ${tool.fields.map(field => field.key).join(", ")}. Derived: phase_factor, phase_count, circuit_factor, rho. One result per line: Label = expression. Supports + - * / ^, parentheses, pi, sqrt(), sin(), cos(), tan(), acos(), atan2(), sum(), parallel().`;
+      formulaHelp.textContent = `Inputs: ${tool.fields.map(field => field.key).join(", ")}. Derived: phase_factor, phase_voltage_factor, phase_count, circuit_factor, rho. The result multiplier is applied to every output after calculation. One result per line: Label = expression. Supports + - * / ^, parentheses, pi, sqrt(), sin(), cos(), tan(), acos(), atan2(), sum(), parallel().`;
       const formulaActions = document.createElement("div");
       formulaActions.className = "ee-formula-actions";
       const saveFormula = document.createElement("button");
@@ -2853,6 +3004,7 @@ function renderEeCategories() {
     ["Power", "P = V × I × PF\nS = V × I\nQ = √(S² − P²)"],
     ["Transformer", "V₂ / V₁ = N₂ / N₁\nI₂ / I₁ = N₁ / N₂"],
     ["Voltage Drop", "ΔV₁φ ≈ 2ρLI / A\nΔV₃φ ≈ √3ρLI / A"],
+    ["Common Symbols", "R — resistor\nL — inductor\nC — capacitor\n⏚ — ground"],
     ["Pythagorean", "c = √(a² + b²)"]
   ];
   references.forEach(([title, formula]) => {
@@ -2933,9 +3085,55 @@ function createEeFormulaContext(toolId, values, fillSamples = false) {
 
   const phase = values.phase;
   context.phase_factor = phase === "three" ? Math.sqrt(3) : 1;
+  context.phase_voltage_factor = phase === "three" ? 1 / Math.sqrt(3) : 1;
   context.phase_count = phase === "three" ? 3 : 1;
   context.circuit_factor = phase === "three" ? Math.sqrt(3) : 2;
   context.rho = values.material === "aluminum" ? 0.0282 : 0.01724;
+
+  const requirePositive = (keys, label) => {
+    if (keys.some(key => !Number.isFinite(context[key]) || context[key] <= 0)) {
+      throw new Error(`Enter positive finite ${label}.`);
+    }
+  };
+  if (toolId === "generator-current-rpm") {
+    requirePositive(["p", "v", "f", "poles"], "power, voltage, frequency, and pole count");
+    if (!Number.isInteger(context.poles) || context.poles % 2 !== 0) {
+      throw new Error("Enter a positive even number of generator poles.");
+    }
+    if (!Number.isFinite(context.pf) || context.pf <= 0 || context.pf > 1) {
+      throw new Error("Power factor must be greater than 0 and no greater than 1.");
+    }
+  } else if (toolId === "transformer-losses") {
+    requirePositive(["rated_kva"], "rated transformer kVA");
+    if (["load_kva", "core_loss", "full_load_copper_loss"].some(key =>
+      !Number.isFinite(context[key]) || context[key] < 0)) {
+      throw new Error("Enter finite, non-negative load and transformer loss values.");
+    }
+  } else if (toolId === "transformer-impedance") {
+    requirePositive(["v", "vsc", "kva"], "rated voltage, test voltage, and transformer kVA");
+  } else if (toolId === "short-circuit-current") {
+    requirePositive(["kva", "v", "z_pct"], "transformer kVA, voltage, and impedance percentage");
+  } else if (toolId === "transformer-load-sharing") {
+    requirePositive(["s1", "z1", "s2", "z2", "load"], "transformer ratings, impedances, and total load");
+  } else if (toolId === "earthing-conductor") {
+    requirePositive(["l", "a"], "conductor length and area");
+  } else if (toolId === "ngr-sizing") {
+    requirePositive(["v", "i", "time"], "system voltage, fault current, and duration");
+  } else if (toolId === "conductor-capacity") {
+    requirePositive(["a", "j"], "conductor area and current density");
+  } else if (toolId === "load-conversion") {
+    requirePositive(["quantity", "v", "eff"], "power quantity, voltage, and motor efficiency");
+    if (!Number.isFinite(context.pf) || context.pf <= 0 || context.pf > 1) {
+      throw new Error("Power factor must be greater than 0 and no greater than 1.");
+    }
+    if (context.eff > 100) throw new Error("Motor efficiency must be no greater than 100%.");
+    const kind = values.quantity_type;
+    context.kw = kind === "hp" ? context.quantity * 0.746 / (context.eff / 100)
+      : kind === "kva" ? context.quantity * context.pf
+        : context.quantity;
+    context.kva = context.kw / context.pf;
+    context.hp = kind === "hp" ? context.quantity : context.kw * (context.eff / 100) / 0.746;
+  }
   return context;
 }
 
@@ -3048,6 +3246,10 @@ function evaluateEeExpression(expression, context) {
 
 function calculateEeFormula(toolId, values, formulaText, fillSamples = false) {
   const context = createEeFormulaContext(toolId, values, fillSamples);
+  const multiplier = fillSamples ? 1 : values.multiplier;
+  if (!Number.isFinite(multiplier) || multiplier <= 0) {
+    throw new Error("Enter a positive, finite result multiplier. Use 1 for no adjustment.");
+  }
   const lines = formulaText.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
   if (!lines.length) throw new Error("Enter at least one formula result as Label = expression.");
   return lines.map((line, index) => {
@@ -3058,8 +3260,10 @@ function calculateEeFormula(toolId, values, formulaText, fillSamples = false) {
     const label = line.slice(0, separator).trim();
     const expression = line.slice(separator + 1).trim();
     if (!label || label.length > 60) throw new Error("Formula line " + (index + 1) + " needs a short result label.");
-    return label + " = " + eeCalculatorNumber(evaluateEeExpression(expression, context));
-  }).join(" | ");
+    const result = evaluateEeExpression(expression, context) * multiplier;
+    if (!Number.isFinite(result)) throw new Error("The adjusted result is not finite. Check the multiplier and input values.");
+    return label + " = " + eeCalculatorNumber(result);
+  }).join(" | ") + (multiplier === 1 ? "" : ` | Multiplier × ${eeCalculatorNumber(multiplier)}`);
 }
 
 function validateEeFormula(toolId, formulaText) {
@@ -3094,11 +3298,13 @@ function persistEeFormulas(nextFormulas) {
 }
 
 renderEeCategories();
+document.getElementById("calculator").dataset.eeSelection = "home";
 
 document.getElementById("eeSidebarNav").addEventListener("click", event => {
   const button = event.target.closest("[data-ee-nav]");
   if (!button) return;
   const selection = button.dataset.eeNav;
+  document.getElementById("calculator").dataset.eeSelection = selection;
   document.querySelectorAll(".ee-nav-item").forEach(item => item.classList.toggle("is-active", item === button));
   document.querySelectorAll("[data-ee-category]").forEach(card => {
     card.hidden = selection !== "home" && card.dataset.eeCategory !== selection;
@@ -3179,14 +3385,19 @@ document.getElementById("eeCategories").addEventListener("submit", event => {
   const form = event.target.closest(".ee-tool-form");
   if (!form) return;
   event.preventDefault();
-  const output = document.querySelector('[data-ee-result="' + form.dataset.eeTool + '"]');
+  const outputs = document.querySelectorAll('[data-ee-result="' + form.dataset.eeTool + '"]');
   const formula = document.querySelector(`[data-ee-formula="${form.dataset.eeTool}"]`);
   try {
-    output.textContent = calculateEeFormula(form.dataset.eeTool, eeReadValues(form), formula.value);
-    output.classList.remove("has-error");
+    const result = calculateEeFormula(form.dataset.eeTool, eeReadValues(form), formula.value);
+    outputs.forEach(output => {
+      output.textContent = result;
+      output.classList.remove("has-error");
+    });
   } catch (error) {
-    output.textContent = error.message;
-    output.classList.add("has-error");
+    outputs.forEach(output => {
+      output.textContent = error.message;
+      output.classList.add("has-error");
+    });
   }
 });
 
