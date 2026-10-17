@@ -52,7 +52,7 @@ a {
   gap: 20px;
   padding: 12px 5%;
   border-bottom: 1px solid var(--line);
-  background: rgba(255, 250, 247, 0.96);
+  background: color-mix(in srgb, var(--cream) 96%, transparent);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -258,6 +258,126 @@ a {
 .dashboard-settings-option-copy small {
   color: var(--muted);
   font-size: 0.76rem;
+}
+
+.dashboard-theme-picker {
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--cream) 88%, var(--blush));
+}
+
+.dashboard-theme-picker h3 {
+  margin: 0;
+  color: var(--plum);
+  font-size: 0.9rem;
+}
+
+.dashboard-theme-picker > p {
+  margin: 3px 0 12px;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.dashboard-theme-choices {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.dashboard-theme-choice {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  padding: 7px 3px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 0.68rem;
+}
+
+.dashboard-theme-choice[aria-pressed="true"] {
+  border-color: var(--rose);
+  background: color-mix(in srgb, var(--blush) 75%, transparent);
+  font-weight: 700;
+}
+
+.dashboard-theme-swatch {
+  width: 27px;
+  height: 27px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(50, 35, 48, 0.14);
+}
+
+.theme-swatch-rose { background: linear-gradient(145deg, #fff0f4, #e79bb3); }
+.theme-swatch-ocean { background: linear-gradient(145deg, #e7f5fb, #68a6c8); }
+.theme-swatch-lavender { background: linear-gradient(145deg, #f1edff, #9d8bd0); }
+.theme-swatch-sage { background: linear-gradient(145deg, #edf5e8, #83a77b); }
+
+.dashboard-settings-links {
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-settings-links .dashboard-settings-option {
+  min-height: 60px;
+  padding: 8px 10px;
+}
+
+.dashboard-settings-links .dashboard-settings-option-icon {
+  width: 36px;
+  height: 36px;
+  flex-basis: 36px;
+}
+
+.dashboard-settings-links .dashboard-settings-option-copy {
+  gap: 0;
+}
+
+.dashboard-settings-links .dashboard-settings-option-copy strong {
+  font-size: 0.82rem;
+}
+
+.dashboard-settings-links .dashboard-settings-option-copy small {
+  font-size: 0.68rem;
+}
+
+.dashboard-settings-panel {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.settings-info-card {
+  position: relative;
+}
+
+.settings-info-card h2 {
+  margin: 8px 38px 12px 0;
+  color: var(--plum);
+  font-size: 1.55rem;
+}
+
+.settings-info-card .settings-info-copy {
+  display: grid;
+  gap: 10px;
+  color: var(--ink);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.settings-info-copy p {
+  margin: 0;
+}
+
+.settings-info-copy .settings-info-note {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--blush);
+  color: var(--plum);
+  font-weight: 650;
 }
 
 .dashboard-settings-music-icon {
@@ -4190,4 +4310,120 @@ body[data-theme="dark"] .photo-filter-none {
     scroll-behavior: auto !important;
     transition: none !important;
   }
+}
+
+body[data-theme="dark"] .mobile-game-launchers {
+  border-color: var(--line);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--cream) 90%, #000), var(--cream));
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.38);
+}
+
+body[data-theme="dark"] .mobile-game-app {
+  color: #f3edf5;
+}
+
+body[data-theme="dark"] .mobile-game-app:focus-visible {
+  outline: 2px solid #ee93b2;
+  outline-offset: 3px;
+}
+
+body[data-theme="dark"] .topbar {
+  background: color-mix(in srgb, var(--cream) 96%, transparent);
+}
+
+body[data-theme="dark"] .game-app-name {
+  color: #f3edf5;
+  text-shadow: 0 1px 3px #000;
+}
+
+body[data-theme="dark"] .game-app-icon {
+  border-color: #3f3544;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.58);
+}
+
+body[data-theme="dark"][data-palette="ocean"] {
+  --plum: #d4eaff;
+  --plum-light: #b7d5ef;
+  --rose: #76b9e6;
+  --pink: #31485b;
+  --blush: #202c38;
+  --cream: #131b24;
+  --ink: #e9f3fb;
+  --muted: #a9bac9;
+  --line: #354653;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+body[data-theme="dark"][data-palette="lavender"] {
+  --plum: #e6dcff;
+  --plum-light: #d0c1f3;
+  --rose: #b9a1ef;
+  --pink: #403751;
+  --blush: #2a2335;
+  --cream: #19151f;
+  --ink: #f1ecfa;
+  --muted: #bdb3cb;
+  --line: #443a51;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+body[data-theme="dark"][data-palette="sage"] {
+  --plum: #d9efdb;
+  --plum-light: #bfddc2;
+  --rose: #8fc69a;
+  --pink: #34473a;
+  --blush: #222f26;
+  --cream: #141d17;
+  --ink: #edf6ee;
+  --muted: #afc0b1;
+  --line: #354639;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+body[data-theme="light"][data-palette="ocean"] {
+  --plum: #193d55;
+  --plum-light: #315c76;
+  --rose: #3980a7;
+  --pink: #bedcea;
+  --blush: #e7f5fb;
+  --cream: #f5fbfd;
+  --ink: #203743;
+  --muted: #647d8a;
+  --line: #d6e9f1;
+  --shadow: 0 18px 50px rgba(36, 91, 119, 0.1);
+  background: var(--cream);
+  color: var(--ink);
+}
+
+body[data-theme="light"][data-palette="lavender"] {
+  --plum: #42365d;
+  --plum-light: #5e4c7e;
+  --rose: #806caf;
+  --pink: #d8cbea;
+  --blush: #f1edff;
+  --cream: #fbf9ff;
+  --ink: #332d40;
+  --muted: #777086;
+  --line: #e5def1;
+  --shadow: 0 18px 50px rgba(73, 54, 106, 0.1);
+  background: var(--cream);
+  color: var(--ink);
+}
+
+body[data-theme="light"][data-palette="sage"] {
+  --plum: #334c37;
+  --plum-light: #4d6a51;
+  --rose: #648c68;
+  --pink: #ccdfc7;
+  --blush: #edf5e8;
+  --cream: #fafcf7;
+  --ink: #2d382e;
+  --muted: #707b70;
+  --line: #dce7d7;
+  --shadow: 0 18px 50px rgba(55, 83, 56, 0.1);
+  background: var(--cream);
+  color: var(--ink);
 }

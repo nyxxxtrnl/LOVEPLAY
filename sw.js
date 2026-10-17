@@ -1,4 +1,4 @@
-const CACHE_NAME = "loveplay-shell-v27";
+const CACHE_NAME = "loveplay-shell-v28";
 const APP_FILES = [
   "index.html",
   "manifest.webmanifest",
@@ -30,6 +30,20 @@ const APP_FILES = [
   "ASSETS/game-icons/terraria.png",
   "ASSETS/game-icons/stumble.png",
   "ASSETS/game-icons/8ball.png",
+  "ASSETS/game-icons/heartopia.png",
+  "ASSETS/game-icons/coffee.png",
+  "ASSETS/game-icons/subway.png",
+  "ASSETS/game-icons/4pics1word.png",
+  "ASSETS/game-icons/cookingmama.png",
+  "ASSETS/game-icons/candycrush.png",
+  "ASSETS/game-icons/pokemongo.png",
+  "ASSETS/game-icons/pvz2.png",
+  "ASSETS/game-icons/gardenscapes.png",
+  "ASSETS/game-icons/royalmatch.png",
+  "ASSETS/game-icons/hayday.png",
+  "ASSETS/game-icons/templerun2.png",
+  "ASSETS/game-icons/tocaboca.png",
+  "ASSETS/game-icons/asphalt.png",
   ...Array.from({ length: 21 }, (_, index) => `ASSETS/memory-${index + 1}.jpg`)
 ];
 

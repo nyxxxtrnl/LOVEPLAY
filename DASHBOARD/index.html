@@ -42,6 +42,11 @@
         </div>
         <button class="dashboard-settings-close" id="dashboardSettingsClose" type="button" aria-label="Close dashboard settings">×</button>
       </header>
+      <button class="dashboard-settings-option" id="settingsFeatured" type="button">
+        <span class="dashboard-settings-option-icon" aria-hidden="true">♡</span>
+        <span class="dashboard-settings-option-copy"><strong>Featured</strong><small>Jump to today's featured moments.</small></span>
+        <span class="dashboard-settings-arrow" aria-hidden="true">›</span>
+      </button>
       <button class="dashboard-settings-option" id="themeToggle" type="button" role="switch" aria-checked="false">
         <span class="dashboard-settings-option-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path class="dashboard-theme-moon" d="M20.7 13A8.5 8.5 0 0 1 11 3.3a8.5 8.5 0 1 0 9.7 9.7Z"/><circle class="dashboard-theme-sun" cx="12" cy="12" r="4"/><path class="dashboard-theme-sun" d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
@@ -49,11 +54,29 @@
         <span class="dashboard-settings-option-copy"><strong>Dark mode</strong><small>Change the look of LovePlay.</small></span>
         <span class="dashboard-switch" aria-hidden="true"><span></span></span>
       </button>
+      <section class="dashboard-theme-picker" aria-labelledby="dashboardThemeTitle">
+        <h3 id="dashboardThemeTitle">App theme</h3>
+        <p>Choose a background color for LovePlay.</p>
+        <div class="dashboard-theme-choices" role="group" aria-label="App background theme">
+          <button class="dashboard-theme-choice" type="button" data-theme-palette="rose" aria-pressed="true"><span class="dashboard-theme-swatch theme-swatch-rose" aria-hidden="true"></span><span>Rose</span></button>
+          <button class="dashboard-theme-choice" type="button" data-theme-palette="ocean" aria-pressed="false"><span class="dashboard-theme-swatch theme-swatch-ocean" aria-hidden="true"></span><span>Ocean</span></button>
+          <button class="dashboard-theme-choice" type="button" data-theme-palette="lavender" aria-pressed="false"><span class="dashboard-theme-swatch theme-swatch-lavender" aria-hidden="true"></span><span>Lavender</span></button>
+          <button class="dashboard-theme-choice" type="button" data-theme-palette="sage" aria-pressed="false"><span class="dashboard-theme-swatch theme-swatch-sage" aria-hidden="true"></span><span>Sage</span></button>
+        </div>
+      </section>
       <button class="dashboard-settings-option" id="editBackgroundMusic" type="button">
         <span class="dashboard-settings-option-icon dashboard-settings-music-icon" aria-hidden="true">♫</span>
         <span class="dashboard-settings-option-copy"><strong>Edit song</strong><small>Update the Home page soundtrack.</small></span>
         <span class="dashboard-settings-arrow" aria-hidden="true">›</span>
       </button>
+      <div class="dashboard-settings-links" aria-label="LovePlay information">
+        <button class="dashboard-settings-option" type="button" data-info-page="rules"><span class="dashboard-settings-option-icon" aria-hidden="true">✓</span><span class="dashboard-settings-option-copy"><strong>Rules</strong><small>Keep LovePlay kind and safe.</small></span><span class="dashboard-settings-arrow" aria-hidden="true">›</span></button>
+        <button class="dashboard-settings-option" type="button" data-info-page="guide"><span class="dashboard-settings-option-icon" aria-hidden="true">⌖</span><span class="dashboard-settings-option-copy"><strong>Guide</strong><small>Learn the main features.</small></span><span class="dashboard-settings-arrow" aria-hidden="true">›</span></button>
+        <button class="dashboard-settings-option" type="button" data-info-page="help"><span class="dashboard-settings-option-icon" aria-hidden="true">?</span><span class="dashboard-settings-option-copy"><strong>Help</strong><small>Quick tips if something is not working.</small></span><span class="dashboard-settings-arrow" aria-hidden="true">›</span></button>
+        <button class="dashboard-settings-option" type="button" data-info-page="privacy"><span class="dashboard-settings-option-icon" aria-hidden="true">◇</span><span class="dashboard-settings-option-copy"><strong>Privacy</strong><small>What LovePlay saves and syncs.</small></span><span class="dashboard-settings-arrow" aria-hidden="true">›</span></button>
+        <button class="dashboard-settings-option" type="button" data-info-page="rate"><span class="dashboard-settings-option-icon" aria-hidden="true">★</span><span class="dashboard-settings-option-copy"><strong>Rate app</strong><small>Leave a rating when LovePlay is listed.</small></span><span class="dashboard-settings-arrow" aria-hidden="true">›</span></button>
+        <button class="dashboard-settings-option" type="button" data-info-page="billing"><span class="dashboard-settings-option-icon" aria-hidden="true">₱</span><span class="dashboard-settings-option-copy"><strong>Premium &amp; billing</strong><small>Subscription information and status.</small></span><span class="dashboard-settings-arrow" aria-hidden="true">›</span></button>
+      </div>
     </section>
     <button class="dashboard-settings-tab" id="dashboardSettingsToggle" type="button" aria-controls="dashboardSettingsPanel" aria-expanded="false" aria-label="Open quick controls">
     </button>
@@ -74,7 +97,7 @@
       </div>
       </div>
 
-      <div class="section-wrap home-feature-row" aria-label="Home music and featured memories">
+      <div class="section-wrap home-feature-row" id="homeFeatured" aria-label="Home music and featured memories">
         <section class="background-music-section" aria-label="Home background music">
           <div class="background-music-card">
             <div class="background-music-copy">
@@ -254,6 +277,48 @@
         </a>
         <a class="mobile-game-app app-8ball" href="https://play.google.com/store/apps/details?id=com.miniclip.eightballpool" data-game-app="8ball" aria-label="Open 8 Ball Pool">
           <span class="game-app-icon"><img src="../ASSETS/game-icons/8ball.png" alt="" loading="lazy"></span><span class="game-app-name">8 Ball Pool</span>
+        </a>
+        <a class="mobile-game-app app-heartopia" href="https://play.google.com/store/apps/details?id=com.xd.xdtglobal.gp" data-game-app="heartopia" aria-label="Open Heartopia">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/heartopia.png" alt="" loading="lazy"></span><span class="game-app-name">Heartopia</span>
+        </a>
+        <a class="mobile-game-app app-coffee" href="https://play.google.com/store/apps/details?id=com.tapblaze.coffeebusiness" data-game-app="coffee" aria-label="Open Good Coffee, Great Coffee">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/coffee.png" alt="" loading="lazy"></span><span class="game-app-name">Good Coffee, Great Coffee</span>
+        </a>
+        <a class="mobile-game-app app-subway" href="https://play.google.com/store/apps/details?id=com.kiloo.subwaysurf" data-game-app="subway" aria-label="Open Subway Surfers">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/subway.png" alt="" loading="lazy"></span><span class="game-app-name">Subway Surfers</span>
+        </a>
+        <a class="mobile-game-app app-4pics1word" href="https://play.google.com/store/apps/details?id=de.lotum.whatsinthefoto.us" data-game-app="4pics1word" aria-label="Open 4 Pics 1 Word">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/4pics1word.png" alt="" loading="lazy"></span><span class="game-app-name">4 Pics 1 Word</span>
+        </a>
+        <a class="mobile-game-app app-cookingmama" href="https://play.google.com/store/apps/details?id=jp.co.ofcr.cm00" data-game-app="cookingmama" aria-label="Open Cooking Mama">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/cookingmama.png" alt="" loading="lazy"></span><span class="game-app-name">Cooking Mama</span>
+        </a>
+        <a class="mobile-game-app app-candycrush" href="https://play.google.com/store/apps/details?id=com.king.candycrushsaga" data-game-app="candycrush" aria-label="Open Candy Crush Saga">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/candycrush.png" alt="" loading="lazy"></span><span class="game-app-name">Candy Crush</span>
+        </a>
+        <a class="mobile-game-app app-pokemongo" href="https://play.google.com/store/apps/details?id=com.nianticlabs.pokemongo" data-game-app="pokemongo" aria-label="Open Pokémon GO">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/pokemongo.png" alt="" loading="lazy"></span><span class="game-app-name">Pokémon GO</span>
+        </a>
+        <a class="mobile-game-app app-pvz2" href="https://play.google.com/store/apps/details?id=com.ea.game.pvz2_row" data-game-app="pvz2" aria-label="Open Plants vs Zombies 2">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/pvz2.png" alt="" loading="lazy"></span><span class="game-app-name">Plants vs Zombies 2</span>
+        </a>
+        <a class="mobile-game-app app-gardenscapes" href="https://play.google.com/store/apps/details?id=com.playrix.gardenscapes" data-game-app="gardenscapes" aria-label="Open Gardenscapes">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/gardenscapes.png" alt="" loading="lazy"></span><span class="game-app-name">Gardenscapes</span>
+        </a>
+        <a class="mobile-game-app app-royalmatch" href="https://play.google.com/store/apps/details?id=com.dreamgames.royalmatch" data-game-app="royalmatch" aria-label="Open Royal Match">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/royalmatch.png" alt="" loading="lazy"></span><span class="game-app-name">Royal Match</span>
+        </a>
+        <a class="mobile-game-app app-hayday" href="https://play.google.com/store/apps/details?id=com.supercell.hayday" data-game-app="hayday" aria-label="Open Hay Day">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/hayday.png" alt="" loading="lazy"></span><span class="game-app-name">Hay Day</span>
+        </a>
+        <a class="mobile-game-app app-templerun2" href="https://play.google.com/store/apps/details?id=com.imangi.templerun2" data-game-app="templerun2" aria-label="Open Temple Run 2">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/templerun2.png" alt="" loading="lazy"></span><span class="game-app-name">Temple Run 2</span>
+        </a>
+        <a class="mobile-game-app app-tocaboca" href="https://play.google.com/store/apps/details?id=com.tocaboca.tocalifeworld" data-game-app="tocaboca" aria-label="Open Toca Boca World">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/tocaboca.png" alt="" loading="lazy"></span><span class="game-app-name">Toca Boca World</span>
+        </a>
+        <a class="mobile-game-app app-asphalt" href="https://play.google.com/store/apps/details?id=com.gameloft.android.ANMP.GloftA9HM" data-game-app="asphalt" aria-label="Open Asphalt Legends">
+          <span class="game-app-icon"><img src="../ASSETS/game-icons/asphalt.png" alt="" loading="lazy"></span><span class="game-app-name">Asphalt Legends</span>
         </a>
       </nav>
 
@@ -933,6 +998,15 @@
     <p>Made with love, just for you.</p>
     <button class="native-share-button" id="shareLovePlay" type="button">Share LovePlay ↗</button>
   </footer>
+
+  <div class="modal" id="settingsInfoModal" hidden>
+    <section class="modal-card settings-info-card" role="dialog" aria-modal="true" aria-labelledby="settingsInfoTitle">
+      <button class="modal-close" id="settingsInfoClose" type="button" aria-label="Close information">✕</button>
+      <span class="eyebrow">LOVEPLAY</span>
+      <h2 id="settingsInfoTitle"></h2>
+      <div id="settingsInfoContent"></div>
+    </section>
+  </div>
 
   <div class="modal" id="messageModal" hidden>
     <div class="modal-card letter-card">

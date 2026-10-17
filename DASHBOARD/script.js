@@ -8,6 +8,7 @@ const STORAGE_KEY = "loveplay-progress-v1";
 const KEEPSAKE_LETTER_STORAGE_KEY = "loveplay-keepsake-letters-v1";
 const QUIZ_STORAGE_KEY = "loveplay-quiz-questions-v1";
 const THEME_STORAGE_KEY = "loveplay-theme-v1";
+const THEME_PALETTE_STORAGE_KEY = "loveplay-theme-palette-v1";
 const BACKGROUND_MUSIC_STORAGE_KEY = "loveplay-background-music-v1";
 const TIKTOK_VIDEO_STORAGE_KEY = "loveplay-tiktok-videos-v1";
 const DEFAULT_BACKGROUND_MUSIC = {
@@ -1871,6 +1872,104 @@ const mobileGameLaunchers = {
     ios: "miniclip://",
     playStore: "https://play.google.com/store/apps/details?id=com.miniclip.eightballpool",
     appStore: "https://apps.apple.com/app/id543186831"
+  },
+  heartopia: {
+    android: "https://play.google.com/store/apps/details?id=com.xd.xdtglobal.gp",
+    native: "heartopia://",
+    ios: "heartopia://",
+    playStore: "https://play.google.com/store/apps/details?id=com.xd.xdtglobal.gp",
+    appStore: "https://apps.apple.com/ph/search?term=Heartopia"
+  },
+  coffee: {
+    android: "https://play.google.com/store/apps/details?id=com.tapblaze.coffeebusiness",
+    native: "coffeebusiness://",
+    ios: "coffeebusiness://",
+    playStore: "https://play.google.com/store/apps/details?id=com.tapblaze.coffeebusiness",
+    appStore: "https://apps.apple.com/ph/search?term=Good%20Coffee%20Great%20Coffee"
+  },
+  subway: {
+    android: "https://play.google.com/store/apps/details?id=com.kiloo.subwaysurf",
+    native: "subwaysurfers://",
+    ios: "subwaysurfers://",
+    playStore: "https://play.google.com/store/apps/details?id=com.kiloo.subwaysurf",
+    appStore: "https://apps.apple.com/app/id512939461"
+  },
+  "4pics1word": {
+    android: "https://play.google.com/store/apps/details?id=de.lotum.whatsinthefoto.us",
+    native: "fourpicsoneword://",
+    ios: "fourpicsoneword://",
+    playStore: "https://play.google.com/store/apps/details?id=de.lotum.whatsinthefoto.us",
+    appStore: "https://apps.apple.com/app/id595558452"
+  },
+  cookingmama: {
+    android: "https://play.google.com/store/apps/details?id=jp.co.ofcr.cm00",
+    native: "cookingmama://",
+    ios: "cookingmama://",
+    playStore: "https://play.google.com/store/apps/details?id=jp.co.ofcr.cm00",
+    appStore: "https://apps.apple.com/ph/search?term=Cooking%20Mama%20Lets%20cook"
+  },
+  candycrush: {
+    android: "https://play.google.com/store/apps/details?id=com.king.candycrushsaga",
+    native: "candycrush://",
+    ios: "candycrush://",
+    playStore: "https://play.google.com/store/apps/details?id=com.king.candycrushsaga",
+    appStore: "https://apps.apple.com/app/id553834731"
+  },
+  pokemongo: {
+    android: "https://play.google.com/store/apps/details?id=com.nianticlabs.pokemongo",
+    native: "pokemongo://",
+    ios: "pokemongo://",
+    playStore: "https://play.google.com/store/apps/details?id=com.nianticlabs.pokemongo",
+    appStore: "https://apps.apple.com/app/id1094591345"
+  },
+  pvz2: {
+    android: "https://play.google.com/store/apps/details?id=com.ea.game.pvz2_row",
+    native: "pvz2://",
+    ios: "pvz2://",
+    playStore: "https://play.google.com/store/apps/details?id=com.ea.game.pvz2_row",
+    appStore: "https://apps.apple.com/app/id597986893"
+  },
+  gardenscapes: {
+    android: "https://play.google.com/store/apps/details?id=com.playrix.gardenscapes",
+    native: "gardenscapes://",
+    ios: "gardenscapes://",
+    playStore: "https://play.google.com/store/apps/details?id=com.playrix.gardenscapes",
+    appStore: "https://apps.apple.com/app/id1105855019"
+  },
+  royalmatch: {
+    android: "https://play.google.com/store/apps/details?id=com.dreamgames.royalmatch",
+    native: "royalmatch://",
+    ios: "royalmatch://",
+    playStore: "https://play.google.com/store/apps/details?id=com.dreamgames.royalmatch",
+    appStore: "https://apps.apple.com/app/id1482155847"
+  },
+  hayday: {
+    android: "https://play.google.com/store/apps/details?id=com.supercell.hayday",
+    native: "hayday://",
+    ios: "hayday://",
+    playStore: "https://play.google.com/store/apps/details?id=com.supercell.hayday",
+    appStore: "https://apps.apple.com/app/id506627515"
+  },
+  templerun2: {
+    android: "https://play.google.com/store/apps/details?id=com.imangi.templerun2",
+    native: "templerun2://",
+    ios: "templerun2://",
+    playStore: "https://play.google.com/store/apps/details?id=com.imangi.templerun2",
+    appStore: "https://apps.apple.com/app/id572395608"
+  },
+  tocaboca: {
+    android: "https://play.google.com/store/apps/details?id=com.tocaboca.tocalifeworld",
+    native: "tocaboca://",
+    ios: "tocaboca://",
+    playStore: "https://play.google.com/store/apps/details?id=com.tocaboca.tocalifeworld",
+    appStore: "https://apps.apple.com/app/id1208138685"
+  },
+  asphalt: {
+    android: "https://play.google.com/store/apps/details?id=com.gameloft.android.ANMP.GloftA9HM",
+    native: "asphalt9://",
+    ios: "asphalt9://",
+    playStore: "https://play.google.com/store/apps/details?id=com.gameloft.android.ANMP.GloftA9HM",
+    appStore: "https://apps.apple.com/app/id805603214"
   }
 };
 
@@ -2061,25 +2160,40 @@ function resumeBackgroundMusicOnInteraction() {
 document.addEventListener("pointerdown", resumeBackgroundMusicOnInteraction);
 document.addEventListener("keydown", resumeBackgroundMusicOnInteraction);
 
-function applyTheme(theme) {
+let currentThemePalette = "rose";
+const allowedThemePalettes = new Set(["rose", "ocean", "lavender", "sage"]);
+
+function applyTheme(theme, palette = currentThemePalette) {
   const dark = theme === "dark";
+  currentThemePalette = allowedThemePalettes.has(palette) ? palette : "rose";
   document.body.dataset.theme = dark ? "dark" : "light";
+  document.body.dataset.palette = currentThemePalette;
   const toggle = document.getElementById("themeToggle");
   toggle.setAttribute("aria-checked", String(dark));
   toggle.setAttribute("aria-label", dark ? "Turn off dark mode" : "Turn on dark mode");
-  document.querySelector('meta[name="theme-color"]').content = dark ? "#1b141d" : "#281323";
+  document.querySelectorAll("[data-theme-palette]").forEach(button => {
+    button.setAttribute("aria-pressed", String(button.dataset.themePalette === currentThemePalette));
+  });
+  const themeColors = {
+    rose: dark ? "#17131b" : "#fffaf7",
+    ocean: dark ? "#131b24" : "#f5fbfd",
+    lavender: dark ? "#19151f" : "#fbf9ff",
+    sage: dark ? "#141d17" : "#fafcf7"
+  };
+  document.querySelector('meta[name="theme-color"]').content = themeColors[currentThemePalette];
 }
 
 try {
   const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem("loveplay-chat-theme-v1");
-  applyTheme(savedTheme === "dark" ? "dark" : "light");
+  const savedPalette = localStorage.getItem(THEME_PALETTE_STORAGE_KEY) || "rose";
+  applyTheme(savedTheme === "dark" ? "dark" : "light", savedPalette);
 } catch (error) {
   applyTheme("light");
 }
 
 function toggleTheme() {
   const theme = document.body.dataset.theme === "dark" ? "light" : "dark";
-  applyTheme(theme);
+  applyTheme(theme, currentThemePalette);
   try {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch (error) {
@@ -2088,12 +2202,27 @@ function toggleTheme() {
 }
 
 document.getElementById("themeToggle").addEventListener("click", toggleTheme);
+document.querySelectorAll("[data-theme-palette]").forEach(button => {
+  button.addEventListener("click", () => {
+    const palette = button.dataset.themePalette;
+    if (!allowedThemePalettes.has(palette)) {
+      throw new Error(`Unsupported LovePlay theme palette: ${palette}`);
+    }
+    applyTheme(document.body.dataset.theme, palette);
+    try {
+      localStorage.setItem(THEME_PALETTE_STORAGE_KEY, palette);
+    } catch (error) {
+      showToast(error.message || "Could not save your app background theme.");
+    }
+  });
+});
 
 const dashboardSettings = document.getElementById("dashboardSettings");
 const dashboardSettingsPanel = document.getElementById("dashboardSettingsPanel");
 const dashboardSettingsToggle = document.getElementById("dashboardSettingsToggle");
 
 function setDashboardSettingsOpen(open) {
+  if (open) dashboardSettingsPanel.scrollTop = 0;
   dashboardSettings.dataset.open = String(open);
   dashboardSettingsPanel.setAttribute("aria-hidden", String(!open));
   dashboardSettingsPanel.inert = !open;
@@ -2128,6 +2257,90 @@ dashboardSettingsToggle.addEventListener("pointercancel", () => {
 document.getElementById("dashboardSettingsClose").addEventListener("click", () => setDashboardSettingsOpen(false));
 document.getElementById("dashboardSettingsBackdrop").addEventListener("click", () => setDashboardSettingsOpen(false));
 document.getElementById("editBackgroundMusic").addEventListener("click", () => setDashboardSettingsOpen(false));
+document.getElementById("settingsFeatured").addEventListener("click", () => {
+  setDashboardSettingsOpen(false);
+  window.location.hash = "home";
+  window.setTimeout(() => {
+    document.getElementById("homeFeatured").scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 80);
+});
+
+const settingsInfoPages = {
+  rules: {
+    title: "Community rules",
+    paragraphs: [
+      "Treat the people you chat with kindly. Do not share someone else's private messages, photos, or personal details without their permission.",
+      "Only upload photos and music you have the right to use. Game icons and game links belong to their respective publishers.",
+      "Use the app responsibly. External games, music, and social services have their own rules and terms."
+    ]
+  },
+  guide: {
+    title: "LovePlay guide",
+    paragraphs: [
+      "Use the bottom navigation to switch between Home, Games, Chat, Music, and More.",
+      "Tap the small handle at the left edge to open Quick Settings. Pick a color theme, switch dark mode, or open an information page there.",
+      "In Games, tap an app icon to open the installed game when supported, or its official store page. Chat requires an account and internet connection."
+    ]
+  },
+  help: {
+    title: "Help",
+    paragraphs: [
+      "If something looks out of date, refresh LovePlay or close and reopen the app so it can load the latest version.",
+      "Game availability depends on your device and region. If an app does not open, use its official store listing to install or update it.",
+      "Chat and shared features need an internet connection. Check the connection and sign in again if chat will not load."
+    ]
+  },
+  privacy: {
+    title: "Privacy",
+    paragraphs: [
+      "Theme choices, game progress, letters, and photo-gallery edits are stored in this browser or on this device unless a feature says otherwise.",
+      "When you sign in to Chat, account and conversation data are handled by LovePlay's configured Firebase service so chat can work across devices.",
+      "Links and embedded players may send information to their own providers. Their privacy policies apply when you use those external services."
+    ]
+  },
+  rate: {
+    title: "Rate LovePlay",
+    paragraphs: [
+      "Thank you for wanting to leave a rating. LovePlay does not currently have a public Play Store listing, so there is no official store review page to open yet.",
+      "When a store listing is published, this section can link directly to its review page."
+    ],
+    note: true
+  },
+  billing: {
+    title: "Premium & billing",
+    paragraphs: [
+      "There is no Premium plan or subscription available to buy right now. This page is informational only.",
+      "No payment method is collected and no charges are made from this screen. A future subscription would need a published plan and secure platform billing before purchases are enabled."
+    ],
+    note: true
+  }
+};
+
+function openSettingsInfo(pageId) {
+  const page = settingsInfoPages[pageId];
+  if (!page) throw new Error(`Unknown LovePlay information page: ${pageId}`);
+
+  const content = document.getElementById("settingsInfoContent");
+  content.replaceChildren();
+  content.className = "settings-info-copy";
+  page.paragraphs.forEach((text, index) => {
+    const paragraph = document.createElement("p");
+    paragraph.textContent = text;
+    if (page.note && index === 0) paragraph.classList.add("settings-info-note");
+    content.append(paragraph);
+  });
+  document.getElementById("settingsInfoTitle").textContent = page.title;
+  document.getElementById("settingsInfoModal").hidden = false;
+  document.getElementById("settingsInfoClose").focus();
+}
+
+document.querySelectorAll("[data-info-page]").forEach(button => {
+  button.addEventListener("click", () => {
+    setDashboardSettingsOpen(false);
+    openSettingsInfo(button.dataset.infoPage);
+  });
+});
+document.getElementById("settingsInfoClose").addEventListener("click", () => closeModal("settingsInfoModal"));
 document.addEventListener("keydown", event => {
   if (event.key === "Escape" && dashboardSettings.dataset.open === "true") setDashboardSettingsOpen(false);
 });
