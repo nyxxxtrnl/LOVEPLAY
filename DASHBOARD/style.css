@@ -281,7 +281,7 @@ a {
 
 .dashboard-theme-choices {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 7px;
 }
 
@@ -311,10 +311,8 @@ a {
   box-shadow: 0 0 0 1px rgba(50, 35, 48, 0.14);
 }
 
-.theme-swatch-rose { background: linear-gradient(145deg, #fff0f4, #e79bb3); }
-.theme-swatch-ocean { background: linear-gradient(145deg, #e7f5fb, #68a6c8); }
-.theme-swatch-lavender { background: linear-gradient(145deg, #f1edff, #9d8bd0); }
-.theme-swatch-sage { background: linear-gradient(145deg, #edf5e8, #83a77b); }
+.theme-swatch-white { background: linear-gradient(145deg, #fff, #f1e9ed); }
+.theme-swatch-dark { background: linear-gradient(145deg, #453647, #17131b); }
 
 .dashboard-settings-links {
   display: grid;
