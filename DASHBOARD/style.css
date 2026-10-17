@@ -1451,138 +1451,6 @@ h1 span,
   height: 110px;
 }
 
-.tiktok-panel {
-  min-height: calc(100vh - 72px);
-  display: grid;
-  place-items: center;
-}
-
-.tiktok-card {
-  width: min(100%, 920px);
-  padding: clamp(28px, 6vw, 64px);
-  border: 1px solid #392c37;
-  border-radius: 24px;
-  background:
-    radial-gradient(ellipse at 18% 10%, #25f4ee25, transparent 42%),
-    radial-gradient(ellipse at 85% 90%, #fe2c5528, transparent 44%),
-    #111014;
-  box-shadow: var(--shadow);
-  color: #fff;
-  text-align: center;
-}
-
-.tiktok-card h2 {
-  margin: 12px 0;
-  font-size: clamp(2.3rem, 7vw, 4rem);
-}
-
-.tiktok-card h2 span {
-  color: #fe2c55;
-}
-
-.tiktok-card > p:not(.tiktok-note) {
-  max-width: 520px;
-  margin: 0 auto 24px;
-  color: #e3dce3;
-  line-height: 1.7;
-}
-
-.tiktok-add-form {
-  max-width: 650px;
-  margin: 0 auto 24px;
-  text-align: left;
-}
-
-.tiktok-add-form label {
-  display: block;
-  margin-bottom: 7px;
-  color: #fff;
-  font-size: 0.88rem;
-  font-weight: 700;
-}
-
-.tiktok-add-row {
-  display: flex;
-  gap: 10px;
-}
-
-.tiktok-add-row input {
-  flex: 1;
-  min-width: 0;
-  padding: 12px 14px;
-  border: 1px solid #625763;
-  border-radius: 10px;
-  background: #211d24;
-  color: #fff;
-  font: inherit;
-}
-
-.tiktok-add-row input:focus {
-  outline: 2px solid #25f4ee;
-  outline-offset: 2px;
-}
-
-.tiktok-add-row .button {
-  flex: 0 0 auto;
-  background: #fe2c55;
-}
-
-.tiktok-form-message {
-  min-height: 1.4em;
-  margin: 8px 0 0;
-  color: #f5ccd8;
-  font-size: 0.85rem;
-}
-
-.tiktok-player-wrap {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.tiktok-player-wrap iframe {
-  display: block;
-  width: min(100%, 400px);
-  height: min(70vh, 720px);
-  min-height: 420px;
-  border: 0;
-  border-radius: 16px;
-  background: #000;
-}
-
-.tiktok-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.tiktok-controls span {
-  min-width: 60px;
-  color: #fff;
-  font-variant-numeric: tabular-nums;
-}
-
-.tiktok-remove-button {
-  margin-top: 12px;
-  border: 0;
-  background: transparent;
-  color: #ff9db3;
-  font: inherit;
-  font-size: 0.85rem;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.tiktok-note {
-  max-width: 680px;
-  margin: 24px auto 0;
-  color: #aaa2ad;
-  font-size: 0.82rem;
-  line-height: 1.6;
-}
-
 .ee-app {
   --ee-bg: #071626;
   --ee-panel: #0b1d30;
@@ -3832,11 +3700,6 @@ footer p {
   footer p { width: 100%; }
   .quiz-options { grid-template-columns: 1fr; }
   .modal-card { padding: 30px 22px; }
-  .tiktok-add-row { flex-direction: column; }
-  .tiktok-add-row .button { width: 100%; }
-  .tiktok-controls { gap: 8px; }
-  .tiktok-controls .button { padding-inline: 10px; }
-  .tiktok-player-wrap iframe { min-height: 360px; height: 65vh; }
 }
 
 @media (max-width: 380px) {
@@ -4096,14 +3959,6 @@ body[data-theme="dark"] .roblox-art {
 
 body[data-theme="dark"] .mlbb-art {
   background: linear-gradient(135deg, #0c1d39, #1c4a70 55%, #8d7846);
-}
-
-body[data-theme="dark"] .tiktok-card {
-  border-color: #392c37;
-  background:
-    radial-gradient(ellipse at 18% 10%, #25f4ee20, transparent 42%),
-    radial-gradient(ellipse at 85% 90%, #fe2c5522, transparent 44%),
-    #111014;
 }
 
 body[data-theme="dark"] .pinedrama-banner {

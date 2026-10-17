@@ -10,7 +10,6 @@ const QUIZ_STORAGE_KEY = "loveplay-quiz-questions-v1";
 const THEME_STORAGE_KEY = "loveplay-theme-v1";
 const THEME_PALETTE_STORAGE_KEY = "loveplay-theme-palette-v1";
 const BACKGROUND_MUSIC_STORAGE_KEY = "loveplay-background-music-v1";
-const TIKTOK_VIDEO_STORAGE_KEY = "loveplay-tiktok-videos-v1";
 const DEFAULT_BACKGROUND_MUSIC = {
   title: "Perfect",
   artist: "Ed Sheeran",
@@ -3909,118 +3908,6 @@ document.getElementById("eeCategories").addEventListener("submit", event => {
     });
   }
 });
-
-// EMBEDDED TIKTOK VIDEO LIST
-const tiktokVideos = [];
-let activeTikTokVideo = 0;
-const tiktokVideoMessage = document.getElementById("tiktokVideoMessage");
-const tiktokViewer = document.getElementById("tiktokViewer");
-const tiktokPlayerWrap = document.getElementById("tiktokPlayerWrap");
-const tiktokVideoCount = document.getElementById("tiktokVideoCount");
-const tiktokPrevious = document.getElementById("tiktokPrevious");
-const tiktokNext = document.getElementById("tiktokNext");
-
-function renderTikTokVideo() {
-  tiktokPlayerWrap.replaceChildren();
-  const hasVideos = tiktokVideos.length > 0;
-  tiktokViewer.hidden = !hasVideos;
-  if (!hasVideos) return;
-
-  const videoId = tiktokVideos[activeTikTokVideo];
-  const player = document.createElement("iframe");
-  player.src = `https://www.tiktok.com/player/v1/${videoId}?music_info=1&description=1`;
-  player.title = `TikTok video ${activeTikTokVideo + 1}`;
-  player.allow = "encrypted-media; fullscreen; picture-in-picture";
-  player.allowFullscreen = true;
-  player.loading = "lazy";
-  tiktokPlayerWrap.append(player);
-
-  tiktokVideoCount.textContent = `${activeTikTokVideo + 1} / ${tiktokVideos.length}`;
-  tiktokPrevious.disabled = tiktokVideos.length < 2;
-  tiktokNext.disabled = tiktokVideos.length < 2;
-}
-
-function saveTikTokVideos() {
-  try {
-    localStorage.setItem(TIKTOK_VIDEO_STORAGE_KEY, JSON.stringify(tiktokVideos));
-  } catch (error) {
-    tiktokVideoMessage.textContent = `Could not save the video list in this browser: ${error.message}`;
-    return false;
-  }
-  return true;
-}
-
-try {
-  const savedTikTokVideos = JSON.parse(localStorage.getItem(TIKTOK_VIDEO_STORAGE_KEY) || "[]");
-  if (!Array.isArray(savedTikTokVideos) ||
-      savedTikTokVideos.some(videoId => typeof videoId !== "string" || !/^\d+$/.test(videoId))) {
-    throw new Error("Saved TikTok video list has an invalid format.");
-  }
-  tiktokVideos.push(...savedTikTokVideos);
-} catch (error) {
-  tiktokVideoMessage.textContent = `Could not load the saved TikTok video list: ${error.message}`;
-}
-
-document.getElementById("tiktokVideoForm").addEventListener("submit", event => {
-  event.preventDefault();
-  const input = document.getElementById("tiktokVideoUrl");
-  let videoUrl;
-  try {
-    videoUrl = new URL(input.value.trim());
-  } catch {
-    tiktokVideoMessage.textContent = "Enter a valid full TikTok video link.";
-    return;
-  }
-
-  const videoId = videoUrl.pathname.match(/\/video\/(\d+)/)?.[1];
-  if (videoUrl.protocol !== "https:" ||
-      !(videoUrl.hostname === "tiktok.com" || videoUrl.hostname.endsWith(".tiktok.com")) ||
-      !videoId) {
-    tiktokVideoMessage.textContent = "Use a full TikTok video link with /video/ in its address. Short links are not supported.";
-    return;
-  }
-  if (tiktokVideos.includes(videoId)) {
-    tiktokVideoMessage.textContent = "That video is already in your list.";
-    return;
-  }
-
-  tiktokVideos.push(videoId);
-  activeTikTokVideo = tiktokVideos.length - 1;
-  if (!saveTikTokVideos()) {
-    tiktokVideos.pop();
-    activeTikTokVideo = Math.max(0, tiktokVideos.length - 1);
-    return;
-  }
-  input.value = "";
-  tiktokVideoMessage.textContent = "Video added.";
-  renderTikTokVideo();
-});
-
-tiktokPrevious.addEventListener("click", () => {
-  activeTikTokVideo = (activeTikTokVideo - 1 + tiktokVideos.length) % tiktokVideos.length;
-  renderTikTokVideo();
-});
-
-tiktokNext.addEventListener("click", () => {
-  activeTikTokVideo = (activeTikTokVideo + 1) % tiktokVideos.length;
-  renderTikTokVideo();
-});
-
-document.getElementById("tiktokRemoveVideo").addEventListener("click", () => {
-  const removedIndex = activeTikTokVideo;
-  const [removedVideo] = tiktokVideos.splice(removedIndex, 1);
-  activeTikTokVideo = Math.max(0, activeTikTokVideo - 1);
-  if (!saveTikTokVideos()) {
-    tiktokVideos.splice(removedIndex, 0, removedVideo);
-    activeTikTokVideo = removedIndex;
-    renderTikTokVideo();
-    return;
-  }
-  tiktokVideoMessage.textContent = "Video removed.";
-  renderTikTokVideo();
-});
-
-renderTikTokVideo();
 
 // MOBILE NAVIGATION
 const menuToggle = document.getElementById("menuToggle");

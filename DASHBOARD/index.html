@@ -23,7 +23,6 @@
       <a class="tab-button" id="tab-games" href="#games" role="tab" aria-controls="games" aria-selected="false" tabindex="-1">Games</a>
       <a class="tab-button" id="tab-music" href="#music" role="tab" aria-controls="music" aria-selected="false" tabindex="-1">Music</a>
       <a class="tab-button" id="tab-movies" href="#movies" role="tab" aria-controls="movies" aria-selected="false" tabindex="-1">PineDrama</a>
-      <a class="tab-button" id="tab-tiktok" href="#tiktok" role="tab" aria-controls="tiktok" aria-selected="false" tabindex="-1">TikTok</a>
       <a class="tab-button" id="tab-pictures" href="#pictures" role="tab" aria-controls="pictures" aria-selected="false" tabindex="-1">Pictures</a>
       <a class="tab-button" id="tab-messages" href="#messages" role="tab" aria-controls="messages" aria-selected="false" tabindex="-1">Messages</a>
       <a class="tab-button" id="tab-chat" href="#chat" role="tab" aria-controls="chat" aria-selected="false" tabindex="-1">Chat</a>
@@ -516,32 +515,6 @@
       </div>
     </section>
 
-    <section class="section-wrap content-section tab-panel tiktok-panel" id="tiktok" role="tabpanel" aria-labelledby="tab-tiktok" tabindex="0" hidden>
-      <div class="tiktok-card">
-        <span class="eyebrow">WATCH &amp; DISCOVER</span>
-        <h2>TikTok <span>videos</span></h2>
-        <p>Paste a public TikTok video link to watch it here. Add more links to make your own swipe-through playlist.</p>
-        <form class="tiktok-add-form" id="tiktokVideoForm">
-          <label for="tiktokVideoUrl">TikTok video link</label>
-          <div class="tiktok-add-row">
-            <input id="tiktokVideoUrl" name="videoUrl" type="url" placeholder="https://www.tiktok.com/@user/video/..." required>
-            <button class="button button-primary" type="submit">Add video</button>
-          </div>
-          <p class="tiktok-form-message" id="tiktokVideoMessage" role="status" aria-live="polite"></p>
-        </form>
-        <div class="tiktok-viewer" id="tiktokViewer" hidden>
-          <div class="tiktok-player-wrap" id="tiktokPlayerWrap"></div>
-          <div class="tiktok-controls">
-            <button class="button button-dark" id="tiktokPrevious" type="button" aria-label="Previous TikTok video">‹ Previous</button>
-            <span id="tiktokVideoCount" aria-live="polite"></span>
-            <button class="button button-dark" id="tiktokNext" type="button" aria-label="Next TikTok video">Next ›</button>
-          </div>
-          <button class="tiktok-remove-button" id="tiktokRemoveVideo" type="button">Remove this video</button>
-        </div>
-        <p class="tiktok-note">LovePlay can embed individual public videos, but TikTok does not allow its For You feed or login/sign-in screen to be embedded here. Signing in and liking may require TikTok's own app or website. Your video list is saved only in this browser.</p>
-      </div>
-    </section>
-
     <section class="ee-app tab-panel" id="calculator" role="tabpanel" aria-labelledby="tab-calculator" tabindex="0" hidden>
       <aside class="ee-sidebar" aria-label="Electrical calculator navigation">
         <a class="ee-sidebar-brand" href="#calculator">
@@ -607,7 +580,7 @@
           <span><strong>PineDrama</strong><small>Stories to watch</small></span>
           <svg class="mobile-extra-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
         </a>
-        <a class="mobile-extra-link" href="#tiktok" data-mobile-app-link data-app-scheme="snssdk1233://" data-android-package="com.zhiliaoapp.musically" data-android-store="https://play.google.com/store/apps/details?id=com.zhiliaoapp.musically" data-ios-store="https://apps.apple.com/ph/app/tiktok-global-video-community/id1235601864">
+        <a class="mobile-extra-link" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" data-mobile-app-link data-app-scheme="snssdk1233://" data-android-package="com.zhiliaoapp.musically" data-android-store="https://play.google.com/store/apps/details?id=com.zhiliaoapp.musically" data-ios-store="https://apps.apple.com/ph/app/tiktok-global-video-community/id1235601864">
           <span class="mobile-extra-icon" aria-hidden="true"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/cd/24/de/cd24de9e-f590-52fb-ec71-6d8f4afe091b/TikTok_AppIcon26-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg" alt="" width="38" height="38"></span>
           <span><strong>TikTok</strong><small>Our video corner</small></span>
           <svg class="mobile-extra-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
